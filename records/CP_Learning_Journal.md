@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-A — C++ Basic Execution
 - Priority Class: Core
-- Learning Status: S0-A Part E in progress; first intermediate-assessment attempt VOID, clean retest required
+- Learning Status: S0-A Part E passed on clean retest; Part F final assessment next
 - Last Updated: 2026-09-11
 
 ---
@@ -22,7 +22,7 @@
 
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
-| S0-A — C++ Basic Execution | L2 | Provisional | Baseline | Incomplete | None | Immediate retest |
+| S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Sufficient for Provisional | None | Final Assessment |
 | S0-B — Basic Containers & STL | L1 | Provisional | Baseline | N/A | None | During S0-B |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
@@ -151,6 +151,40 @@ No open Review Debt. Initial Baseline failures identify starting gaps but do **n
 **Next action**
 - Briefly remediate input-contract tracking and basic function definition/use.
 - Use a new, pre-validated Tier B problem for the S0-A intermediate-assessment retest.
+
+---
+
+### 2026-09-11 — Part E Intermediate Assessment Retest 1
+
+**Formal status**
+- Result: `PASS`
+- Validation Tier: `B`
+- Validation evidence: executable reference solution, boundary-oriented tests, and randomized differential verification.
+- Calibration: approximately `R1/I1`, Comparative / Provisional under `CP_Calibration_Anchor_Registry_v1.1`.
+- `T_solve`: `4.67 min`
+- Hints: `None`
+- First-pass Correct: `Yes`
+
+**Evidence**
+- Read `N` correctly and processed exactly `N` inputs.
+- Implemented and used a helper function outside `main()`.
+- Correctly encoded all three branches: negative, nonnegative even, nonnegative odd.
+- Used scalar accumulation only; implementation is `O(N)` time and `O(1)` extra space.
+- Submitted program compiled cleanly and matched independent checks.
+- No edge case was explicitly listed by the learner. The code nevertheless handles key categories such as `x < 0`, `x = 0`, positive even/odd values, `N = 1`, and the stated input bounds. This is retained as a process observation rather than a correctness failure.
+
+**Mastery update**
+- Capability: `L3`
+- Confidence: `Provisional`
+- Evidence Context: `Immediate`
+- Unit Coverage Status: `Sufficient for Provisional`
+- Review Debt: `None`
+- Retest Needed: `No` for Part E
+
+**Next action**
+- Proceed to `Part F — Final Assessment`.
+- Final assessment should obtain clean independent evidence before S0-A completion is considered.
+- Continue to watch whether edge-case self-validation becomes explicit rather than implicit.
 
 ---
 
