@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-A — C++ Basic Execution
 - Priority Class: Core
-- Learning Status: S0-A Part F final assessment retest 1 FAIL; §39.2 diagnostic remediation required before another formal retest
+- Learning Status: S0-A Part F final assessment retest 2 PASS; Part G Adaptive Extra Problem next
 - Last Updated: 2026-09-11
 
 ---
@@ -22,7 +22,7 @@
 
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
-| S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Incomplete | Open (Medium) | Diagnostic remediation checkpoint |
+| S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Sufficient for Provisional | Resolved | Part G Adaptive Extra Problem |
 | S0-B — Basic Containers & STL | L1 | Provisional | Baseline | N/A | None | During S0-B |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
@@ -30,7 +30,7 @@
 
 ## 3. Open Review Debt Summary
 
-One open Medium Review Debt exists for S0-A. It was opened because the same boundary/initial-state correctness and edge-case self-validation weakness repeated across two consecutive skill-related final assessments. This debt is prerequisite-blocking until a diagnostic remediation checkpoint is passed. Initial Baseline failures remain excluded from Review Debt.
+No open Review Debt. The prior Medium S0-A debt for repeated boundary/initial-state errors was resolved after the diagnostic remediation checkpoint and a clean Final Assessment Retest 2 PASS with an explicit `N=1` edge-case check. Recurrence in delayed/mixed evidence should reopen the debt. Initial Baseline failures remain excluded from Review Debt.
 
 ---
 
@@ -201,6 +201,53 @@ One open Medium Review Debt exists for S0-A. It was opened because the same boun
 **Next action**
 - Run a diagnostic remediation checkpoint focused on: (1) initial state vs first transition, (2) defining each state variable in words before coding, and (3) mandatory minimum/boundary-case validation before locking code.
 - Only after passing the checkpoint, use a new pre-validated Tier A/B final-assessment problem.
+
+### 2026-09-11 — Diagnostic Remediation Checkpoint
+
+**Status**
+- Completed successfully after two consecutive skill-related Part F FAILs.
+- The learner correctly defined the meanings of the running balance/state variables, manually traced the initial transition, and explained why the first transition must obey the same rule as later transitions.
+- This checkpoint is learning/remediation evidence, not a formal assessment result.
+
+**Observed correction**
+- Initial state and first transition are now treated as part of the same state machine rather than bypassed by an unsafe blanket first-iteration special case.
+- The learner explicitly reasoned about a minimum/boundary case before the next formal submission.
+
+### 2026-09-11 — Part F Final Assessment Retest 2
+
+**Problem**
+- Record-break count and longest contiguous strictly increasing segment.
+
+**Formal status**
+- Result: `PASS`
+- Validation Tier: `B`
+- Validation evidence: exact-code C++17 compilation + sample/boundary execution + exhaustive small-case differential verification.
+- Calibration: approximately `R1/I2`, Comparative / Provisional under `CP_Calibration_Anchor_Registry_v1.1`.
+- `T_solve`: `33.07 min` (`33:04`)
+- Hints: `None`
+- First-pass Correct: `Yes`
+- VS debugger: permitted; actual use was not reported.
+
+**Evidence**
+- Record-break counting is correct, including the first value.
+- The longest increasing-run state is updated correctly for both record-breaking and non-record-breaking increases, and resets to length 1 otherwise.
+- Exact submitted code compiled cleanly and matched the sample, boundary executions, and exhaustive small-case differential checks.
+- Time complexity `O(N)` and extra space `O(1)` are correct.
+- The learner explicitly self-checked the minimum-size case `N=1`, expecting `1 1`.
+
+**Mastery update**
+- Capability: `L3`
+- Confidence: `Provisional`
+- Evidence Context: `Immediate; Compiler/Debugger allowed`
+- Unit Coverage Status: `Sufficient for Provisional`
+- Review Debt: `Resolved`
+- Retest Needed: `No` for Part F
+
+**Next action**
+- Proceed immediately to mandatory `Part G — Adaptive Extra Problem`.
+- Keep the explicit minimum/boundary-case validation habit; delayed/mixed evidence will determine whether confidence can later advance beyond Provisional.
+
+---
 
 ## 6. Learning Unit Journal Entry Template
 
