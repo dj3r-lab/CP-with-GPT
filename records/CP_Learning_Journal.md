@@ -1,6 +1,6 @@
 # CP Learning Journal
 
-> **Status:** Empty template  
+> **Status:** Active  
 > **Curriculum standard:** Competitive Programming 학습자료 제작 작업 규범 v5.4  
 > **Calibration registry:** CP_Calibration_Anchor_Registry v1.1  
 > **Authoritative quantitative record:** `CP_Learning_Record.xlsx`  
@@ -10,11 +10,11 @@
 
 ## 1. Current Position
 
-- Current Stage:
-- Current Learning Unit:
-- Priority Class:
-- Learning Status:
-- Last Updated:
+- Current Stage: Stage 0 — C++ 문제풀이 기반
+- Current Learning Unit: S0-A — C++ Basic Execution
+- Priority Class: Core
+- Learning Status: Initial Baseline completed; S0-A ready to begin
+- Last Updated: 2026-09-11
 
 ---
 
@@ -22,17 +22,105 @@
 
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
+| S0-A — C++ Basic Execution | L2 | Provisional | Baseline | N/A | None | During S0-A |
+| S0-B — Basic Containers & STL | L1 | Provisional | Baseline | N/A | None | During S0-B |
+| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
 ---
 
 ## 3. Open Review Debt Summary
 
-| Learning Unit | Severity | Reason | Prerequisite Blocking? | Next Remediation |
-|---|---|---|---|---|
+No open Review Debt. Initial Baseline failures identify starting gaps but do **not** create Review Debt under v5.4.
 
 ---
 
-## 4. Learning Unit Journal Entry Template
+## 4. Initial Baseline Diagnostic
+
+### 2026-09-11
+
+**Purpose**
+- Establish the pre-curriculum snapshot for later 4–6 week comparison.
+- This is not a progression gate and is not used to infer fixed growth potential.
+
+**Foundation Check**
+- FC-1 — even count + sum: `CONDITIONAL PASS`.
+  - Loop/condition logic was correct.
+  - `int` was used for a sum that can reach `10^14`, showing inconsistent constraint-to-type application.
+  - Reported time `6:58` excluded reading time, so it is retained only as a note, not formal `T_solve`.
+- FC-2 — nested-loop complexity: `PASS`.
+  - Correctly derived `O(N log N)`.
+  - Reported time `3:48` excluded reading time.
+- FC-3 — multiplication overflow: `PASS`.
+  - Correctly recognized that `int * int` is evaluated before assignment to `long long`.
+  - Correctly promoted operands to `long long`.
+  - Reported time `2:18` excluded reading time.
+
+**Baseline Problem A — LeetCode 977, Squares of a Sorted Array**
+- Calibration: approximately `R1/I1` under the actually stated acceptance condition.
+- Result: `FAIL`
+- `T_solve`: `12.03 min`
+- Positive evidence: independently found a valid square-then-sort solution.
+- Failure evidence:
+  - could not produce compilable `vector`-based C++ implementation;
+  - treated comparison sorting as `O(N)` rather than `O(N log N)`.
+- Knowledge Coverage Gap: `vector` construction / STL syntax.
+
+**Baseline Problem B — LeetCode 26, Remove Duplicates from Sorted Array**
+- Calibration: approximately `R2/I2`.
+- Result: `FAIL`
+- `T_solve`: `12.38 min`
+- Positive evidence: used sorted order to reason about duplicate handling and derived `O(N)` scan complexity.
+- Failure evidence:
+  - created a separate result vector instead of satisfying the required in-place output contract;
+  - could not express the intended vector construction in valid C++.
+- Knowledge Coverage Gap: `vector` syntax and in-place mutation semantics.
+
+**Baseline Problem C — LeetCode 334, Increasing Triplet Subsequence**
+- Calibration: approximately `R3/I2`.
+- Result: `FAIL`
+- `T_solve`: `112.18 min`
+- Positive evidence:
+  - targeted `O(N)` time and `O(1)` additional state;
+  - attempted to compress history into a small number of candidate values.
+- Failure evidence:
+  - proposed invariant is not correct; e.g. `[1,2,1,2]` can be accepted although no strictly increasing triplet exists;
+  - `2^31` is bitwise XOR in C++, not exponentiation;
+  - `vector<int> v = [M1, M2];` is not valid C++;
+  - `M1`, `M2` are compared later but never updated when `v` is updated.
+- Knowledge Coverage Gap: C++ vector initialization and operator semantics.
+- Reasoning bottleneck: invariant design and counterexample-based validation.
+
+**Baseline snapshot**
+- Evidence-supported strengths:
+  - basic input/loop/condition code can be written independently;
+  - basic loop-complexity composition is understood;
+  - integer-overflow mechanism is conceptually recognized;
+  - the learner can often formulate a direct candidate approach before knowing all STL syntax.
+- Evidence-supported bottlenecks:
+  - container/STL implementation knowledge is currently a major blocker;
+  - problem contracts such as `in-place` must be tracked more rigorously;
+  - operation complexity (`sort`) is not yet consistently known;
+  - numeric safety knowledge is not yet applied consistently from constraints;
+  - correctness validation through invariants and counterexamples is weak;
+  - C++ operator semantics contain gaps.
+- Approximate independent range:
+  - simple scalar/loop-based `R1/I1` work is currently feasible;
+  - `R2` reasoning appears in partial form, but independent implementation is not yet reliable;
+  - no successful `R3` evidence yet.
+- What cannot yet be concluded:
+  - long-term growth rate or ceiling;
+  - performance after C++ container/STL prerequisites are taught;
+  - stable recognition ability at R2+ after syntax blockers are removed.
+
+**Next action**
+1. Begin `S0-A — C++ Basic Execution`.
+2. Continue to `S0-B — Basic Containers & STL`, where the largest knowledge gap currently lies.
+3. Revisit complexity/numeric-safety consistency in `S0-C`.
+4. Do not create Review Debt from these Baseline failures.
+
+---
+
+## 5. Learning Unit Journal Entry Template
 
 ### [Stage / Learning Unit]
 
@@ -75,7 +163,7 @@
 
 ---
 
-## 5. Periodic Growth Review Template
+## 6. Periodic Growth Review Template
 
 ### [Review Date / Period]
 
@@ -109,7 +197,7 @@
 
 ---
 
-## 6. Stage 10 / Readiness Review Template
+## 7. Stage 10 / Readiness Review Template
 
 ### Target Test Profile
 - Profile:
@@ -133,9 +221,10 @@
 
 ---
 
-## 7. Operating Notes
+## 8. Operating Notes
 
 - 문제별 정형 데이터는 `CP_Learning_Record.xlsx`의 `Assessments`에 기록한다.
+- Initial Baseline의 세부 결과는 `Baseline`에 기록한다.
 - Multi-tool Learning Unit의 Core Decision Boundary별 evidence는 `Decision_Coverage`에 한 행씩 기록한다.
 - 이 Markdown 파일에는 모든 문제 기록을 중복 복사하지 않고, Learning Unit 단위의 해석과 주기적 성장 분석만 남긴다.
 - 풀이 시간은 채팅 간격으로 추정하지 않고 실제 timer 기록만 사용한다.
