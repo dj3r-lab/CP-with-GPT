@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-A — C++ Basic Execution
 - Priority Class: Core
-- Learning Status: S0-A Part F final assessment attempt 1 FAIL; remediation and clean retest required
+- Learning Status: S0-A Part F final assessment retest 1 FAIL; §39.2 diagnostic remediation required before another formal retest
 - Last Updated: 2026-09-11
 
 ---
@@ -22,7 +22,7 @@
 
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
-| S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Incomplete | None | Final Assessment Retest after remediation |
+| S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Incomplete | Open (Medium) | Diagnostic remediation checkpoint |
 | S0-B — Basic Containers & STL | L1 | Provisional | Baseline | N/A | None | During S0-B |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
@@ -30,7 +30,7 @@
 
 ## 3. Open Review Debt Summary
 
-No open Review Debt. Initial Baseline failures do not create Review Debt under v5.4. The current S0-A final-assessment FAIL is an immediate same-objective failure handled by §39 remediation/retest flow; it is not recorded as Review Debt at this point.
+One open Medium Review Debt exists for S0-A. It was opened because the same boundary/initial-state correctness and edge-case self-validation weakness repeated across two consecutive skill-related final assessments. This debt is prerequisite-blocking until a diagnostic remediation checkpoint is passed. Initial Baseline failures remain excluded from Review Debt.
 
 ---
 
@@ -164,7 +164,43 @@ No open Review Debt. Initial Baseline failures do not create Review Debt under v
 - Require explicit edge-case self-check before locking the next final answer.
 - Reassess with a new, pre-validated Tier A/B final-assessment problem; do not reuse this problem.
 
----
+### 2026-09-11 — Part F Final Assessment Retest 1
+
+**Problem**
+- Balance recovery count and maximum post-transaction balance.
+
+**Formal status**
+- Result: `FAIL`
+- Validation Tier: `B`
+- Validation evidence: executable reference + exhaustive small-case verification + randomized differential verification.
+- Calibration: approximately `R1/I2`, Comparative / Provisional.
+- `T_solve`: `15.10 min` (`15:06`)
+- Hints: `None`
+- First-pass Correct: `No`
+- Failure Attribution: `Correctness`
+
+**Positive evidence**
+- The overall single-pass `O(N)` / `O(1)` design is appropriate.
+- Helper function is defined and used.
+- Maximum post-transaction balance tracking is correct after initialization.
+- Complexity analysis is correct.
+
+**Failure evidence**
+- The first transaction is special-cased by assigning `B=x` and `H=x` without applying the recovery rule.
+- Because the initial balance is `0`, a positive first transaction must count as a recovery.
+- Counterexample: `N=1`, `x=5` should output `1 5`, but the submitted code outputs `0 5`.
+- No edge case was explicitly tested, despite the prior remediation explicitly requiring a minimum/boundary self-check before code lock.
+
+**Interpretation / escalation**
+- This is the second consecutive skill-related FAIL on the same S0-A final-assessment objective.
+- The repeated pattern is boundary/initial-state handling plus absent explicit edge-case validation.
+- Per v5.4 §39.2, stop simple formal retesting and perform diagnostic remediation first.
+- Capability remains `L3 / Provisional` because the prior clean intermediate PASS still demonstrates canonical implementation ability, but S0-A completion remains unproven.
+- A `Medium` Review Debt is opened under v5.4 §28.3 because the same error type repeated.
+
+**Next action**
+- Run a diagnostic remediation checkpoint focused on: (1) initial state vs first transition, (2) defining each state variable in words before coding, and (3) mandatory minimum/boundary-case validation before locking code.
+- Only after passing the checkpoint, use a new pre-validated Tier A/B final-assessment problem.
 
 ## 6. Learning Unit Journal Entry Template
 
