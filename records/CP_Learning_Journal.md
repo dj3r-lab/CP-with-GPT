@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-A — C++ Basic Execution
 - Priority Class: Core
-- Learning Status: Initial Baseline completed; S0-A ready to begin
+- Learning Status: S0-A Part E in progress; first intermediate-assessment attempt VOID, clean retest required
 - Last Updated: 2026-09-11
 
 ---
@@ -22,7 +22,7 @@
 
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
-| S0-A — C++ Basic Execution | L2 | Provisional | Baseline | N/A | None | During S0-A |
+| S0-A — C++ Basic Execution | L2 | Provisional | Baseline | Incomplete | None | Immediate retest |
 | S0-B — Basic Containers & STL | L1 | Provisional | Baseline | N/A | None | During S0-B |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
@@ -120,7 +120,41 @@ No open Review Debt. Initial Baseline failures identify starting gaps but do **n
 
 ---
 
-## 5. Learning Unit Journal Entry Template
+## 5. S0-A — C++ Basic Execution
+
+### 2026-09-11 — Part E Intermediate Assessment Attempt 1
+
+**Formal status**
+- Result: `VOID`
+- `T_solve`: `9.17 min`
+- This attempt is not used as formal mastery evidence.
+- Evaluator-side reasons:
+  - the generated problem was not cross-validated to Tier B before being used as a formal intermediate assessment;
+  - the assessment prompt exposed a solution-relevant direction (`vector` was unnecessary and values could be processed while reading), so the attempt was not cleanly independent.
+- No Review Debt is created and Capability/Confidence are not downgraded from this attempt.
+
+**Diagnostic observations only**
+- `N` was initialized to `0` but never read with input, so the submitted loop executes zero times and the program always prints `0 0`.
+- The explicit requirement to define and use at least one function other than `main()` was not satisfied.
+- The stated `O(N)` time and `O(1)` space analyses match the intended corrected design, but not the submitted program as executed.
+- No edge case was independently checked.
+- `main` should be understood as the program entry point rather than simply an “always executing function.”
+
+**Mastery update**
+- Capability: `L2` (unchanged; VOID is not mastery evidence)
+- Confidence: `Provisional`
+- Evidence Context: Baseline only for formal mastery
+- Unit Coverage Status: `Incomplete`
+- Review Debt: `None`
+- Retest Needed: `Yes`
+
+**Next action**
+- Briefly remediate input-contract tracking and basic function definition/use.
+- Use a new, pre-validated Tier B problem for the S0-A intermediate-assessment retest.
+
+---
+
+## 6. Learning Unit Journal Entry Template
 
 ### [Stage / Learning Unit]
 
@@ -163,7 +197,7 @@ No open Review Debt. Initial Baseline failures identify starting gaps but do **n
 
 ---
 
-## 6. Periodic Growth Review Template
+## 7. Periodic Growth Review Template
 
 ### [Review Date / Period]
 
@@ -197,7 +231,7 @@ No open Review Debt. Initial Baseline failures identify starting gaps but do **n
 
 ---
 
-## 7. Stage 10 / Readiness Review Template
+## 8. Stage 10 / Readiness Review Template
 
 ### Target Test Profile
 - Profile:
@@ -221,7 +255,7 @@ No open Review Debt. Initial Baseline failures identify starting gaps but do **n
 
 ---
 
-## 8. Operating Notes
+## 9. Operating Notes
 
 - 문제별 정형 데이터는 `CP_Learning_Record.xlsx`의 `Assessments`에 기록한다.
 - Initial Baseline의 세부 결과는 `Baseline`에 기록한다.
