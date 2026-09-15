@@ -13,8 +13,8 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-B — Basic Containers & STL
 - Priority Class: Core
-- Learning Status: S0-A Part A–H complete; Learning Unit Progression Gate satisfied; proceed to S0-B
-- Last Updated: 2026-09-11
+- Learning Status: S0-B Part E Intermediate Assessment PASS; Part F Final Assessment pending
+- Last Updated: 2026-09-15
 
 ---
 
@@ -23,7 +23,7 @@
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
-| S0-B — Basic Containers & STL | L1 | Provisional | Baseline | N/A | None | During S0-B |
+| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Intermediate PASS; Final not yet assessed | None | Final Assessment |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
 ---
@@ -113,16 +113,48 @@ Initial Baseline failures do not create Review Debt under v5.4.
 
 ---
 
-## 6. Next Learning Action
+## 6. S0-B — Basic Containers & STL — In Progress
 
-1. Begin S0-B with the full Part A–H structure.
-2. Prioritize `vector`, `string`, `array`, `pair`, iterators/range-for, `sort`, `reverse`, comparator, reference/const usage as defined by the current curriculum.
-3. Retain explicit minimum/boundary-case checks before locking assessment submissions.
-4. Schedule a delayed/mixed S0-A check later to determine whether Confidence can move from Provisional to Confirmed.
+### Intermediate Assessment — 2026-09-15
+
+**Problem**
+- Word Catalog: sort strings by ascending length, then lexicographically; preserve duplicates.
+
+**Result**
+- `PASS`
+- Validation Tier: `B`
+- Validation: prevalidated reference + exhaustive/random differential checks; submitted C++17 code compiled successfully and matched sample and additional random differential tests.
+- Difficulty: approximately `R1/I2`, comparative calibration against Registry v1.1 anchors.
+- `T_solve`: `10:17`
+- First-pass Correct: `Yes`
+- Hints: `None`
+- Complexity: `O(N log N)` under the problem's bounded string length (`<=30`); storage `O(N)` under the same bounded-length assumption.
+- Edge cases explicitly checked: `N=1`; duplicate strings with one shorter string.
+- Minor non-blocking issues: explanation said “strings differ” where the code actually checks “lengths differ”; compiler emits a signed/unsigned comparison warning in `j < v.size()`.
+
+### Current Mastery Interpretation
+
+- Capability: `L3`
+- Confidence: `Provisional`
+- Evidence Context: `Immediate`
+- Unit Coverage: `Intermediate PASS; Final not yet assessed`
+- Review Debt: `None`
+- Independent canonical use of `vector<string>`, `push_back`, custom comparator, and `sort` has now been demonstrated.
+- Broader container/STL selection and transfer evidence remain to be tested in Part F and later assessments.
 
 ---
 
-## 7. Operating Notes
+## 7. Next Learning Action
+
+1. When the learner chooses to continue, proceed to S0-B Part F Final Assessment.
+2. Do not present the Part F problem in the same response as the completed Part E evaluation unless explicitly requested.
+3. Broaden assessment beyond the exact length-then-lexicographic sorting pattern so that container/STL selection and transfer are tested.
+4. Retain explicit minimum/boundary-case checks before locking assessment submissions.
+5. Schedule a delayed/mixed S0-A check later to determine whether Confidence can move from Provisional to Confirmed.
+
+---
+
+## 8. Operating Notes
 
 - Problem-level structured data belongs in `CP_Learning_Record.xlsx` → `Assessments`.
 - Initial Baseline detail belongs in `Baseline`.
