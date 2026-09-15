@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-B — Basic Containers & STL
 - Priority Class: Core
-- Learning Status: S0-B Part E Intermediate Assessment PASS; Part F Final Assessment pending
+- Learning Status: Part E Intermediate Assessment PASS; Part F Final Assessment Attempt 1 FAIL; Retest required
 - Last Updated: 2026-09-15
 
 ---
@@ -23,7 +23,7 @@
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
-| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Intermediate PASS; Final not yet assessed | None | Final Assessment |
+| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Intermediate PASS; Final Attempt 1 FAIL | None | Final Assessment Retest 1 |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
 
 ---
@@ -32,9 +32,7 @@
 
 No open Review Debt.
 
-The prior Medium Review Debt for S0-A was opened after two consecutive final-assessment failures with the same pattern: boundary/initial-state correctness errors plus missing explicit edge-case validation. It was resolved after a diagnostic remediation checkpoint followed by a clean Final Assessment Retest 2 PASS and Adaptive Extra Problem PASS, both with explicit edge-case checks. Recurrence in delayed/mixed evidence should reopen the debt.
-
-Initial Baseline failures do not create Review Debt under v5.4.
+Initial Baseline failures do not create Review Debt under v5.4. The current S0-B final-assessment failure is a first skill-related FAIL on this objective, so it triggers retesting but not a Review Debt entry by itself.
 
 ---
 
@@ -72,44 +70,17 @@ Initial Baseline failures do not create Review Debt under v5.4.
 - Intermediate Assessment Retest 1: `PASS`, Tier B, approximately `R1/I1`, `T_solve 4:40`.
 - Final Assessment Attempt 1: `FAIL`, Tier B, approximately `R1/I2`, `T_solve 28:43` — zero-boundary state transitions incorrect.
 - Final Assessment Retest 1: `FAIL`, Tier B, approximately `R1/I2`, `T_solve 15:06` — first transition from initial state mishandled.
-- Diagnostic remediation checkpoint: completed successfully; state meanings and first-transition handling were correctly articulated.
+- Diagnostic remediation checkpoint: completed successfully.
 - Final Assessment Retest 2: `PASS`, Tier B, approximately `R1/I2`, `T_solve 33:04`, First-pass Correct `Yes`.
 - Adaptive Extra Problem: `PASS`, Tier B, approximately `R1/I2`, `T_solve 14:41`, First-pass Correct `Yes`.
-- Hints on valid formal attempts: `None`.
-
-### Part G Adaptive Extra Problem
-
-**Problem**
-- Minimum cumulative balance and longest consecutive negative-balance period.
-
-**Result**
-- `PASS`
-- Validation: exact submitted C++17 code compilation + sample/boundary execution + exhaustive small-case differential verification.
-- Complexity: `O(N)` time, `O(1)` extra space — correct.
-- Numeric safety: cumulative balance correctly stored in `long long`; possible magnitude is on the order of `10^14`.
-- Edge-case validation: learner explicitly checked `N=1` with both negative and positive input.
-- Minor style issue: unused variable `r`; no correctness impact.
-- VS debugger was permitted; actual use was not reported.
 
 ### Part H Mastery Record
 
 - Capability: `L3`
 - Confidence: `Provisional`
-- Evidence Context: `Immediate`
 - Unit Coverage Status: `Complete — Progression Gate Satisfied`
-- Review Debt: `None open` (prior Medium debt resolved)
+- Review Debt: `None open`
 - Retest Needed: `No` for immediate progression
-
-**Interpretation**
-- Basic C++ input/output, conditional branches, loops, helper functions, and scalar state tracking can now be implemented independently at the current Stage 0 level.
-- Successful formal assessments consistently contained correct time/space complexity explanations.
-- Boundary/initial-state handling was the main repeated weakness, but remediation was followed by two clean independent PASS results with explicit edge-case checks.
-- Numeric-safety transfer improved in Part G through correct use of `long long` for cumulative values.
-- Confidence remains `Provisional` because all successful evidence is immediate. Stage 0 Core completion ultimately requires later `Confirmed` evidence, so S0-A should receive a Delayed/Mixed Assessment at an appropriate later point.
-
-**Progression decision**
-- S0-A satisfies the Learning Unit Progression Gate.
-- Proceed to `S0-B — Basic Containers & STL`.
 
 ---
 
@@ -123,34 +94,56 @@ Initial Baseline failures do not create Review Debt under v5.4.
 **Result**
 - `PASS`
 - Validation Tier: `B`
-- Validation: prevalidated reference + exhaustive/random differential checks; submitted C++17 code compiled successfully and matched sample and additional random differential tests.
-- Difficulty: approximately `R1/I2`, comparative calibration against Registry v1.1 anchors.
+- Difficulty: approximately `R1/I2`
 - `T_solve`: `10:17`
 - First-pass Correct: `Yes`
 - Hints: `None`
-- Complexity: `O(N log N)` under the problem's bounded string length (`<=30`); storage `O(N)` under the same bounded-length assumption.
-- Edge cases explicitly checked: `N=1`; duplicate strings with one shorter string.
-- Minor non-blocking issues: explanation said “strings differ” where the code actually checks “lengths differ”; compiler emits a signed/unsigned comparison warning in `j < v.size()`.
+- Demonstrated: `vector<string>`, `push_back`, custom comparator, `sort`, duplicate preservation, `O(N log N)` complexity reasoning.
+
+### Final Assessment — Attempt 1 — 2026-09-15
+
+**Problem**
+- Priority List: sort `vector<pair<string,int>>` by priority descending, then name length ascending, then lexicographically; print forward and exact reverse order.
+- Explicit interface requirement: output must be performed by a separate `print_records` function that receives the record container as a parameter, does not modify it, and does not copy the whole container.
+
+**Result**
+- `FAIL`
+- Failure Attribution: `Implementation`
+- Validation Tier: `B`
+- Difficulty: approximately `R1/I2`
+- `T_solve`: `24:20`
+- Hints: `None`
+
+**What was correct**
+- `vector<pair<string,int>>` representation.
+- Three-level comparator logic.
+- `sort` result.
+- `reverse` for exact reverse output without an extra `O(N)` container.
+- Sample output.
+- Overall `O(N log N)` time and `O(N)` storage analysis under bounded string length.
+
+**Blocking issue**
+- The required `print_records` output helper was not implemented. Instead, the comparator itself was named `print_records` and accepted two `const pair<string,int>&` parameters.
+- Therefore the explicit assessment target — passing the record container to an output function without copying or modifying it — was not demonstrated.
+- The submitted comparator also produced a compiler warning that control may reach the end of a non-void function; all logical cases appear covered, but the function does not syntactically end with a guaranteed return.
 
 ### Current Mastery Interpretation
 
-- Capability: `L3`
-- Confidence: `Provisional`
-- Evidence Context: `Immediate`
-- Unit Coverage: `Intermediate PASS; Final not yet assessed`
-- Review Debt: `None`
-- Independent canonical use of `vector<string>`, `push_back`, custom comparator, and `sort` has now been demonstrated.
-- Broader container/STL selection and transfer evidence remain to be tested in Part F and later assessments.
+- Capability remains `L3`.
+- Confidence remains `Provisional`.
+- Sorting/comparator/vector/pair/reverse knowledge is independently demonstrated.
+- Current bottleneck is **mapping the exact problem contract to function/interface structure**, especially distinguishing a comparator function from a required container-processing helper.
+- This first final-assessment FAIL does not yet create Review Debt; a new equivalent retest is required.
 
 ---
 
 ## 7. Next Learning Action
 
-1. When the learner chooses to continue, proceed to S0-B Part F Final Assessment.
-2. Do not present the Part F problem in the same response as the completed Part E evaluation unless explicitly requested.
-3. Broaden assessment beyond the exact length-then-lexicographic sorting pattern so that container/STL selection and transfer are tested.
+1. Treat the failed Priority List problem as learning-only; do not reuse it as formal evidence.
+2. Review the role difference between comparator parameters (`const pair<...>&`) and a container output helper parameter (`const vector<pair<...>>&`).
+3. After remediation discussion, use a new equivalent S0-B Final Assessment Retest 1.
 4. Retain explicit minimum/boundary-case checks before locking assessment submissions.
-5. Schedule a delayed/mixed S0-A check later to determine whether Confidence can move from Provisional to Confirmed.
+5. Schedule a delayed/mixed S0-A check later for Confirmed evidence.
 
 ---
 
