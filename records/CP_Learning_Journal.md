@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: S0-B Parts A-H complete; progression gate satisfied; v5.5 test Extra Problem block in progress
+- Learning Status: S0-B Parts A-H complete; progression gate satisfied; v5.5 test Extra Problem block completed
 - Last Updated: 2026-09-15
 
 ---
@@ -23,17 +23,18 @@
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
-| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — Medium: complexity analysis | Remediate during S0-C, then fresh Extra/Delayed check |
+| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium: complexity analysis + boundary validation | Remediate complexity during S0-C; fresh Extra/Mixed checks for both debts |
 | S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | Not started | None | Begin S0-C |
 
 ---
 
 ## 3. Open Review Debt Summary
 
-One open Core Review Debt:
+Two open S0-B Review Debts are present; overall severity is **Medium**.
 
 - **Medium — Complexity analysis after correct implementation.** In the v5.5 test GPT-generated Extra Problem `Mirror Catalog`, the submitted C++ implementation was accepted-quality, but the analysis treated string reversal as O(1) and incorrectly equated the maximum total character count with the number of words `N`. The assessment therefore failed with `Failure Attribution: Complexity`.
-- This does **not** revoke the already satisfied S0-B progression gate. It is scheduled for remediation in the next unit, S0-C — Complexity & Numeric Safety, followed by a fresh independent check.
+- **Low — Character-boundary implementation.** In the v5.5 External CP Extra Problem `AtCoder ABC104 B — AcCepted`, the overall solution structure and complexity analysis were correct, but the uppercase scan used `c != 'Z'`, so uppercase `Z` was never checked. This is a local one-line boundary bug, so the result is `CONDITIONAL PASS`. A fresh equivalent full-PASS check is required.
+- Neither debt revokes the already satisfied S0-B progression gate. The Medium complexity debt is scheduled for remediation during S0-C; the Low boundary debt will be checked on a fresh S0-B Extra/Mixed problem.
 
 Initial Baseline failures do not create Review Debt under the governing norm. S0-B Final Assessment Attempt 1 was a first implementation-contract failure and did not create Review Debt; the fresh equivalent Retest 1 was passed independently. The original S0-B Adaptive Extra Problem was also passed independently.
 
@@ -124,7 +125,20 @@ Initial Baseline failures do not create Review Debt under the governing norm. S0
 - Blocking assessment issue: the complexity explanation classified the repeated work as O(1) per word and omitted the linear cost of `reverse`; it also stated that the total word length is at most `N`, which is not implied by the problem constraints.
 - Correct asymptotic parameterization: if `L` is the sum of all word lengths, total runtime is `O(L)` (equivalently `O(N + L)`, and `L >= N` here); stored-input space is `O(L)` and the algorithm uses `O(1)` auxiliary space beyond that storage.
 - Review Debt: `Open`, Severity `Medium` — complexity analysis.
-- External CP Extra Problem B from the same v5.5 test block remains pending.
+
+### v5.5 Test Extra Problem B — 2026-09-15
+- Problem: AtCoder ABC104 B — AcCepted — External CP.
+- Result: `CONDITIONAL PASS`
+- Validation Tier: `A`
+- Difficulty: approximately `R1/I1`
+- `T_solve`: `24:57`
+- First-pass Correct: `No`
+- Hints: `None`
+- Correct evidence: the first-character condition, the valid position range for the unique `C`, and the overall character-validation structure are appropriate; the stated total time complexity `O(|S|)` and total space complexity `O(|S|)` are correct.
+- Local implementation bug: `for (char c = 'A'; c != 'Z'; c += 1)` checks `A` through `Y` but not `Z`. For example, `AcCZ` must be `WA`, but the submitted code prints `AC`.
+- The bug is a local one-line boundary condition rather than a structural algorithm error, so v5.5 `CONDITIONAL PASS` applies.
+- `judge(string S, int ind)` copies `S`, so auxiliary space is `O(|S|)` in the submitted implementation; this does not change the submitted total-space conclusion `O(|S|)`.
+- Review Debt: `Open`, Severity `Low` — exact character-boundary implementation. Fresh equivalent full-PASS evidence is required.
 
 ### Part H Mastery Record
 
@@ -132,30 +146,32 @@ Initial Baseline failures do not create Review Debt under the governing norm. S0
 - Confidence: `Provisional`
 - Evidence Context: `Immediate`
 - Unit Coverage Status: `Complete — Progression Gate Satisfied; Parts A-H complete`
-- Review Debt: `Open — Medium: complexity analysis`
-- Retest Needed: `Yes` for the debt; `No` for immediate progression
+- Review Debt: `Open — overall Medium: complexity analysis (Medium) + character-boundary implementation (Low)`
+- Retest Needed: `Yes` for both debts; `No` for immediate progression
 
 **Interpretation**
-- Independent implementation evidence covers `vector`, `string`, `pair`, custom comparators, `sort`, `reverse`, duplicate preservation, mutable/read-only whole-container references, `pair` returns, and scalar-state scans.
+- Independent implementation evidence covers `vector`, `string`, `pair`, custom comparators, `sort`, `reverse`, duplicate preservation, mutable/read-only whole-container references, `pair` returns, scalar-state scans, string indexing, and explicit condition validation.
 - The earlier function-contract mapping miss was corrected on a fresh independent final retest.
 - Boundary initialization, previously a weakness in S0-A, transferred successfully in the original Adaptive Extra Problem.
-- The v5.5 test Extra Problem A adds positive implementation evidence but reveals a separate complexity-analysis weakness: operation costs over variable-length strings must be parameterized by total processed characters rather than only the number of container elements.
+- v5.5 Test Extra A adds positive implementation evidence but reveals a complexity-analysis weakness: operation costs over variable-length strings must be parameterized by total processed characters rather than only the number of container elements.
+- v5.5 Test Extra B shows correct decomposition of a multi-condition string-validation task and correct asymptotic analysis, while exposing a narrow boundary-condition bug in the uppercase scan.
 - Confidence remains `Provisional`; `Confirmed` requires delayed/mixed evidence under the governing norm.
 
 **Progression decision**
-- S0-B still satisfies the Learning Unit Progression Gate; Extra Problem failure does not retroactively cancel the prior final PASS.
-- Proceed to `S0-C — Complexity & Numeric Safety`, using the open Medium Review Debt as an explicit remediation target.
+- S0-B still satisfies the Learning Unit Progression Gate; neither the Extra FAIL nor the CONDITIONAL PASS retroactively cancels the prior final PASS.
+- The v5.5 test Extra Problem block is complete: GPT-generated A = `FAIL (Complexity)`, External CP B = `CONDITIONAL PASS`.
+- Proceed to `S0-C — Complexity & Numeric Safety`, using the open Medium complexity debt as an explicit remediation target and scheduling a fresh boundary-validation check separately.
 
 ---
 
 ## 7. Next Learning Action
 
-1. Complete the pending External CP Extra Problem B if continuing the v5.5 test block.
-2. Begin S0-C — Complexity & Numeric Safety when the learner chooses to continue.
-3. In S0-C, explicitly distinguish container element count `N` from aggregate payload size such as total string length `L`, and account for non-O(1) STL operations such as `reverse` over a range.
-4. After remediation, use a fresh independent Extra/Delayed problem to close the Medium Review Debt.
+1. Begin S0-C — Complexity & Numeric Safety when the learner chooses to continue.
+2. In S0-C, explicitly distinguish container element count `N` from aggregate payload size such as total string length `L`, and account for non-O(1) STL operations such as `reverse` over a range.
+3. After remediation, use a fresh independent Extra/Delayed problem to close the Medium complexity Review Debt.
+4. Use a fresh equivalent S0-B Extra/Mixed problem requiring exact character-boundary validation to close the Low Review Debt; do not reuse AtCoder ABC104 B as formal evidence.
 5. Later schedule delayed/mixed checks for S0-A and S0-B to determine whether Confidence can move from Provisional to Confirmed.
-6. Continue monitoring code-quality precision: signed/unsigned comparisons, explicit return paths, and unnecessary object copies.
+6. Continue monitoring code-quality precision: signed/unsigned comparisons, pass-by-value copies, explicit return paths, and unnecessary object copies.
 
 ---
 
