@@ -11,9 +11,9 @@
 ## 1. Current Position
 
 - Current Stage: Stage 0 — C++ 문제풀이 기반
-- Current Learning Unit: S0-B — Basic Containers & STL
+- Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Part E Intermediate Assessment PASS; Part F Final Assessment Retest 1 PASS; Part G Adaptive Extra Problem pending
+- Learning Status: S0-B Parts A-H complete; progression gate satisfied
 - Last Updated: 2026-09-15
 
 ---
@@ -23,8 +23,8 @@
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
-| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Final PASS — Progression Gate Satisfied; Part G pending | None | Adaptive Extra Problem |
-| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | N/A | None | During S0-C |
+| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | None | Delayed/Mixed Assessment |
+| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline | Not started | None | Begin S0-C |
 
 ---
 
@@ -32,15 +32,11 @@
 
 No open Review Debt.
 
-Initial Baseline failures do not create Review Debt under v5.4. S0-B Final Assessment Attempt 1 was a first implementation-contract failure and did not create Review Debt; the fresh equivalent Retest 1 was passed independently.
+Initial Baseline failures do not create Review Debt under v5.4. S0-B Final Assessment Attempt 1 was a first implementation-contract failure and did not create Review Debt; the fresh equivalent Retest 1 was passed independently. The S0-B Adaptive Extra Problem was also passed independently, so no new debt was opened.
 
 ---
 
 ## 4. Initial Baseline Diagnostic — 2026-09-11
-
-**Purpose**
-- Pre-curriculum snapshot for later 4–6 week comparison.
-- Not a progression gate and not evidence of a fixed growth ceiling.
 
 **Main strengths**
 - Basic scalar input/loop/condition code can be written independently.
@@ -62,17 +58,15 @@ Initial Baseline failures do not create Review Debt under v5.4. S0-B Final Asses
 - Intermediate Retest 1: `PASS`, Tier B, approximately `R1/I1`, `T_solve 4:40`.
 - Final Attempt 1: `FAIL`, Tier B, approximately `R1/I2`, `T_solve 28:43`.
 - Final Retest 1: `FAIL`, Tier B, approximately `R1/I2`, `T_solve 15:06`.
-- Diagnostic remediation checkpoint: completed successfully.
 - Final Retest 2: `PASS`, Tier B, approximately `R1/I2`, `T_solve 33:04`, First-pass Correct `Yes`.
 - Adaptive Extra Problem: `PASS`, Tier B, approximately `R1/I2`, `T_solve 14:41`, First-pass Correct `Yes`.
 - Capability `L3`, Confidence `Provisional`, no open Review Debt.
 
 ---
 
-## 6. S0-B — Basic Containers & STL — In Progress
+## 6. S0-B — Basic Containers & STL — Completed
 
 ### Intermediate Assessment — 2026-09-15
-
 - Problem: Word Catalog — length ascending, then lexicographic; duplicates preserved.
 - Result: `PASS`
 - Validation Tier: `B`
@@ -80,10 +74,8 @@ Initial Baseline failures do not create Review Debt under v5.4. S0-B Final Asses
 - `T_solve`: `10:17`
 - First-pass Correct: `Yes`
 - Hints: `None`
-- Demonstrated: `vector<string>`, `push_back`, custom comparator, `sort`, duplicate preservation, `O(N log N)` reasoning.
 
 ### Final Assessment — Attempt 1 — 2026-09-15
-
 - Problem: Priority List.
 - Result: `FAIL`
 - Failure Attribution: `Implementation`
@@ -91,42 +83,58 @@ Initial Baseline failures do not create Review Debt under v5.4. S0-B Final Asses
 - Difficulty: approximately `R1/I2`
 - `T_solve`: `24:20`
 - Hints: `None`
-- Blocking issue: required container-processing `print_records(const vector<pair<string,int>>& ...)` interface was not implemented; comparator was mistakenly named `print_records`.
-- Sorting/comparator/vector/pair/reverse logic itself was correct.
+- Blocking issue: required container-processing output helper interface was not implemented; comparator was mistakenly used under that function name.
 
 ### Final Assessment — Retest 1 — 2026-09-15
-
-- Problem: Item Ordering — cost ascending, name length descending, then lexicographic; normal and exact backward output.
+- Problem: Item Ordering.
 - Result: `PASS`
 - Validation Tier: `B`
 - Difficulty: approximately `R1/I2`
 - `T_solve`: `20:51`
 - First-pass Correct: `Yes`
 - Hints: `None`
-- Exact submitted C++17 code compiled and matched the sample output.
-- The prior blocking requirement was correctly demonstrated with `write_list(const vector<pair<string,int>>& v)`: no whole-container copy and no caller-container mutation.
-- Backward output used indexed traversal and did not allocate a duplicate `O(N)` record container.
-- Comparator, `vector<pair<...>>`, `sort`, duplicate preservation, and complexity reasoning were correct.
-- Non-blocking code-quality issues: comparator has a syntactic fallthrough warning despite logically exhaustive conditions; loops compare signed `int` with unsigned `size_type`; strings are copied into local variables inside comparator/output helper unnecessarily.
+- Demonstrated: `vector<pair<string,int>>`, custom comparator, `sort`, duplicate preservation, read-only whole-container passing with `const &`, reverse traversal without an extra O(N) record container.
 
-### Current Mastery Interpretation
+### Adaptive Extra Problem — 2026-09-15
+- Problem: Record Highs and Longest Nondecreasing Segment.
+- Result: `PASS`
+- Validation Tier: `B`
+- Difficulty: approximately `R1/I2`
+- `T_solve`: `24:21`
+- First-pass Correct: `Yes`
+- Hints: `None`
+- Validation: exact submitted C++17 code compiled; sample matched; 3,279 exhaustive boundary-domain cases and 16,000 random differential cases matched an independent oracle.
+- Demonstrated: `vector<int>`, `analyze(const vector<int>&)`, `pair<int,int>` return, O(N) dual scalar-state tracking, first-element/boundary handling, no O(N) auxiliary container.
+- Non-blocking issues: signed/unsigned loop warning; unused `current`; sentinel/offset initialization is correct but less direct; explanation contains one wording reversal (`이하` should be `이상`) while the code and surrounding explanation are correct.
+
+### Part H Mastery Record
 
 - Capability: `L3`
 - Confidence: `Provisional`
 - Evidence Context: `Immediate`
-- S0-B Learning Unit Progression Gate: satisfied by Intermediate PASS + Final Retest 1 PASS and demonstrated complexity/interface reasoning.
-- Immediate Decision Boundary evidence now includes custom ordering with comparator and read-only large-container passing via `const &`.
-- Part G Adaptive Extra Problem remains required before Part H closure.
-- Delayed/mixed evidence is still required for `Confirmed` confidence.
+- Unit Coverage Status: `Complete — Progression Gate Satisfied; Parts A-H complete`
+- Review Debt: `None`
+- Retest Needed: `No` for immediate progression
+
+**Interpretation**
+- Independent implementation evidence now covers `vector`, `string`, `pair`, custom comparators, `sort`, duplicate preservation, whole-container `const &` parameters, `pair` returns, and O(N) state scans.
+- The earlier function-contract mapping miss was corrected on a fresh independent final retest.
+- Boundary initialization, previously a weakness in S0-A, transferred successfully in the Adaptive Extra Problem.
+- Remaining issues are code-quality precision rather than blocking correctness: explicit return/initialization structure, signed-vs-unsigned loop types, and avoiding unnecessary copies/unused variables.
+- Confidence remains `Provisional`; `Confirmed` requires delayed/mixed evidence under v5.4.
+
+**Progression decision**
+- S0-B satisfies the Learning Unit Progression Gate.
+- Proceed to `S0-C — Complexity & Numeric Safety`.
 
 ---
 
 ## 7. Next Learning Action
 
-1. Proceed immediately to S0-B Part G Adaptive Extra Problem.
-2. Weight the Extra Problem toward transfer between S0-A state/boundary handling and S0-B container/reference usage.
-3. After Part G, record Part H and decide progression to S0-C.
-4. Schedule delayed/mixed S0-A and later S0-B checks for Confirmed evidence.
+1. Begin S0-C — Complexity & Numeric Safety when the learner chooses to continue.
+2. In S0-C, emphasize operation-complexity knowledge, constraint-to-type mapping, integer ranges, overflow, and feasibility reasoning.
+3. Later schedule delayed/mixed checks for S0-A and S0-B to determine whether Confidence can move from Provisional to Confirmed.
+4. Continue monitoring code-quality precision: signed/unsigned comparisons, explicit return paths, and unnecessary object copies.
 
 ---
 
