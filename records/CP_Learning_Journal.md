@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Part A-D complete; Part E Intermediate Retest 3 also resulted in FAIL. The algorithm and submitted C++ were correct, but the required risky intermediate-expression bounds and actual C++ types were again omitted from the numeric-safety proof. Formal S0-C assessment is paused again for deeper §39.3 remediation before another fresh retest.
+- Learning Status: Part A-D complete; Part E Intermediate Retest 3 resulted in FAIL, followed by a deeper §39.3 remediation sequence focused on true upper bounds and C++ expression types. The deeper remediation checkpoint has now been completed successfully, so formal assessment may resume with a fresh Tier A/B Intermediate Retest.
 - Last Updated: 2026-09-17
 
 ---
@@ -24,7 +24,7 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium: complexity analysis + boundary validation | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed; Retest 3 FAIL after remediation | Open — High, prerequisite-blocking | Deeper §39.3 remediation checkpoint before fresh Intermediate Retest |
+| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed; deeper §39.3 remediation checkpoint completed | Open — High, prerequisite-blocking | Fresh Tier A/B Intermediate Retest |
 
 ---
 
@@ -39,13 +39,15 @@
 - Requires a fresh equivalent full-PASS check.
 
 ### S0-C — High, prerequisite-blocking
-- Multiple Part E attempts expose a repeated numeric-safety proof weakness.
+- Multiple Part E attempts exposed a repeated numeric-safety proof weakness.
 - Attempt 1 (`Total Pair Gap`): code and O(N)/O(1) analysis were correct, but the numeric-bound argument used one feasible input rather than proving a global worst-case upper bound.
 - Retest 1 (`Sum of All Subarray Sums`): mathematical contribution formula and O(N)/O(1) analysis were correct, but `(i+1)*(N-i)` was evaluated as `int * int` before multiplication by `long long A`, causing signed-int intermediate overflow at large `N`.
 - Retest 2 (`Equal Pair Score`): the submitted code itself was correct and safe on validated inputs, but the required intermediate-expression bound was not explicitly established. For `temp*(count-1)*count/2`, the raw product before division can reach about `3.99998e18`, still within signed 64-bit, but this proof was absent from the submission.
 - A §39.3 remediation sequence then re-established early promotion, evaluation order, and the need to compare intermediate magnitudes against the actual expression type's capacity. The non-formal checkpoint was completed successfully.
-- Retest 3 (`Distance Pair Score`): the O(N), O(1)-space algorithm and submitted C++ are correct. However, the numeric-safety explanation bounded state variables `sum1` and `sum2` but did not bound or type-check the actual risky products `j*sum1`, `j*j*A`, and `j*(j-1)*A`. This repeats the structural proof-discipline weakness after remediation.
-- Formal assessment is therefore paused again. Backtrack further to the distinction between **state-variable bounds** and **evaluation-subexpression bounds**, and require clean non-formal checkpoints before another formal retest.
+- Retest 3 (`Distance Pair Score`): the O(N), O(1)-space algorithm and submitted C++ were correct. The learner identified the relevant risky expressions, but two stated upper bounds (`j*j*A` and `j*(j-1)*A`) were too small to be valid upper bounds; the actual maxima are about `2.5e13`.
+- A deeper remediation sequence then focused specifically on verifying that a claimed value is truly an upper bound, separating coefficients from powers of ten, and combining the bound calculation with the actual C++ evaluation type.
+- In the final checkpoint, the learner correctly classified `int*int` overflow vs early `1LL` promotion and correctly analyzed `1LL*n*(n+1)*(2*n+1)` using a conservative valid bound while separately checking the parenthesized `int` subexpression.
+- Formal assessment may now resume, but this Review Debt remains open until a fresh independent S0-C assessment provides full-PASS evidence.
 
 ---
 
@@ -141,25 +143,29 @@
 - Exact all-maximum answer (`N=50000`, every `A_i=10000`) is `416666666500000000` ≈ `4.17e17`.
 - Relevant state bounds are approximately `sum1 <= 4.9999e8` and `sum2 <= 1.249925001e13`.
 - The actual risky arithmetic products near maximum index are approximately: `j*sum1 <= 2.499900001e13`, `j*j*A <= 2.499900001e13`, and raw `j*(j-1)*A <= 2.499850002e13` before `/2`. Because `j` and `A` are `long long`, these products are evaluated as signed 64-bit and are safely below `9.22e18`.
-- Blocking issue: the submitted proof stated state-variable bounds for `sum1` and `sum2`, but did not explicitly provide the required intermediate-subexpression maxima or actual C++ result types. The problem statement explicitly required both.
-- The stated estimate `ans ≈ 2.5e18` for the all-maximum input is a loose overestimate; it is safe as an upper estimate only if justified as such, but the actual all-maximum value is about `4.17e17`.
-- Because the same structural proof omission reappeared after remediation, formal S0-C assessment is paused again for deeper prerequisite remediation.
+- Blocking issue: the submitted proof identified risky expressions but underestimated two of their maxima, so the stated values were not valid upper bounds.
+- Because the same proof-discipline weakness reappeared after remediation, formal S0-C assessment was paused again for deeper prerequisite remediation.
+
+### Deeper §39.3 Remediation Checkpoint — 2026-09-17
+- Focus: verify that a claimed value is actually an upper bound; separate coefficient arithmetic from powers of ten; combine upper-bound arithmetic with actual C++ expression typing.
+- Upper-bound-only checkpoint: A-C correct; D had a minor scientific-notation normalization issue but the bound and safety conclusion were valid.
+- Combined bound/type checkpoint: all E-G correct.
+- In G, for `1LL*n*(n+1)*(2*n+1)` with `n=100000`, the learner used a conservative `6e15` bound, correctly noted that `(2*n+1)` is evaluated as `int` but remains safely within `int`, and correctly recognized that the multiplication chain is `long long` because of the leading `1LL`.
+- Result: deeper remediation checkpoint completed. This is learning-mode evidence only; formal S0-C Part E remains unpassed.
 
 ---
 
 ## 8. Next Learning Action
 
-1. Pause further formal S0-C Part E problems.
-2. Backtrack specifically to the difference between **variable/state bounds** and **risky expression/subexpression bounds**.
-3. For each candidate expression, require this exact checklist in learning mode:
-   - write the expression in C++ evaluation order,
-   - list operand types at each multiplication/addition,
-   - compute the maximum magnitude of each cumulative subexpression,
-   - compare each maximum with that result type's capacity,
-   - only then conclude Safe/Unsafe.
-4. Use several short non-formal checkpoints until this sequence is produced without prompting.
-5. Then administer a fresh Tier A/B Intermediate Retest in Independent Assessment Mode.
-6. Continue the existing S0-B complexity and character-boundary debts separately.
+1. Resume formal S0-C Part E with a fresh Tier A/B Intermediate Retest in Independent Assessment Mode.
+2. Require the learner to independently provide:
+   - a true global final-answer upper bound,
+   - valid upper bounds for every risky cumulative intermediate subexpression,
+   - the actual C++ result type at each risky step,
+   - comparison with the corresponding type capacity,
+   - time/space complexity and valid edge cases.
+3. Keep the S0-C High Review Debt open until a fresh full-PASS assessment demonstrates the complete proof discipline independently.
+4. Continue the existing S0-B complexity and character-boundary debts separately.
 
 ---
 
