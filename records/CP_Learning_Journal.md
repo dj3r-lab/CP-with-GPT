@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Part A-D complete; Part E Intermediate Retest 4 resulted in FAIL after the deeper §39.3 remediation checkpoint. The submitted algorithm/code and O(N)/O(1) complexity were correct, but the formal numeric-safety proof was still incomplete and one edge-case example violated the input contract. Formal S0-C assessment is paused again under §39.3.
+- Learning Status: Parts A-D complete; Part E Intermediate Assessment has now been passed on Retest 4 after deeper §39.3 remediation. Part F Final Assessment is next.
 - Last Updated: 2026-09-17
 
 ---
@@ -24,26 +24,22 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium: complexity analysis + boundary validation | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed; Retest 4 FAIL after deeper remediation | Open — High, prerequisite-blocking | Renewed §39.3 remediation checkpoint before fresh Intermediate Retest |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Part E PASS; Part F pending | Open — Low | Part F Final Assessment |
 
 ---
 
 ## 3. Open Review Debt Summary
 
 ### S0-B — Medium
-- Complexity analysis: `reverse(string)` was treated as O(1), and element count `N` was confused with total payload size `L`.
+- Complexity analysis: `reverse(string)` was treated as O(1), and element count `N` was confused with total input length `L`.
 
 ### S0-B — Low
 - Character-boundary implementation: uppercase `Z` was omitted in AtCoder ABC104 B.
 
-### S0-C — High, prerequisite-blocking
-- Attempt 1 (`Total Pair Gap`): correct code/complexity, but numeric proof used one feasible input rather than a global worst-case upper bound.
-- Retest 1 (`Sum of All Subarray Sums`): correct mathematics, but `(i+1)*(N-i)` overflowed as `int * int` before reaching `long long`.
-- Retest 2 (`Equal Pair Score`): correct/safe code, but the required intermediate-expression maximum was not explicitly proved.
-- Retest 3 (`Distance Pair Score`): correct code and relevant expressions were identified, but two claimed upper bounds were smaller than the true maxima.
-- Deeper remediation then successfully trained valid upper-bound construction and C++ expression-type analysis.
-- Retest 4 (`Weighted Prefix Load`): submitted code is correct and safe. The learner established `P <= 2e7` and a conservative final bound `S <= 8e17`, but did not explicitly isolate the required risky intermediate `(i+1)*P`, bound it by `4e12`, state that the submitted code evaluates it as `long long`, and compare that with the signed 64-bit limit. The explanation also incorrectly said `A` and `i` must be `long long`; they do not need to be in this code. The edge case `[N=1, A=123]` violates `A_i <= 100`, repeating an input-contract tracking issue.
-- The debt remains High/prerequisite-blocking. The remaining weakness is no longer algorithm design; it is systematic proof completeness and contract verification.
+### S0-C — Low
+- Retest 4 established a valid global bound and safe intermediate bound for the submitted code, resolving the previous High prerequisite-blocking numeric-safety proof debt.
+- Residual nuance: the learner stated that `A` and `i` must also be `long long`. In this specific code that is too strong: `int A` would be safely converted during `P += A`, and an `int (i+1)` would remain within `int` before being promoted when multiplied by `long long P`.
+- This is no longer prerequisite-blocking, but usual arithmetic conversion reasoning should be checked again in Part F.
 
 ---
 
@@ -83,33 +79,35 @@
 
 ### Intermediate Assessment — Retest 4
 - Problem: Weighted Prefix Load
-- Result: FAIL
+- Result: PASS
 - Tier: B
 - Difficulty: ~R1/I1
 - T_solve: 9:49
-- Attribution: Correctness
-- Positive evidence: one-pass prefix-sum recurrence is correct; O(N) time and O(1) total/auxiliary storage are correct; exact program is safe for the constraints.
+- Positive evidence:
+  - submitted one-pass prefix recurrence is correct;
+  - O(N) time and O(1) total/auxiliary space are correct;
+  - `P <= 2e7`;
+  - `(i+1)*P <= 2e5 * 2e7 = 4e12`;
+  - with at most `2e5` nonnegative terms, `S <= 8e17 < 9.22e18` is a valid conservative global upper bound;
+  - in the submitted code, `i` and `P` are both `long long`, so `(i+1)*P` is evaluated in signed 64-bit and is safe;
+  - edge case `[N=1, A=11 -> 11]` satisfies the input contract.
 - Exact all-maximum answer (`N=200000`, all `A_i=100`) is `266668666670000000` ≈ `2.67e17`.
-- Valid conservative proof facts: `P <= 2e7`; `(i+1)*P <= 2e5 * 2e7 = 4e12`; summing at most `2e5` terms gives `S <= 8e17`.
-- In the submitted program, `i` and `P` are both `long long`, so `(i+1)*P` is evaluated in signed 64-bit and `4e12 << 9.22e18`.
-- Blocking issue: the intermediate bound/type/capacity comparison was not explicitly written as required; type necessity was overstated; edge case violated the stated domain.
+- Non-blocking issue: `A` and `i` were described as necessarily `long long`, although safe mixed-type alternatives exist.
 
 ---
 
 ## 5. Next Learning Action
 
-1. Pause further formal S0-C Part E problems under §39.3.
-2. Use one fixed checklist for every formal numeric-safety proof:
-   - verify every example/edge case satisfies the input constraints;
-   - state a global final-answer upper bound;
-   - list every risky cumulative subexpression in the actual submitted code;
-   - compute a valid upper bound for each;
-   - state the actual C++ result type at each step;
-   - compare each bound against that type's capacity;
-   - distinguish "this type is sufficient" from "this variable must have this type."
-3. Require short learning-mode checkpoints that combine numeric proof completeness and contract tracking.
-4. Resume with a fresh Tier A/B Intermediate Retest only after the checkpoint is clean.
-5. Keep S0-C High Review Debt open until a fresh independent full PASS.
+1. Proceed to Part F Final Assessment for S0-C.
+2. In the final assessment, require independent evidence for:
+   - constraint-based feasibility reasoning,
+   - time and space complexity,
+   - a valid global numeric upper bound,
+   - risky intermediate subexpression bounds,
+   - actual C++ expression types and promotion order,
+   - valid edge cases.
+3. Recheck the distinction between “this type is sufficient” and “this variable must have this type.”
+4. If Part F passes, continue to Part G Adaptive Extra Problems according to v5.5.
 
 ---
 
