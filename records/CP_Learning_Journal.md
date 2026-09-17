@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Part A-D complete; Part E has three consecutive same-objective formal FAILs, followed by the §39.3 backtrack/remediation sequence. The remediation checkpoint has now been completed successfully, so formal assessment may resume with a fresh Tier A/B Intermediate Retest.
+- Learning Status: Part A-D complete; Part E Intermediate Retest 3 also resulted in FAIL. The algorithm and submitted C++ were correct, but the required risky intermediate-expression bounds and actual C++ types were again omitted from the numeric-safety proof. Formal S0-C assessment is paused again for deeper §39.3 remediation before another fresh retest.
 - Last Updated: 2026-09-17
 
 ---
@@ -24,7 +24,7 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium: complexity analysis + boundary validation | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed; §39.3 remediation checkpoint completed | Open — High, prerequisite-blocking | Fresh Tier A/B Intermediate Retest |
+| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed; Retest 3 FAIL after remediation | Open — High, prerequisite-blocking | Deeper §39.3 remediation checkpoint before fresh Intermediate Retest |
 
 ---
 
@@ -39,13 +39,13 @@
 - Requires a fresh equivalent full-PASS check.
 
 ### S0-C — High, prerequisite-blocking
-- Three consecutive Part E attempts exposed a repeated numeric-safety proof weakness.
+- Multiple Part E attempts expose a repeated numeric-safety proof weakness.
 - Attempt 1 (`Total Pair Gap`): code and O(N)/O(1) analysis were correct, but the numeric-bound argument used one feasible input rather than proving a global worst-case upper bound.
 - Retest 1 (`Sum of All Subarray Sums`): mathematical contribution formula and O(N)/O(1) analysis were correct, but `(i+1)*(N-i)` was evaluated as `int * int` before multiplication by `long long A`, causing signed-int intermediate overflow at large `N`.
-- Retest 2 (`Equal Pair Score`): the submitted code itself was correct and safe on validated inputs, but the required intermediate-expression bound was not explicitly established. For the grouping term `temp*(count-1)*count/2`, the raw product before division can reach about `3.99998e18`, still within signed 64-bit, but this proof was absent from the submission.
-- The §39.3 remediation sequence then backtracked to exact proof discipline: true global bound, cumulative intermediate-subexpression bounds, actual C++ expression types, and comparison against the destination type's capacity.
-- Final non-formal checkpoint was completed successfully. In the checkpoint with `n <= 400000`, `x <= 1e8`, one factor among `n` and `n+1` was divided by 2 before multiplication; the learner correctly identified the maximum intermediate/final magnitude as about `8e18`, verified that `n+1` is safe in `int`, and explained that multiplication proceeds in `long long` because the first operand is `long long`.
-- Formal assessment may now resume, but this Review Debt remains open until a fresh independent S0-C assessment provides full-PASS evidence.
+- Retest 2 (`Equal Pair Score`): the submitted code itself was correct and safe on validated inputs, but the required intermediate-expression bound was not explicitly established. For `temp*(count-1)*count/2`, the raw product before division can reach about `3.99998e18`, still within signed 64-bit, but this proof was absent from the submission.
+- A §39.3 remediation sequence then re-established early promotion, evaluation order, and the need to compare intermediate magnitudes against the actual expression type's capacity. The non-formal checkpoint was completed successfully.
+- Retest 3 (`Distance Pair Score`): the O(N), O(1)-space algorithm and submitted C++ are correct. However, the numeric-safety explanation bounded state variables `sum1` and `sum2` but did not bound or type-check the actual risky products `j*sum1`, `j*j*A`, and `j*(j-1)*A`. This repeats the structural proof-discipline weakness after remediation.
+- Formal assessment is therefore paused again. Backtrack further to the distinction between **state-variable bounds** and **evaluation-subexpression bounds**, and require clean non-formal checkpoints before another formal retest.
 
 ---
 
@@ -119,31 +119,47 @@
 - Difficulty: approximately R2/I2
 - T_solve: 22:00
 - Failure Attribution: Correctness
-- Positive evidence: sorting/group-counting solution is correct; O(N log N) time is feasible; total stored input is O(N); exact submitted C++17 code matched both samples, 97,655 exhaustive small cases, and the max-scale all-equal case under UBSan.
+- Positive evidence: sorting/group-counting solution is correct; O(N log N) time is feasible; total stored input is O(N); exact submitted C++17 code matched samples, 97,655 exhaustive small cases, and max-scale all-equal input under UBSan.
 - Numeric facts: final answer maximum is `100000000 * C(200000,2) = 1.99999e18`; raw intermediate `temp*(count-1)*count` can reach about `3.99998e18` before division by 2; both are within signed 64-bit.
-- Blocking issue: the submission did not explicitly prove the required intermediate-expression maximum, despite the problem explicitly requiring it.
-- Secondary analysis omission: own scalar state is O(1), total stored input is O(N), while `std::sort` implementations typically use O(log N) call-stack auxiliary space.
-- Because this is the third consecutive same-objective formal FAIL, §39.3 escalation applies.
+- Blocking issue: the submission did not explicitly prove the required intermediate-expression maximum.
+- Because this was the third consecutive same-objective formal FAIL, §39.3 escalation applied.
 
 ### §39.3 Backtrack / Remediation Checkpoint — 2026-09-17
 - Focus: `constraint -> final bound -> cumulative intermediate bound -> actual C++ type -> capacity comparison` as a mandatory proof sequence.
 - The learner correctly distinguished early promotion from range safety: a `long long`-typed expression can still overflow if its intermediate magnitude exceeds signed 64-bit.
-- Final checkpoint: after dividing one of the consecutive factors `n`, `n+1` by 2 before multiplication, the learner correctly bounded the maximum `a*b*x` at about `8e18` and identified the code as safe under signed 64-bit.
-- Result: remediation checkpoint completed. This is learning-mode evidence only; formal S0-C Part E remains unpassed.
+- Final checkpoint: after dividing one of the consecutive factors `n`, `n+1` by 2 before multiplication, the learner correctly bounded `a*b*x` at about `8e18` and identified the code as safe under signed 64-bit.
+- Result: remediation checkpoint completed. This is learning-mode evidence only.
+
+### Intermediate Assessment — Retest 3 — 2026-09-17
+- Problem: Distance Pair Score
+- Result: FAIL
+- Validation Tier: B
+- Difficulty: approximately R2/I2
+- T_solve: 46:28
+- Failure Attribution: Correctness
+- Positive evidence: the submitted one-pass prefix-contribution algorithm is mathematically correct, runs in O(N), uses O(1) total/auxiliary storage, and the exact submitted C++17 program matches the sample and the maximum-scale all-equal case under UBSan.
+- Exact all-maximum answer (`N=50000`, every `A_i=10000`) is `416666666500000000` ≈ `4.17e17`.
+- Relevant state bounds are approximately `sum1 <= 4.9999e8` and `sum2 <= 1.249925001e13`.
+- The actual risky arithmetic products near maximum index are approximately: `j*sum1 <= 2.499900001e13`, `j*j*A <= 2.499900001e13`, and raw `j*(j-1)*A <= 2.499850002e13` before `/2`. Because `j` and `A` are `long long`, these products are evaluated as signed 64-bit and are safely below `9.22e18`.
+- Blocking issue: the submitted proof stated state-variable bounds for `sum1` and `sum2`, but did not explicitly provide the required intermediate-subexpression maxima or actual C++ result types. The problem statement explicitly required both.
+- The stated estimate `ans ≈ 2.5e18` for the all-maximum input is a loose overestimate; it is safe as an upper estimate only if justified as such, but the actual all-maximum value is about `4.17e17`.
+- Because the same structural proof omission reappeared after remediation, formal S0-C assessment is paused again for deeper prerequisite remediation.
 
 ---
 
 ## 8. Next Learning Action
 
-1. Resume formal S0-C Part E with a fresh Tier A/B Intermediate Retest in Independent Assessment Mode.
-2. Require the learner to explicitly provide, without prompting:
-   - a true global final-answer bound,
-   - every risky cumulative intermediate-subexpression bound,
-   - the actual C++ type at each risky step,
-   - comparison with the corresponding type capacity,
-   - time and space complexity and valid edge cases.
-3. Keep the S0-C High Review Debt open until a fresh full-PASS assessment demonstrates the complete proof discipline independently.
-4. Continue the existing S0-B complexity and character-boundary debts separately.
+1. Pause further formal S0-C Part E problems.
+2. Backtrack specifically to the difference between **variable/state bounds** and **risky expression/subexpression bounds**.
+3. For each candidate expression, require this exact checklist in learning mode:
+   - write the expression in C++ evaluation order,
+   - list operand types at each multiplication/addition,
+   - compute the maximum magnitude of each cumulative subexpression,
+   - compare each maximum with that result type's capacity,
+   - only then conclude Safe/Unsafe.
+4. Use several short non-formal checkpoints until this sequence is produced without prompting.
+5. Then administer a fresh Tier A/B Intermediate Retest in Independent Assessment Mode.
+6. Continue the existing S0-B complexity and character-boundary debts separately.
 
 ---
 
