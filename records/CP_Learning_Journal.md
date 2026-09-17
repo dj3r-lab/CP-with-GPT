@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Parts A-D complete; Part E PASS; Part F Final PASS. Part G GPT-generated Extra A resulted in FAIL; External Extra B is still pending. The S0-C progression gate remains satisfied.
+- Learning Status: Parts A-D complete; Part E PASS; Part F Final PASS; Part G complete. GPT-generated Extra A resulted in FAIL, External Tier A Extra B PASS. The S0-C progression gate remains satisfied; Part H is next.
 - Last Updated: 2026-09-17
 
 ---
@@ -24,7 +24,7 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Final PASS — Progression Gate Satisfied; Part G Extra A FAIL / Extra B pending | Open — Medium | External Extra B + fresh transfer reassessment for Extra A debt |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Final PASS — Progression Gate Satisfied; Part G complete | Open — Medium | Part H + fresh transfer reassessment for Extra A debt |
 
 ---
 
@@ -42,7 +42,8 @@
   - outputting all stored strings was treated as O(N), although the output writes all `L` characters and costs O(L);
   - total storage was stated as O(NL), although the vector stores N string objects plus exactly L characters, so total storage is O(N+L), which is O(L) here because strings are nonempty and N<=L;
   - `std::string::size()` was treated as producing an `int` multiplication. It returns `string::size_type` (an unsigned size type), so the actual usual-arithmetic-conversion path must be analyzed rather than assuming the leading `1LL` makes every later multiplication signed `long long`.
-- This Extra FAIL does not revoke the S0-C Final PASS or progression gate, but creates Medium Review Debt because the same aggregate-size complexity theme had already appeared in S0-B.
+- External Extra B (`AtCoder ABC238 B — Pizza`) was independently passed, showing correct simulation/state tracking, sorting-based circular-gap evaluation, and integer range reasoning.
+- The remaining S0-C debt is therefore specifically the aggregate string-size/time-space accounting and `size_type` promotion weakness exposed by Extra A. Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
 
 ---
 
@@ -105,15 +106,32 @@
   - `si.size()` returns `string::size_type`, so the expression type was misidentified.
 - Review Debt: Open / Medium.
 
+### Part G Extra B — External CP
+- Problem: AtCoder ABC238 B — Pizza
+- Result: PASS
+- Validation Tier: A
+- Difficulty: ~R2/I2
+- T_solve: 47:39
+- Positive evidence:
+  - submitted C++17 code is correct for the official constraints;
+  - official samples matched;
+  - independent exhaustive comparison matched 37,448 valid small states;
+  - cumulative angle is maintained in [0,359], and the sorted cut list includes both 0 and 360;
+  - every adjacent gap, including the final gap to 360, is considered;
+  - O(N log N) time and O(N) space are correct;
+  - `int` is sufficient for all stated angle, difference, index, and count values under N<=359 and Ai<=359.
+- Non-blocking analysis imprecision: the second scan runs N iterations, not N-2; the vector contains N+2 elements. These do not change the O(N log N) / O(N) conclusions.
+- Compiler note: signed/unsigned comparison warning in `i < v.size()-1`; no correctness impact for these constraints.
+
 ---
 
 ## 5. Next Learning Action
 
-1. Continue Part G by completing the already-issued External Extra B independently.
+1. Complete Part H for S0-C.
 2. Keep the S0-C Final PASS and progression gate intact.
-3. Open a fresh equivalent Extra/mixed reassessment later for the Extra A transfer debt; do not reuse Reverse Archive Score as a passing problem.
+3. Schedule a fresh equivalent Extra/mixed reassessment for the unresolved Extra A transfer debt; do not reuse Reverse Archive Score as a passing problem.
 4. In that reassessment, require explicit separation of N and total payload L, output cost, aggregate storage, and actual `size_type` arithmetic conversions.
-5. After External Extra B, complete Part H and schedule debt remediation according to priority.
+5. Then move to the next Learning Unit while preserving delayed/mixed review scheduling needed for Confirmed confidence.
 
 ---
 
