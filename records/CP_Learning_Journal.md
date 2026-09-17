@@ -10,10 +10,11 @@
 
 ## 1. Current Position
 
-- Current Stage: Stage 0 — C++ 문제풀이 기반
-- Current Learning Unit: S0-C — Complexity & Numeric Safety
+- Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
+- Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
+- Next Learning Unit: S1-A — Associative Containers
 - Priority Class: Core
-- Learning Status: Parts A-D complete; Part E PASS; Part F Final PASS; Part G complete. GPT-generated Extra A resulted in FAIL, External Tier A Extra B PASS. The S0-C progression gate remains satisfied; Part H is next.
+- Learning Status: S0-C Parts A-H complete. Part E PASS, Part F Final PASS, Part G complete with GPT-generated Extra A FAIL and External Tier A Extra B PASS. The S0-C immediate progression gate is satisfied. Stage 0 immediate progression coverage is complete, but Stage 0 confidence remains provisional pending delayed/mixed evidence.
 - Last Updated: 2026-09-17
 
 ---
@@ -23,15 +24,16 @@
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
-| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Final PASS — Progression Gate Satisfied; Part G complete | Open — Medium | Part H + fresh transfer reassessment for Extra A debt |
+| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Fresh transfer reassessment + delayed mixed assessment |
 
 ---
 
 ## 3. Open Review Debt Summary
 
 ### S0-B — Medium
-- Complexity analysis: `reverse(string)` was treated as O(1), and element count `N` was confused with total input length `L`.
+- Complexity analysis: `reverse(string)` was previously treated as O(1), and element count `N` was confused with total input length `L`.
+- This theme reappeared in S0-C Extra A, so it remains an active cross-unit review priority.
 
 ### S0-B — Low
 - Character-boundary implementation: uppercase `Z` was omitted in AtCoder ABC104 B.
@@ -39,11 +41,13 @@
 ### S0-C — Medium
 - Part E and Part F established correct numeric-safety reasoning and resolved the earlier mixed-type promotion misconception.
 - GPT-generated Extra A (`Reverse Archive Score`) had correct submitted C++ code, but the formal analysis failed on transfer:
-  - outputting all stored strings was treated as O(N), although the output writes all `L` characters and costs O(L);
-  - total storage was stated as O(NL), although the vector stores N string objects plus exactly L characters, so total storage is O(N+L), which is O(L) here because strings are nonempty and N<=L;
-  - `std::string::size()` was treated as producing an `int` multiplication. It returns `string::size_type` (an unsigned size type), so the actual usual-arithmetic-conversion path must be analyzed rather than assuming the leading `1LL` makes every later multiplication signed `long long`.
-- External Extra B (`AtCoder ABC238 B — Pizza`) was independently passed, showing correct simulation/state tracking, sorting-based circular-gap evaluation, and integer range reasoning.
-- The remaining S0-C debt is therefore specifically the aggregate string-size/time-space accounting and `size_type` promotion weakness exposed by Extra A. Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
+  - outputting all stored strings was treated as O(N), although writing all output characters costs O(L);
+  - total storage was stated as O(NL), although the actual aggregate storage is O(N+L)=O(L) because all strings are nonempty and N<=L;
+  - `std::string::size()` was treated as `int`; its actual type is `string::size_type`, so the usual arithmetic conversions must be checked explicitly.
+- External Extra B (`AtCoder ABC238 B — Pizza`) was passed independently, showing correct state tracking, sorting-based circular-gap evaluation, O(N log N) reasoning, and integer-range analysis.
+- Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
+
+Current unresolved Core Review Debt count: 3 entries (S0-B Medium, S0-B Low, S0-C Medium). This is below the v5.5 pause threshold (>4), and there is no unresolved High prerequisite-blocking debt, so new Core progression may continue.
 
 ---
 
@@ -52,44 +56,55 @@
 ### Intermediate Assessment — Attempt 1
 - Problem: Total Pair Gap
 - Result: FAIL
-- Tier: B
+- Validation Tier: B
 - Difficulty: ~R2/I1
 - T_solve: 15:40
+- Failure Attribution: Correctness
 
 ### Intermediate Assessment — Retest 1
 - Problem: Sum of All Subarray Sums
 - Result: FAIL
-- Tier: B
+- Validation Tier: B
 - Difficulty: ~R2/I1
 - T_solve: 6:29
+- Failure Attribution: Implementation
 
 ### Intermediate Assessment — Retest 2
 - Problem: Equal Pair Score
 - Result: FAIL
-- Tier: B
+- Validation Tier: B
 - Difficulty: ~R2/I2
 - T_solve: 22:00
+- Failure Attribution: Correctness
 
 ### Intermediate Assessment — Retest 3
 - Problem: Distance Pair Score
 - Result: FAIL
-- Tier: B
+- Validation Tier: B
 - Difficulty: ~R2/I2
 - T_solve: 46:28
+- Failure Attribution: Correctness
 
 ### Intermediate Assessment — Retest 4
 - Problem: Weighted Prefix Load
 - Result: PASS
-- Tier: B
+- Validation Tier: B
 - Difficulty: ~R1/I1
 - T_solve: 9:49
+- Positive evidence: correct O(N) streaming recurrence, O(1) space, valid global/intermediate bounds, safe signed-64-bit arithmetic.
 
 ### Final Assessment — Attempt 1
 - Problem: Grouped Weighted Score
 - Result: PASS
-- Tier: B
+- Validation Tier: B
 - Difficulty: ~R2/I1
 - T_solve: 15:51
+- Positive evidence:
+  - correct nested streaming solution;
+  - O(T)=O(N+T) because every group is nonempty and N<=T;
+  - O(1) total/auxiliary storage;
+  - valid conservative global bound S<=8e17;
+  - correct use of leading `1LL` to promote the multiplication chain while retaining individually safe `int` operands.
 - Progression Gate: Satisfied
 
 ### Part G Extra A — GPT-generated
@@ -99,11 +114,8 @@
 - Difficulty: ~R1/I2
 - T_solve: 6:37
 - Failure Attribution: Complexity
-- Positive evidence: submitted C++17 code is correct; sample output matches; `reverse` cost was correctly recognized as proportional to each string length; the numeric magnitude bounds are conservative and safe.
-- Blocking analysis errors:
-  - second output loop is not O(N) under a character-cost model; it emits L characters and is O(N+L)=O(L);
-  - vector/string storage is O(N+L)=O(L), not O(NL);
-  - `si.size()` returns `string::size_type`, so the expression type was misidentified.
+- Positive evidence: submitted C++ code is correct; `reverse` cost was recognized as proportional to string length; numeric magnitude was safe.
+- Blocking analysis errors: aggregate output cost, aggregate string storage, and `string::size_type` conversion reasoning.
 - Review Debt: Open / Medium.
 
 ### Part G Extra B — External CP
@@ -113,32 +125,72 @@
 - Difficulty: ~R2/I2
 - T_solve: 47:39
 - Positive evidence:
-  - submitted C++17 code is correct for the official constraints;
-  - official samples matched;
+  - official constraints and samples matched;
   - independent exhaustive comparison matched 37,448 valid small states;
-  - cumulative angle is maintained in [0,359], and the sorted cut list includes both 0 and 360;
-  - every adjacent gap, including the final gap to 360, is considered;
+  - cumulative angle and circular-gap logic are correct;
   - O(N log N) time and O(N) space are correct;
-  - `int` is sufficient for all stated angle, difference, index, and count values under N<=359 and Ai<=359.
-- Non-blocking analysis imprecision: the second scan runs N iterations, not N-2; the vector contains N+2 elements. These do not change the O(N log N) / O(N) conclusions.
-- Compiler note: signed/unsigned comparison warning in `i < v.size()-1`; no correctness impact for these constraints.
+  - all relevant values are safe in `int`.
+- Non-blocking imprecision: the second scan runs N iterations, not N-2.
 
 ---
 
-## 5. Next Learning Action
+## 5. Part H — S0-C Mastery Record
 
-1. Complete Part H for S0-C.
-2. Keep the S0-C Final PASS and progression gate intact.
-3. Schedule a fresh equivalent Extra/mixed reassessment for the unresolved Extra A transfer debt; do not reuse Reverse Archive Score as a passing problem.
-4. In that reassessment, require explicit separation of N and total payload L, output cost, aggregate storage, and actual `size_type` arithmetic conversions.
-5. Then move to the next Learning Unit while preserving delayed/mixed review scheduling needed for Confirmed confidence.
+Learning Unit: S0-C — Complexity & Numeric Safety
+Assessment Mode: Independent formal assessment; no hints used in passing attempts
+Intermediate Assessment: PASS on Retest 4
+Final Assessment: PASS on Attempt 1
+GPT-generated Extra: FAIL — Reverse Archive Score
+External CP Extra: PASS — AtCoder ABC238 B
+Capability Level: L3 — Implementation
+Confidence Status: Provisional
+Evidence Context: Baseline + Immediate
+Unit Coverage Status: Complete for immediate progression; not yet Confirmed
+Review Debt: Open
+Review Debt Severity: Medium
+Retest Needed: Yes — fresh equivalent transfer/mixed reassessment for aggregate-size complexity and `size_type` arithmetic conversion
+
+### Repeated weakness pattern
+- Early S0-C: global numeric upper bounds and intermediate-expression type safety.
+- These numeric-safety weaknesses improved through remediation and were independently passed in Part E and Part F.
+- Remaining weakness is now narrower: aggregate payload accounting (`N` vs total size `L`), output/storage cost, and exact STL return types such as `string::size_type`.
+
+### Strength evidence
+- Can independently implement O(N) / O(T) streaming solutions.
+- Can reject unsafe integer arithmetic and place `1LL` before risky multiplication chains.
+- Can derive conservative signed-64-bit bounds correctly after remediation.
+- Can analyze a new external simulation/sorting problem correctly and justify `int` safety.
+
+### Why Confidence remains Provisional
+- All S0-C evidence was obtained in the immediate learning window.
+- v5.5 requires a delayed mixed assessment, normally after at least 3 days or after learning at least two other Learning Units, before promoting to Confirmed.
+- Extra A also exposed a still-open cross-unit complexity accounting weakness.
 
 ---
 
-## 6. Operating Notes
+## 6. Next Learning Action
+
+1. Begin **S1-A — Associative Containers** as the next Core Learning Unit.
+2. Do not block S1-A on the current Medium debt: unresolved Core debt count is below the pause threshold and no High prerequisite debt exists.
+3. Schedule a fresh, unnamed mixed/transfer reassessment for the S0-B/S0-C aggregate-size debt. Do not reuse `Reverse Archive Score`.
+4. The reassessment must test:
+   - `N` versus total payload size `L`;
+   - cost of reading/copying/reversing/outputting strings or containers;
+   - aggregate storage versus per-element storage;
+   - `size_type` / signed-unsigned arithmetic conversion.
+5. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
+   - at least 3 days have passed, or
+   - at least two additional Learning Units have been studied,
+   with the S0-C topic not disclosed in advance.
+6. If that delayed mixed assessment passes, promote S0-C from **L3 / Provisional** to **L3 / Confirmed** and close any debt that the new evidence directly resolves.
+
+---
+
+## 7. Operating Notes
 
 - Problem-level structured data belongs in `CP_Learning_Record.xlsx` -> `Assessments`.
 - Actual learner timer values are used for `T_solve`; chat intervals are never substituted.
 - Hint contamination, VOID, Review Debt, progression, and mastery follow the latest work norm.
 - Extra FAIL does not retroactively cancel a Final PASS.
+- Immediate progression and long-term Confirmed mastery are tracked separately.
 - Calibration uses the latest compatible `CP_Calibration_Anchor_Registry`.
