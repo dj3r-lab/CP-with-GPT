@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Parts A-D complete; Part E Intermediate Assessment PASS; Part F Final Assessment PASS. The S0-C immediate progression gate is satisfied. Part G Adaptive Extra Problems are next.
+- Learning Status: Parts A-D complete; Part E PASS; Part F Final PASS. Part G GPT-generated Extra A resulted in FAIL; External Extra B is still pending. The S0-C progression gate remains satisfied.
 - Last Updated: 2026-09-17
 
 ---
@@ -23,8 +23,8 @@
 | Learning Unit | Capability | Confidence | Evidence Context | Unit Coverage | Review Debt | Next Review |
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
-| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium: complexity analysis + boundary validation | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Part E PASS + Part F PASS — Progression Gate Satisfied; Part G pending | None | Part G Adaptive Extra Problems |
+| S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed checks |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Final PASS — Progression Gate Satisfied; Part G Extra A FAIL / Extra B pending | Open — Medium | External Extra B + fresh transfer reassessment for Extra A debt |
 
 ---
 
@@ -36,12 +36,13 @@
 ### S0-B — Low
 - Character-boundary implementation: uppercase `Z` was omitted in AtCoder ABC104 B.
 
-### S0-C — Resolved
-- Earlier attempts exposed repeated weaknesses in global upper-bound construction, intermediate-expression bounds, and C++ promotion order.
-- Deeper remediation established a fixed proof sequence: global bound -> risky subexpression bound -> actual evaluation type -> capacity comparison.
-- Part E Retest 4 produced a clean PASS on numeric-safety reasoning, leaving only a Low mixed-type nuance.
-- Part F Final Assessment resolved that nuance: the learner safely kept `N`, `M_g`, `g`, `j`, and `A` as `int`, while using a leading `1LL` so the multiplication chain is evaluated as `long long`. Parenthesized `int` additions remain safely within `int` range.
-- No S0-C Review Debt remains open after the Final PASS.
+### S0-C — Medium
+- Part E and Part F established correct numeric-safety reasoning and resolved the earlier mixed-type promotion misconception.
+- GPT-generated Extra A (`Reverse Archive Score`) had correct submitted C++ code, but the formal analysis failed on transfer:
+  - outputting all stored strings was treated as O(N), although the output writes all `L` characters and costs O(L);
+  - total storage was stated as O(NL), although the vector stores N string objects plus exactly L characters, so total storage is O(N+L), which is O(L) here because strings are nonempty and N<=L;
+  - `std::string::size()` was treated as producing an `int` multiplication. It returns `string::size_type` (an unsigned size type), so the actual usual-arithmetic-conversion path must be analyzed rather than assuming the leading `1LL` makes every later multiplication signed `long long`.
+- This Extra FAIL does not revoke the S0-C Final PASS or progression gate, but creates Medium Review Debt because the same aggregate-size complexity theme had already appeared in S0-B.
 
 ---
 
@@ -53,7 +54,6 @@
 - Tier: B
 - Difficulty: ~R2/I1
 - T_solve: 15:40
-- Attribution: Correctness
 
 ### Intermediate Assessment — Retest 1
 - Problem: Sum of All Subarray Sums
@@ -61,7 +61,6 @@
 - Tier: B
 - Difficulty: ~R2/I1
 - T_solve: 6:29
-- Attribution: Implementation
 
 ### Intermediate Assessment — Retest 2
 - Problem: Equal Pair Score
@@ -69,7 +68,6 @@
 - Tier: B
 - Difficulty: ~R2/I2
 - T_solve: 22:00
-- Attribution: Correctness
 
 ### Intermediate Assessment — Retest 3
 - Problem: Distance Pair Score
@@ -77,7 +75,6 @@
 - Tier: B
 - Difficulty: ~R2/I2
 - T_solve: 46:28
-- Attribution: Correctness
 
 ### Intermediate Assessment — Retest 4
 - Problem: Weighted Prefix Load
@@ -85,44 +82,45 @@
 - Tier: B
 - Difficulty: ~R1/I1
 - T_solve: 9:49
-- Positive evidence: correct O(N) streaming recurrence, O(1) space, valid global/intermediate bounds, safe signed-64-bit arithmetic.
 
 ### Final Assessment — Attempt 1
 - Problem: Grouped Weighted Score
 - Result: PASS
-- Validation Tier: B
-- Difficulty: approximately R2/I1
+- Tier: B
+- Difficulty: ~R2/I1
 - T_solve: 15:51
-- Positive evidence:
-  - submitted nested streaming solution is correct;
-  - each group is nonempty, so `N <= T`; therefore the stated O(T) loop bound is equivalent to the required O(N+T);
-  - total and auxiliary storage are O(1);
-  - each weighted term is bounded by `2e5 * 2e5 * 100 = 4e12`;
-  - with at most `T <= 2e5` terms, `S <= 8e17 < 9.22e18` is a valid conservative global bound;
-  - `(g+1)` and `(j+1)` are computed as `int` but are at most `2e5`, so those additions are safe;
-  - the leading `1LL` makes the subsequent multiplication chain signed 64-bit, so the `4e12` term bound is safe;
-  - `N`, `M_g`, `g`, `j`, and `A` are individually safe as `int` under the stated constraints;
-  - edge case `N=1, M_g=1, A=61 -> 61` is valid.
-- Residual mixed-type promotion Review Debt is resolved by this Final PASS.
+- Progression Gate: Satisfied
+
+### Part G Extra A — GPT-generated
+- Problem: Reverse Archive Score
+- Result: FAIL
+- Validation Tier: B
+- Difficulty: ~R1/I2
+- T_solve: 6:37
+- Failure Attribution: Complexity
+- Positive evidence: submitted C++17 code is correct; sample output matches; `reverse` cost was correctly recognized as proportional to each string length; the numeric magnitude bounds are conservative and safe.
+- Blocking analysis errors:
+  - second output loop is not O(N) under a character-cost model; it emits L characters and is O(N+L)=O(L);
+  - vector/string storage is O(N+L)=O(L), not O(NL);
+  - `si.size()` returns `string::size_type`, so the expression type was misidentified.
+- Review Debt: Open / Medium.
 
 ---
 
 ## 5. Next Learning Action
 
-1. Proceed immediately to Part G Adaptive Extra Problems for S0-C.
-2. Use two independent formal Extras according to v5.5:
-   - one GPT-generated Tier B problem;
-   - one external CP-site Tier A problem.
-3. Use different learned-topic combinations so the Extras test transfer rather than repeat the Final Assessment.
-4. Record each Extra independently. A skill-related Extra FAIL creates Review Debt but does not revoke the current S0-C Final PASS or progression gate.
-5. After Part G, complete Part H and move to the next Learning Unit while scheduling delayed/mixed checks needed for Confirmed confidence.
+1. Continue Part G by completing the already-issued External Extra B independently.
+2. Keep the S0-C Final PASS and progression gate intact.
+3. Open a fresh equivalent Extra/mixed reassessment later for the Extra A transfer debt; do not reuse Reverse Archive Score as a passing problem.
+4. In that reassessment, require explicit separation of N and total payload L, output cost, aggregate storage, and actual `size_type` arithmetic conversions.
+5. After External Extra B, complete Part H and schedule debt remediation according to priority.
 
 ---
 
 ## 6. Operating Notes
 
 - Problem-level structured data belongs in `CP_Learning_Record.xlsx` -> `Assessments`.
-- Initial Baseline detail belongs in `Baseline`.
 - Actual learner timer values are used for `T_solve`; chat intervals are never substituted.
 - Hint contamination, VOID, Review Debt, progression, and mastery follow the latest work norm.
+- Extra FAIL does not retroactively cancel a Final PASS.
 - Calibration uses the latest compatible `CP_Calibration_Anchor_Registry`.
