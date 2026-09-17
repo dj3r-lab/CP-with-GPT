@@ -13,7 +13,7 @@
 - Current Stage: Stage 0 — C++ 문제풀이 기반
 - Current Learning Unit: S0-C — Complexity & Numeric Safety
 - Priority Class: Core
-- Learning Status: Part A-D complete; Part E Intermediate Assessment has three consecutive same-objective FAILs. Formal assessment is paused under §39.3 until backtrack/remediation checkpoint is completed.
+- Learning Status: Part A-D complete; Part E has three consecutive same-objective formal FAILs, followed by the §39.3 backtrack/remediation sequence. The remediation checkpoint has now been completed successfully, so formal assessment may resume with a fresh Tier A/B Intermediate Retest.
 - Last Updated: 2026-09-17
 
 ---
@@ -24,7 +24,7 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium: complexity analysis + boundary validation | Fresh Extra/Mixed checks |
-| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed | Open — High, prerequisite-blocking | §39.3 backtrack/remediation checkpoint before fresh Intermediate Retest |
+| S0-C — Complexity & Numeric Safety | L2 | Provisional | Baseline + Immediate | Incomplete — Part E not passed; §39.3 remediation checkpoint completed | Open — High, prerequisite-blocking | Fresh Tier A/B Intermediate Retest |
 
 ---
 
@@ -42,9 +42,10 @@
 - Three consecutive Part E attempts exposed a repeated numeric-safety proof weakness.
 - Attempt 1 (`Total Pair Gap`): code and O(N)/O(1) analysis were correct, but the numeric-bound argument used one feasible input rather than proving a global worst-case upper bound.
 - Retest 1 (`Sum of All Subarray Sums`): mathematical contribution formula and O(N)/O(1) analysis were correct, but `(i+1)*(N-i)` was evaluated as `int * int` before multiplication by `long long A`, causing signed-int intermediate overflow at large `N`.
-- Diagnostic remediation on early `long long` promotion was then completed successfully.
-- Retest 2 (`Equal Pair Score`): the submitted code itself was correct and safe on validated inputs, but the required intermediate-expression bound was not explicitly established. For the grouping term `temp*(count-1)*count/2`, the raw product before division can reach about `3.99998e18`, which is still within signed 64-bit, but this proof was absent from the submission.
-- Under §39.3, formal S0-C assessment is now paused. Backtrack/remediation must re-establish exact proof discipline for global bounds, intermediate bounds, expression types, and evaluation order before another formal retest.
+- Retest 2 (`Equal Pair Score`): the submitted code itself was correct and safe on validated inputs, but the required intermediate-expression bound was not explicitly established. For the grouping term `temp*(count-1)*count/2`, the raw product before division can reach about `3.99998e18`, still within signed 64-bit, but this proof was absent from the submission.
+- The §39.3 remediation sequence then backtracked to exact proof discipline: true global bound, cumulative intermediate-subexpression bounds, actual C++ expression types, and comparison against the destination type's capacity.
+- Final non-formal checkpoint was completed successfully. In the checkpoint with `n <= 400000`, `x <= 1e8`, one factor among `n` and `n+1` was divided by 2 before multiplication; the learner correctly identified the maximum intermediate/final magnitude as about `8e18`, verified that `n+1` is safe in `int`, and explained that multiplication proceeds in `long long` because the first operand is `long long`.
+- Formal assessment may now resume, but this Review Debt remains open until a fresh independent S0-C assessment provides full-PASS evidence.
 
 ---
 
@@ -124,21 +125,25 @@
 - Secondary analysis omission: own scalar state is O(1), total stored input is O(N), while `std::sort` implementations typically use O(log N) call-stack auxiliary space.
 - Because this is the third consecutive same-objective formal FAIL, §39.3 escalation applies.
 
+### §39.3 Backtrack / Remediation Checkpoint — 2026-09-17
+- Focus: `constraint -> final bound -> cumulative intermediate bound -> actual C++ type -> capacity comparison` as a mandatory proof sequence.
+- The learner correctly distinguished early promotion from range safety: a `long long`-typed expression can still overflow if its intermediate magnitude exceeds signed 64-bit.
+- Final checkpoint: after dividing one of the consecutive factors `n`, `n+1` by 2 before multiplication, the learner correctly bounded the maximum `a*b*x` at about `8e18` and identified the code as safe under signed 64-bit.
+- Result: remediation checkpoint completed. This is learning-mode evidence only; formal S0-C Part E remains unpassed.
+
 ---
 
 ## 8. Next Learning Action
 
-1. Pause further formal S0-C Part E problems under §39.3.
-2. Backtrack to the numeric-safety proof discipline required by S0-C:
-   - derive a true global upper bound from constraints,
-   - identify every risky intermediate subexpression,
-   - compute its maximum magnitude,
-   - identify the actual C++ operand/result type at that point,
-   - verify that the magnitude fits before the next operation occurs.
-3. Include space-accounting precision: distinguish stored input, own auxiliary state, and library/recursion stack where relevant.
-4. Use non-formal canonical/simpler checkpoints until this proof sequence is reliable.
-5. After the remediation checkpoint is passed, administer a fresh Tier A/B Intermediate Retest with no hints.
-6. Continue the existing S0-B complexity and character-boundary debts separately.
+1. Resume formal S0-C Part E with a fresh Tier A/B Intermediate Retest in Independent Assessment Mode.
+2. Require the learner to explicitly provide, without prompting:
+   - a true global final-answer bound,
+   - every risky cumulative intermediate-subexpression bound,
+   - the actual C++ type at each risky step,
+   - comparison with the corresponding type capacity,
+   - time and space complexity and valid edge cases.
+3. Keep the S0-C High Review Debt open until a fresh full-PASS assessment demonstrates the complete proof discipline independently.
+4. Continue the existing S0-B complexity and character-boundary debts separately.
 
 ---
 
