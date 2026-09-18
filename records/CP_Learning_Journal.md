@@ -15,7 +15,7 @@
 - Current Learning Unit: S1-A — Associative Containers
 - Next Assessment: Remediation checkpoint before further S1-A formal assessment
 - Priority Class: Core
-- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed.
+- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
 - Last Updated: 2026-09-18
 
 ---
@@ -27,7 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High | Immediate complexity remediation checkpoint + fresh transfer reassessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Part G Extra A FAIL; formal assessment paused for remediation | Open — High | S0-C complexity remediation checkpoint → fresh equivalent Extra A → remaining Part G |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Part G Extra A FAIL; Extra B VOID during pause | Open — High | S0-C complexity remediation checkpoint → fresh equivalent GPT Extra + fresh External CP Extra |
 
 ---
 
@@ -54,6 +54,7 @@
 - Part G GPT-generated Extra A (`Symbol Balance Queries`) had correct code, correct `unordered_map<string,long long>` selection, and correct numeric-safety reasoning, but the submitted complexity analysis was O(N+M) rather than the required expected O(L+N+M).
 - This debt is attributed to the inherited S0-C complexity weakness, not to associative-container selection.
 - Part E and Part F PASS evidence remains valid; the Final PASS is not revoked.
+- The later AtCoder ABC073 C submission occurred after the §39.3 pause had already begun, so it is VOID rather than PASS/FAIL evidence. Learning-mode review found that the exact code uses `unordered_set::contains`, which is unavailable in C++17; use `find` for a C++17-compatible implementation. No new Review Debt is created from this VOID.
 
 Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A High). Because a High prerequisite-blocking Core debt is now open and the same structural error has repeated, further S1-A formal assessment is paused pending remediation.
 
@@ -227,6 +228,32 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 - Review Debt: None opened by this assessment.
 - Retest Needed: No.
 
+### Part G Extra A — GPT-generated
+- Problem: Symbol Balance Queries
+- Result: FAIL
+- Validation Tier: B
+- Difficulty: ~R2/I2
+- T_solve: 8:11
+- Failure Attribution: Complexity
+- Positive evidence: correct `unordered_map<string,long long>` selection; correct code; correct long-long numeric bound.
+- Blocking error: string-key hashing/processing was treated as O(1), so total payload size L was omitted from the required expected O(L+N+M) analysis.
+- Review Debt: Open / High; formal assessment paused under §39.3 because the same structural error recurred.
+
+### Part G Extra B — External CP
+- Problem: AtCoder ABC073 C — Write and Erase
+- Result: VOID
+- Validation Tier: A
+- Difficulty: ~R2/I1
+- T_solve: 3:55
+- VOID Reason: §39.3 formal-assessment pause was already active after Extra A; therefore the submission cannot count as independent formal evidence.
+- Learning-mode review:
+  - container-selection reasoning is directionally correct: key-only membership/toggle state with no ordering requirement → `unordered_set`;
+  - the exact code does not compile under the required C++17 because `unordered_set::contains` is a C++20 member; `find` is required for C++17;
+  - complexity should be stated as expected O(N), worst-case O(N^2), not unconditional O(N);
+  - official constraints are N<=100000 and Ai<=1e9, so `int` is safe.
+- Review Debt: None from this VOID.
+- Reuse: prohibited for formal reassessment because the problem has now been exposed/reviewed.
+
 ---
 
 ## 7. Next Learning Action
@@ -239,7 +266,7 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
    - aggregate storage versus per-element storage;
    - `size_type` / signed-unsigned arithmetic conversion.
 4. After the remediation checkpoint is passed, use a **fresh equivalent** generated problem for the failed Extra A objective; do not reuse `Symbol Balance Queries` or `Reverse Archive Score`.
-5. Only after that fresh reassessment should the remaining S1-A Part G External CP problem resume.
+5. Only after that fresh reassessment should S1-A Part G resume with a **fresh External CP problem**; do not reuse AtCoder ABC073 C because it has already been exposed and reviewed.
 6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
    - at least 3 days have passed, or
    - at least two additional Learning Units have been studied,
