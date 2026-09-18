@@ -281,3 +281,10 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 - Extra FAIL does not retroactively cancel a Final PASS.
 - Immediate progression and long-term Confirmed mastery are tracked separately.
 - Calibration uses the latest compatible `CP_Calibration_Anchor_Registry`.
+
+
+### Targeted Remediation Checkpoint 2 — 2026-09-18
+- Topic: forward/reverse index, ordered unique relation storage, `map::value_type`, and `const auto&`.
+- Result: PASS (learning-mode; not formal mastery evidence).
+- Evidence: correctly identified the full-scan bottleneck of reverse queries, proposed `group -> users` as a reverse index, selected `map<int,set<int>>` for ordered unique relations, and explained why `const auto&` avoids hidden copies/type mismatch.
+- Next action: fresh External CP reassessment — AtCoder ABC253 C.
