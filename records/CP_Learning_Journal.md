@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Fresh External CP reassessment — AtCoder ABC217 D — Cutting Woods
+- Next Assessment: S1-A ordered-set remediation checkpoint before further formal reassessment — Cutting Woods
 - Priority Class: Core
 - Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
 - Last Updated: 2026-09-18
