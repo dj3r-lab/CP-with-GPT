@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Fresh S1-A Part G formal reassessment with entirely new GPT-generated + External CP problems
+- Next Assessment: Complete fresh External CP Extra (ABC298 C)
 - Priority Class: Core
 - Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
 - Last Updated: 2026-09-18
@@ -27,7 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High (checkpoint passed; transfer revalidation pending) | Fresh transfer reassessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; fresh GPT Extra FAIL; fresh External Extra FAIL; targeted remediation checkpoint PASS | Open — High | Fresh Part G formal reassessment with entirely new problems |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; targeted remediation PASS; fresh GPT Extra PASS; fresh External Extra pending | Open — Medium | Complete fresh External CP Extra |
 
 ---
 
@@ -50,14 +50,15 @@
 - Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
 - The same N-vs-L / aggregate-payload error recurred in S1-A Part G Extra A on 2026-09-18: string-key hash operations were treated as O(1) and L was omitted from the required time analysis. The debt was escalated to High. A remediation checkpoint on 2026-09-18 was subsequently passed: the learner correctly distinguished N/M from Lu/Lq/L, recognized constant-bounded string length as allowing O(N+M) while retaining L-based structural analysis, distinguished transient strings from accumulated container storage, and explained the state/space side effect of operator[]. Formal reassessment may resume, but the debt remains open pending fresh transfer evidence.
 
-### S1-A — High
+### S1-A — Medium
 - Part E and Part F PASS evidence remains valid; L4 Selection evidence is not revoked.
 - Fresh GPT Extra (`First Appearance Log`) used the correct `unordered_set<string>` and correctly accounted for total payload `L` in expected O(L+N) time and O(L) space, showing that the earlier N-vs-L error did not recur. The attempt still FAILed because the required worst-case unordered-container complexity was omitted and vector search complexity was misstated.
 - Fresh External CP (`AtCoder ABC235 C`) selected the appropriate `unordered_map<int, vector<int>>`, but FAILed on 0-based output, dereferencing `end()` when a key was absent, and copying the mapped vector on each query.
 - A targeted remediation checkpoint was then PASSed in learning mode: the learner correctly identified `find`/`end` safety, `i+1` for 1-based positions, vector copy as O(f) time and O(f) extra space, const-reference binding as O(1) time/space, and `unordered_map<int,...>` lookup as expected O(1) / worst-case O(K) for K stored keys.
-- Because this checkpoint used GPT explanation, it is not mastery evidence. The debt remains High until the same points transfer independently to a fresh formal problem.
+- Because this checkpoint used GPT explanation, it was not mastery evidence by itself.
+- Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgrades S1-A Review Debt from High to Medium while the External CP reassessment remains pending.
 
-Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A High). Because the remediation checkpoint was passed on 2026-09-18, the original §39.3 pause was lifted. However, both fresh Part G reassessments then failed: GPT Extra A on omitted worst-case unordered-container complexity, and External CP ABC235 C on 0-based indexing, end-iterator dereference, and per-query vector copying. The focused remediation review block was completed successfully on 2026-09-18. Formal reassessment may now resume with entirely fresh problems; the High S1-A Review Debt remains open until independent transfer is demonstrated.
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A Medium). After the targeted remediation block, the fresh GPT-generated formal reassessment `Active ID Registry` PASSed independently on 2026-09-18. The learner correctly distinguished expected O(Q) from worst-case O(Q^2) unordered-map behavior and maintained correct O(Q) space/numeric-safety reasoning. S1-A Review Debt is therefore downgraded High→Medium; the fresh External CP reassessment remains pending.
 
 ---
 
@@ -259,10 +260,10 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 
 ## 7. Next Learning Action
 
-1. The targeted remediation review block was **PASSed on 2026-09-18** in learning mode; formal assessment may resume.
-2. Use entirely fresh GPT-generated and External CP reassessment problems; do not reuse `Symbol Balance Queries`, `First Appearance Log`, ABC073 C, or ABC235 C.
-3. Keep the High S1-A Review Debt open until a fresh independent transfer problem is solved with correct implementation and complexity analysis.
-4. If the fresh formal reassessment is clean, downgrade or close only the debt directly supported by that evidence.
+1. The targeted remediation review block was **PASSed on 2026-09-18** in learning mode.
+2. Fresh GPT-generated reassessment `Active ID Registry` **PASSed** independently; expected/worst-case unordered-container analysis transferred correctly.
+3. Complete the already-issued fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem`.
+4. S1-A Review Debt is now **Medium**; close or further reduce it only if the external transfer is also clean.
 6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
    - at least 3 days have passed, or
    - at least two additional Learning Units have been studied,
