@@ -13,9 +13,9 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Part G — Adaptive Extra Problems
+- Next Assessment: Remediation checkpoint before further S1-A formal assessment
 - Priority Class: Core
-- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Parts A-D are complete; Part E Intermediate Assessment (Ticker Directory) PASSed on Attempt 1 and Part F Final Assessment (Live Value Pool) PASSed on Attempt 1 on 2026-09-18. Immediate coverage now includes ordered key→value selection and duplicate-preserving ordered-container selection. S1-A remains in progress; Part G is next.
+- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed.
 - Last Updated: 2026-09-18
 
 ---
@@ -26,8 +26,8 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
-| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Fresh transfer reassessment + delayed mixed assessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Immediate Coverage Floor satisfied | None | Part G + delayed/mixed coverage |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High | Immediate complexity remediation checkpoint + fresh transfer reassessment |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Part G Extra A FAIL; formal assessment paused for remediation | Open — High | S0-C complexity remediation checkpoint → fresh equivalent Extra A → remaining Part G |
 
 ---
 
@@ -40,7 +40,7 @@
 ### S0-B — Low
 - Character-boundary implementation: uppercase `Z` was omitted in AtCoder ABC104 B.
 
-### S0-C — Medium
+### S0-C — High
 - Part E and Part F established correct numeric-safety reasoning and resolved the earlier mixed-type promotion misconception.
 - GPT-generated Extra A (`Reverse Archive Score`) had correct submitted C++ code, but the formal analysis failed on transfer:
   - outputting all stored strings was treated as O(N), although writing all output characters costs O(L);
@@ -48,8 +48,14 @@
   - `std::string::size()` was treated as `int`; its actual type is `string::size_type`, so the usual arithmetic conversions must be checked explicitly.
 - External Extra B (`AtCoder ABC238 B — Pizza`) was passed independently, showing correct state tracking, sorting-based circular-gap evaluation, O(N log N) reasoning, and integer-range analysis.
 - Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
+- The same N-vs-L / aggregate-payload error recurred in S1-A Part G Extra A on 2026-09-18: string-key hash operations were treated as O(1) and L was omitted from the required time analysis. Because this is now a repeated structural complexity error in a Core prerequisite, the debt is escalated to High and prerequisite-blocking.
 
-Current unresolved Core Review Debt count: 3 entries (S0-B Medium, S0-B Low, S0-C Medium). This is below the v5.5 pause threshold (>4), and there is no unresolved High prerequisite-blocking debt, so new Core progression may continue.
+### S1-A — High
+- Part G GPT-generated Extra A (`Symbol Balance Queries`) had correct code, correct `unordered_map<string,long long>` selection, and correct numeric-safety reasoning, but the submitted complexity analysis was O(N+M) rather than the required expected O(L+N+M).
+- This debt is attributed to the inherited S0-C complexity weakness, not to associative-container selection.
+- Part E and Part F PASS evidence remains valid; the Final PASS is not revoked.
+
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A High). Because a High prerequisite-blocking Core debt is now open and the same structural error has repeated, further S1-A formal assessment is paused pending remediation.
 
 ---
 
@@ -149,8 +155,8 @@ Confidence Status: Provisional
 Evidence Context: Baseline + Immediate
 Unit Coverage Status: Complete for immediate progression; not yet Confirmed
 Review Debt: Open
-Review Debt Severity: Medium
-Retest Needed: Yes — fresh equivalent transfer/mixed reassessment for aggregate-size complexity and `size_type` arithmetic conversion
+Review Debt Severity: High
+Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent transfer/mixed reassessment for aggregate-size complexity, string hashing cost, and `size_type` arithmetic conversion
 
 ### Repeated weakness pattern
 - Early S0-C: global numeric upper bounds and intermediate-expression type safety.
@@ -225,19 +231,20 @@ Retest Needed: Yes — fresh equivalent transfer/mixed reassessment for aggregat
 
 ## 7. Next Learning Action
 
-1. Continue **S1-A — Associative Containers** with Part G Adaptive Extra Problems immediately after the Part F PASS.
-2. Do not block S1-A on the current Medium debt: unresolved Core debt count remains below the pause threshold and no High prerequisite debt exists.
-3. Schedule a fresh, unnamed mixed/transfer reassessment for the S0-B/S0-C aggregate-size debt. Do not reuse `Reverse Archive Score`.
-4. The reassessment must test:
+1. Pause further **S1-A formal assessment** under §39.3 because the same structural complexity error has now repeated across S0-B, S0-C, and S1-A transfer evidence.
+2. Backtrack temporarily to **S0-C — Complexity & Numeric Safety** for a remediation checkpoint focused on element count versus total payload size.
+3. The remediation checkpoint must explicitly test and explain:
    - `N` versus total payload size `L`;
    - cost of reading/copying/reversing/outputting strings or containers;
    - aggregate storage versus per-element storage;
    - `size_type` / signed-unsigned arithmetic conversion.
-5. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
+4. After the remediation checkpoint is passed, use a **fresh equivalent** generated problem for the failed Extra A objective; do not reuse `Symbol Balance Queries` or `Reverse Archive Score`.
+5. Only after that fresh reassessment should the remaining S1-A Part G External CP problem resume.
+6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
    - at least 3 days have passed, or
    - at least two additional Learning Units have been studied,
    with the S0-C topic not disclosed in advance.
-6. If that delayed mixed assessment passes, promote S0-C from **L3 / Provisional** to **L3 / Confirmed** and close any debt that the new evidence directly resolves.
+7. If the later delayed mixed assessment passes, promote S0-C from **L3 / Provisional** to **L3 / Confirmed** and close only the debt directly resolved by that evidence.
 
 ---
 
