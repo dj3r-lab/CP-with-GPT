@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Remediation checkpoint before further S1-A formal assessment
+- Next Assessment: Fresh S1-A Part G reassessment — GPT-generated Extra + fresh External CP Extra
 - Priority Class: Core
 - Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
 - Last Updated: 2026-09-18
@@ -26,8 +26,8 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
-| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High | Immediate complexity remediation checkpoint + fresh transfer reassessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Part G Extra A FAIL; Extra B VOID during pause | Open — High | S0-C complexity remediation checkpoint → fresh equivalent GPT Extra + fresh External CP Extra |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High (checkpoint passed; transfer revalidation pending) | Fresh transfer reassessment |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Part G Extra A FAIL; Extra B VOID; remediation checkpoint PASS | Open — High (formal reassessment resumed) | Fresh equivalent GPT Extra + fresh External CP Extra |
 
 ---
 
@@ -48,7 +48,7 @@
   - `std::string::size()` was treated as `int`; its actual type is `string::size_type`, so the usual arithmetic conversions must be checked explicitly.
 - External Extra B (`AtCoder ABC238 B — Pizza`) was passed independently, showing correct state tracking, sorting-based circular-gap evaluation, O(N log N) reasoning, and integer-range analysis.
 - Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
-- The same N-vs-L / aggregate-payload error recurred in S1-A Part G Extra A on 2026-09-18: string-key hash operations were treated as O(1) and L was omitted from the required time analysis. Because this is now a repeated structural complexity error in a Core prerequisite, the debt is escalated to High and prerequisite-blocking.
+- The same N-vs-L / aggregate-payload error recurred in S1-A Part G Extra A on 2026-09-18: string-key hash operations were treated as O(1) and L was omitted from the required time analysis. The debt was escalated to High. A remediation checkpoint on 2026-09-18 was subsequently passed: the learner correctly distinguished N/M from Lu/Lq/L, recognized constant-bounded string length as allowing O(N+M) while retaining L-based structural analysis, distinguished transient strings from accumulated container storage, and explained the state/space side effect of operator[]. Formal reassessment may resume, but the debt remains open pending fresh transfer evidence.
 
 ### S1-A — High
 - Part G GPT-generated Extra A (`Symbol Balance Queries`) had correct code, correct `unordered_map<string,long long>` selection, and correct numeric-safety reasoning, but the submitted complexity analysis was O(N+M) rather than the required expected O(L+N+M).
@@ -56,7 +56,7 @@
 - Part E and Part F PASS evidence remains valid; the Final PASS is not revoked.
 - The later AtCoder ABC073 C submission occurred after the §39.3 pause had already begun, so it is VOID rather than PASS/FAIL evidence. Learning-mode review found that the exact code uses `unordered_set::contains`, which is unavailable in C++17; use `find` for a C++17-compatible implementation. No new Review Debt is created from this VOID.
 
-Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A High). Because a High prerequisite-blocking Core debt is now open and the same structural error has repeated, further S1-A formal assessment is paused pending remediation.
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A High). Because the remediation checkpoint was passed on 2026-09-18, the §39.3 formal-assessment pause is lifted. The related Review Debt remains open until a fresh transfer assessment provides clean evidence.
 
 ---
 
@@ -258,15 +258,10 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 
 ## 7. Next Learning Action
 
-1. Pause further **S1-A formal assessment** under §39.3 because the same structural complexity error has now repeated across S0-B, S0-C, and S1-A transfer evidence.
-2. Backtrack temporarily to **S0-C — Complexity & Numeric Safety** for a remediation checkpoint focused on element count versus total payload size.
-3. The remediation checkpoint must explicitly test and explain:
-   - `N` versus total payload size `L`;
-   - cost of reading/copying/reversing/outputting strings or containers;
-   - aggregate storage versus per-element storage;
-   - `size_type` / signed-unsigned arithmetic conversion.
-4. After the remediation checkpoint is passed, use a **fresh equivalent** generated problem for the failed Extra A objective; do not reuse `Symbol Balance Queries` or `Reverse Archive Score`.
-5. Only after that fresh reassessment should S1-A Part G resume with a **fresh External CP problem**; do not reuse AtCoder ABC073 C because it has already been exposed and reviewed.
+1. The §39.3 remediation checkpoint was **PASSed on 2026-09-18**; formal assessment may resume.
+2. Reassess the failed Extra A objective using a **fresh GPT-generated problem**; do not reuse `Symbol Balance Queries` or `Reverse Archive Score`.
+3. Use a **fresh External CP problem** with a different learning-topic combination; do not reuse AtCoder ABC073 C because it has already been exposed and reviewed.
+4. Keep the High Review Debt open until clean fresh transfer evidence confirms the aggregate-size/string-cost analysis independently.
 6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
    - at least 3 days have passed, or
    - at least two additional Learning Units have been studied,
