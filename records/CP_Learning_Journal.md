@@ -13,9 +13,9 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Part F — Final Assessment
+- Next Assessment: Part G — Adaptive Extra Problems
 - Priority Class: Core
-- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Parts A-D are complete; Part E Intermediate Assessment (Ticker Directory) PASSed on Attempt 1 on 2026-09-18. S1-A remains in progress; Part F is next.
+- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Parts A-D are complete; Part E Intermediate Assessment (Ticker Directory) PASSed on Attempt 1 and Part F Final Assessment (Live Value Pool) PASSed on Attempt 1 on 2026-09-18. Immediate coverage now includes ordered key→value selection and duplicate-preserving ordered-container selection. S1-A remains in progress; Part G is next.
 - Last Updated: 2026-09-18
 
 ---
@@ -27,7 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Fresh transfer reassessment + delayed mixed assessment |
-| S1-A — Associative Containers | L3 | Provisional | Immediate | In Progress — Part E PASS; ordered-map selection boundary independently covered | None | Part F + remaining Core Decision Boundaries |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; Immediate Coverage Floor satisfied | None | Part G + delayed/mixed coverage |
 
 ---
 
@@ -197,11 +197,35 @@ Retest Needed: Yes — fresh equivalent transfer/mixed reassessment for aggregat
 - Review Debt: None opened by this assessment.
 - Retest Needed: No.
 
+### Final Assessment — Attempt 1
+- Problem: Live Value Pool
+- Result: PASS
+- Validation Tier: B
+- Difficulty: ~R2/I2
+- T_solve: 12:32
+- Hints: None
+- Assessment Mode: Independent
+- Validation Evidence: C++17 compile/sample check + 500 randomized differential cases
+- Positive evidence:
+  - correctly selected `multiset<int>` because duplicate occurrences must be preserved while minimum/maximum order queries are required;
+  - ADD, one-occurrence REMOVE, CHECK, and RANGE behavior are correct;
+  - correctly used iterator erase to delete exactly one duplicate rather than `erase(value)`, which would delete all equal values;
+  - O(Q log Q) total time and O(Q) storage are correct;
+  - integer ranges are safe in `int`.
+- Non-blocking implementation inefficiency: REMOVE performs `find(x)` twice; storing the iterator would avoid the second O(log Q) lookup without changing asymptotic complexity.
+- Edge-case handling in code is broader than the single reported case: empty RANGE, removing absent values, duplicate insertion/removal, and negative values are all handled.
+- Core Decision Boundary Coverage: value-only container; duplicates preserved; ordering/min-max required; dynamic updates → `multiset`.
+- Immediate Coverage Floor: Satisfied by Part E + Part F.
+- Capability: L4 — Selection.
+- Confidence: Provisional / Immediate.
+- Review Debt: None opened by this assessment.
+- Retest Needed: No.
+
 ---
 
 ## 7. Next Learning Action
 
-1. Continue **S1-A — Associative Containers** with Part F Final Assessment after the learner has finished reviewing the Part E result.
+1. Continue **S1-A — Associative Containers** with Part G Adaptive Extra Problems immediately after the Part F PASS.
 2. Do not block S1-A on the current Medium debt: unresolved Core debt count remains below the pause threshold and no High prerequisite debt exists.
 3. Schedule a fresh, unnamed mixed/transfer reassessment for the S0-B/S0-C aggregate-size debt. Do not reuse `Reverse Archive Score`.
 4. The reassessment must test:
