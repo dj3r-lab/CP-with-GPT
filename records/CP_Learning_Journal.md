@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Complete fresh External CP Extra (ABC298 C)
+- Next Assessment: Targeted remediation on bidirectional indexing and map value-type/reference semantics before fresh External CP reassessment
 - Priority Class: Core
 - Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
 - Last Updated: 2026-09-18
@@ -27,7 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High (checkpoint passed; transfer revalidation pending) | Fresh transfer reassessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; targeted remediation PASS; fresh GPT Extra PASS; fresh External Extra pending | Open — Medium | Complete fresh External CP Extra |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; targeted remediation PASS; fresh GPT Extra PASS; fresh External ABC298 C FAIL | Open — Medium | Remediate bidirectional indexing + map value_type/reference semantics |
 
 ---
 
@@ -56,9 +56,10 @@
 - Fresh External CP (`AtCoder ABC235 C`) selected the appropriate `unordered_map<int, vector<int>>`, but FAILed on 0-based output, dereferencing `end()` when a key was absent, and copying the mapped vector on each query.
 - A targeted remediation checkpoint was then PASSed in learning mode: the learner correctly identified `find`/`end` safety, `i+1` for 1-based positions, vector copy as O(f) time and O(f) extra space, const-reference binding as O(1) time/space, and `unordered_map<int,...>` lookup as expected O(1) / worst-case O(K) for K stored keys.
 - Because this checkpoint used GPT explanation, it was not mastery evidence by itself.
-- Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgrades S1-A Review Debt from High to Medium while the External CP reassessment remains pending.
+- Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgraded S1-A Review Debt from High to Medium.
+- Fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem` then FAILed on Complexity. The submitted `map<int, multiset<int>>` correctly represents sorted duplicate-preserving box contents, but type-3 queries scan all boxes instead of maintaining a reverse card→ordered unique boxes index. In addition, `const pair<int, multiset<int>>&` does not match `map<int,multiset<int>>::value_type` (`pair<const int,multiset<int>>`), so each range-for iteration constructs a temporary and copies the multiset. Type-2 traversal cost was also overstated as O(c log c); iterating an already ordered multiset is O(c) plus output.
 
-Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A Medium). After the targeted remediation block, the fresh GPT-generated formal reassessment `Active ID Registry` PASSed independently on 2026-09-18. The learner correctly distinguished expected O(Q) from worst-case O(Q^2) unordered-map behavior and maintained correct O(Q) space/numeric-safety reasoning. S1-A Review Debt is therefore downgraded High→Medium; the fresh External CP reassessment remains pending.
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer, but external ABC298 C exposed a separate associative-container composition gap: bidirectional indexing and hidden copy cost from mismatched map pair types. S1-A debt remains Medium.
 
 ---
 
@@ -262,8 +263,8 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 
 1. The targeted remediation review block was **PASSed on 2026-09-18** in learning mode.
 2. Fresh GPT-generated reassessment `Active ID Registry` **PASSed** independently; expected/worst-case unordered-container analysis transferred correctly.
-3. Complete the already-issued fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem`.
-4. S1-A Review Debt is now **Medium**; close or further reduce it only if the external transfer is also clean.
+3. `AtCoder ABC298 C — Cards Query Problem` **FAILed on Complexity**: type-3 queries lacked a reverse card→boxes index, and the range-for pair type caused hidden multiset copies.
+4. Run targeted remediation on bidirectional indexing, `map::value_type`, and reference-safe iteration, then use a completely fresh External CP problem. Keep S1-A Review Debt at **Medium** until that transfer is clean.
 6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
    - at least 3 days have passed, or
    - at least two additional Learning Units have been studied,
