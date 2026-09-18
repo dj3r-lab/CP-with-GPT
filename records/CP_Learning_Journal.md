@@ -12,10 +12,11 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
-- Next Learning Unit: S1-A — Associative Containers
+- Current Learning Unit: S1-A — Associative Containers
+- Next Assessment: Part F — Final Assessment
 - Priority Class: Core
-- Learning Status: S0-C Parts A-H complete. Part E PASS, Part F Final PASS, Part G complete with GPT-generated Extra A FAIL and External Tier A Extra B PASS. The S0-C immediate progression gate is satisfied. Stage 0 immediate progression coverage is complete, but Stage 0 confidence remains provisional pending delayed/mixed evidence.
-- Last Updated: 2026-09-17
+- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Parts A-D are complete; Part E Intermediate Assessment (Ticker Directory) PASSed on Attempt 1 on 2026-09-18. S1-A remains in progress; Part F is next.
+- Last Updated: 2026-09-18
 
 ---
 
@@ -26,6 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Fresh transfer reassessment + delayed mixed assessment |
+| S1-A — Associative Containers | L3 | Provisional | Immediate | In Progress — Part E PASS; ordered-map selection boundary independently covered | None | Part F + remaining Core Decision Boundaries |
 
 ---
 
@@ -168,10 +170,39 @@ Retest Needed: Yes — fresh equivalent transfer/mixed reassessment for aggregat
 
 ---
 
-## 6. Next Learning Action
+## 6. S1-A Formal Evidence — 2026-09-18
 
-1. Begin **S1-A — Associative Containers** as the next Core Learning Unit.
-2. Do not block S1-A on the current Medium debt: unresolved Core debt count is below the pause threshold and no High prerequisite debt exists.
+### Intermediate Assessment — Attempt 1
+- Problem: Ticker Directory
+- Result: PASS
+- Validation Tier: B
+- Difficulty: ~R2/I2
+- T_solve: 19:51
+- Hints: None
+- Assessment Mode: Independent
+- Tool / documentation note: the learner searched only C++ map-iterator member-access syntax (`it->first`, `it->second`) after independently choosing the data structure and solution. Documentation/internet use had not been prohibited for this assessment, and the search did not expose the problem solution/editorial; the attempt remains valid.
+- Positive evidence:
+  - correctly selected `map<string,int>` because the state is key→value and `FIRST` requires lexicographic ordering;
+  - correct SET overwrite, GET, ERASE, and FIRST behavior;
+  - submitted C++17 compiled and matched the sample and 200 randomized differential cases;
+  - O(N log N) total time bound and O(N) storage are valid under the stated key-length bound;
+  - numeric types are safe for the stated constraints.
+- Non-blocking imprecision:
+  - the explanation referred to N as though it could reach 1e9; the actual constraint is N<=200000, while x is bounded by 1e9. The int-safety conclusion remains correct;
+  - GET performs a second tree lookup via `ticker[s]` after `find`; this does not change the asymptotic bound and is not a correctness issue.
+- Core Decision Boundary Coverage: key→value; ordering required → ordered `map` instead of `unordered_map`; dynamic updates.
+- Unit Coverage: Incomplete for the multi-tool S1-A Unit; key-only set/unordered_set, duplicate-preserving multiset, and static sorted-vector vs dynamic ordered-container boundaries still require independent coverage.
+- Capability: L3 unit-level, with L4 Selection evidence on the ordering boundary.
+- Confidence: Provisional / Immediate.
+- Review Debt: None opened by this assessment.
+- Retest Needed: No.
+
+---
+
+## 7. Next Learning Action
+
+1. Continue **S1-A — Associative Containers** with Part F Final Assessment after the learner has finished reviewing the Part E result.
+2. Do not block S1-A on the current Medium debt: unresolved Core debt count remains below the pause threshold and no High prerequisite debt exists.
 3. Schedule a fresh, unnamed mixed/transfer reassessment for the S0-B/S0-C aggregate-size debt. Do not reuse `Reverse Archive Score`.
 4. The reassessment must test:
    - `N` versus total payload size `L`;
@@ -186,7 +217,7 @@ Retest Needed: Yes — fresh equivalent transfer/mixed reassessment for aggregat
 
 ---
 
-## 7. Operating Notes
+## 8. Operating Notes
 
 - Problem-level structured data belongs in `CP_Learning_Record.xlsx` -> `Assessments`.
 - Actual learner timer values are used for `T_solve`; chat intervals are never substituted.
