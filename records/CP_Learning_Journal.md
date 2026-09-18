@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
 - Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: Targeted remediation on multiset operation costs and amortized/global query accounting before fresh External CP reassessment
+- Next Assessment: Fresh External CP reassessment — AtCoder ABC217 D — Cutting Woods
 - Priority Class: Core
 - Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
 - Last Updated: 2026-09-18
@@ -27,7 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High (checkpoint passed; transfer revalidation pending) | Fresh transfer reassessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; fresh GPT Extra PASS; ABC298 C FAIL; remediation PASS; ABC253 C FAIL on complexity explanation | Open — Medium | Remediate multiset operation costs + amortized/global query accounting |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; fresh GPT Extra PASS; ABC298 C FAIL; ABC253 C code-correct/complexity FAIL; ordered-container remediation PASS | Open — Medium | Fresh External CP reassessment — ABC217 D |
 
 ---
 
@@ -59,7 +59,7 @@
 - Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgraded S1-A Review Debt from High to Medium.
 - Fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem` then FAILed on Complexity. The submitted `map<int, multiset<int>>` correctly represents sorted duplicate-preserving box contents, but type-3 queries scan all boxes instead of maintaining a reverse card→ordered unique boxes index. In addition, `const pair<int, multiset<int>>&` does not match `map<int,multiset<int>>::value_type` (`pair<const int,multiset<int>>`), so each range-for iteration constructs a temporary and copies the multiset. Type-2 traversal cost was also overstated as O(c log c); iterating an already ordered multiset is O(c) plus output.
 
-Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint also PASSed, but fresh External CP `AtCoder ABC253 C — Max - Min Query` then FAILed on complexity explanation despite correct code and correct `multiset` selection. The remaining S1-A debt is now concentrated on exact ordered-container operation costs and amortized/global query accounting.
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium until this transfers cleanly to a fresh External CP assessment.
 
 ---
 
@@ -266,7 +266,7 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 3. `AtCoder ABC298 C — Cards Query Problem` **FAILed on Complexity**: type-3 queries lacked a reverse card→boxes index, and the range-for pair type caused hidden multiset copies.
 4. The bidirectional-index / `map::value_type` remediation checkpoint subsequently **PASSed** in learning mode.
 5. Fresh External CP `AtCoder ABC253 C — Max - Min Query` produced correct code and correct `multiset` selection, but **FAILed on Complexity**: type-3 min/max access was analyzed as O(log|S|) instead of O(1), and the type-2 deletion-total derivation did not correctly distinguish `find` from `erase(iterator)` or sum successful removals across all queries.
-6. Run targeted remediation on ordered-container operation costs and amortized/global query accounting before any further external formal reassessment. Keep S1-A Review Debt at **Medium**.
+6. The ordered-container/global-accounting remediation checkpoint subsequently **PASSed** in learning mode. Fresh External CP reassessment is now authorized; keep S1-A Review Debt at **Medium** until clean independent transfer.
 6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
    - at least 3 days have passed, or
    - at least two additional Learning Units have been studied,
@@ -301,3 +301,10 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 - Blocking analysis errors: type-3 min/max access is O(1), not O(log|S|); `erase(iterator)` is amortized O(1) while `find` is O(log|S|); total type-2 work should be bounded by total successful deletions plus at most one failed `find` per type-2 query, yielding overall O(Q log Q).
 - Review Debt: Open / Medium.
 - Next action: targeted remediation on multiset operation costs and amortized/global query accounting, followed by a fresh External CP reassessment.
+
+
+### Targeted Remediation Checkpoint 3 — 2026-09-18
+- Topic: ordered-container operation costs and global/amortized accounting.
+- Result: PASS (learning-mode; not formal mastery evidence).
+- Evidence: correctly stated `find(x)=O(log|S|)`, `erase(iterator)=amortized O(1)`, `begin()/prev(end())=O(1)`, total successful erases <= total ADD count, and overall `O(Q log Q)`.
+- Next action: fresh External CP reassessment — AtCoder ABC217 D — Cutting Woods.
