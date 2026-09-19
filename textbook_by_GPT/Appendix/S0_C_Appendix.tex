@@ -1,0 +1,144 @@
+\chapter{빠른 Complexity \& Numeric Safety 참고}
+
+\section{대표 시간복잡도}
+\begin{longtable}{p{3.5cm}p{9.5cm}}
+\toprule
+\textbf{형태} & \textbf{대표 해석} \\
+\midrule
+$O(1)$ & 입력 크기와 무관한 상수 횟수 연산 \\
+$O(\log N)$ & 범위를 일정 비율로 줄이는 반복 \\
+$O(N)$ & 전체 입력을 한 번 순회 \\
+$O(N\log N)$ & comparison sort의 대표 비용 \\
+$O(N^2)$ & 모든 pair 또는 $N\times N$ 형태의 반복 \\
+\bottomrule
+\end{longtable}
+
+\section{여러 입력 크기 기호}
+\begin{lstlisting}
+// N strings
+int N;
+
+// total number of characters
+long long L = 0;
+
+// grouped input: total element count
+long long T = 0;
+\end{lstlisting}
+
+\[
+L=\sum_i |s_i|,
+\qquad
+T=\sum_g M_g.
+\]
+
+\section{STL 비용 빠른 참고}
+\begin{longtable}{p{4.5cm}p{8.5cm}}
+\toprule
+\textbf{연산} & \textbf{대표 비용} \\
+\midrule
+\code{v[i]} & $O(1)$ \\
+\code{v.size()} & $O(1)$ \\
+\code{push\_back} & amortized $O(1)$ \\
+전체 순회 & $O(N)$ \\
+\code{reverse(first,last)} & 범위 길이에 비례 \\
+\code{sort(first,last)} & $O(N\log N)$ \\
+\code{string} 복사 & 문자열 길이에 비례 \\
+문자열 출력 & 출력 문자 수에 비례 \\
+\bottomrule
+\end{longtable}
+
+\section{정수 범위}
+\begin{longtable}{p{3.2cm}p{4.5cm}p{5.8cm}}
+\toprule
+\textbf{타입} & \textbf{전형적 범위} & \textbf{대표 용도} \\
+\midrule
+\code{int} & 약 $\pm2.1\times10^9$ & 일반 정수, 작은 index/개수 \\
+\code{long long} & 약 $\pm9.22\times10^{18}$ & 큰 합, 큰 곱, 누적값 \\
+\code{size\_t} 계열 & unsigned, 구현 의존 폭 & container 크기와 size 반환형 \\
+\bottomrule
+\end{longtable}
+
+\section{unsafe multiplication과 early promotion}
+\begin{lstlisting}
+int a = 100000;
+int b = 100000;
+
+// Unsafe: a*b is evaluated as int first.
+long long x = a * b;
+
+// Safe if the long long result itself fits.
+long long y = 1LL * a * b;
+
+// Explicit cast alternative.
+long long z = static_cast<long long>(a) * b;
+\end{lstlisting}
+
+\section{cast 위치}
+\begin{lstlisting}
+// Too late if a+b can overflow as int.
+long long x = static_cast<long long>(a + b) * c;
+
+// Promote before the risky addition.
+long long y = (static_cast<long long>(a) + b) * c;
+\end{lstlisting}
+
+\section{나누기 전 intermediate 줄이기}
+\begin{lstlisting}
+long long a = n;
+long long b = n + 1;
+
+if (a % 2 == 0) a /= 2;
+else b /= 2;
+
+long long answer = a * b * value;
+\end{lstlisting}
+
+\section{Numeric-safety proof template}
+\begin{enumerate}
+  \item 각 입력 변수의 constraint를 적는다.
+  \item 최종 answer의 global upper bound를 적는다.
+  \item 실제 코드의 위험한 cumulative subexpression을 나열한다.
+  \item 각 subexpression의 valid upper bound를 계산한다.
+  \item 각 단계의 actual C++ result type을 적는다.
+  \item 그 타입의 capacity와 비교해 Safe/Unsafe를 결론낸다.
+\end{enumerate}
+
+\section{upper bound 계산 예시}
+\[
+a<2\times10^5,\quad b\le5\times10^4
+\]
+라면
+\[
+a^2b
+<(2\times10^5)^2(5\times10^4)
+=2\times10^{15}.
+\]
+
+계수와 $10$의 지수를 분리해 계산하고 마지막에 과학적 표기법으로 정규화하면 실수를 줄일 수 있다.
+
+\section{total space와 auxiliary space}
+입력 전체를 vector에 저장하고 scalar 몇 개만 추가로 사용한다면
+\[
+\text{total space}=O(N),\qquad
+\text{auxiliary space}=O(1).
+\]
+
+입력을 streaming으로 처리해 저장하지 않는다면 둘 다 $O(1)$일 수 있다.
+
+\section{문자열 aggregate size}
+$N$개의 문자열 총 길이가 $L$이면
+\begin{itemize}
+  \item 모든 문자열을 한 번씩 순회: $O(L)$
+  \item 모든 문자열을 뒤집기: $O(L)$
+  \item 모든 문자열의 문자를 출력: $O(L)$
+  \item \code{vector<string>}의 문자 payload 저장: $O(L)$
+  \item string object metadata까지 포함한 aggregate storage: $O(N+L)$
+\end{itemize}
+
+\section{\code{size()}와 타입}
+\begin{lstlisting}
+string s = "abc";
+auto n = s.size();
+\end{lstlisting}
+
+\code{n}은 일반적인 \code{int}가 아니라 \code{string::size\_type} 계열이다. signed \code{int}나 signed \code{long long}과 섞여 계산될 때 usual arithmetic conversion을 의식한다.

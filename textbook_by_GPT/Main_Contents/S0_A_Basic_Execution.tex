@@ -1,0 +1,986 @@
+% =========================================================
+% Front matter
+% =========================================================
+\frontmatter
+\begin{titlepage}
+  \centering
+  \vspace*{2.2cm}
+  {\Huge\bfseries Competitive Programming\par}
+  \vspace{0.35cm}
+  {\LARGE C++ 문제풀이 기반 교재\par}
+  \vspace{1.2cm}
+  {\large v5.5 Learning Unit Part A--H 구조 기반\par}
+  \vfill
+  {\large 개념 설명, Worked Example, 실제 평가 문제, 학습자 제출 답안 수록\par}
+  \vspace{1.0cm}
+\end{titlepage}
+
+\chapter*{이 책의 목적과 사용법}
+\addcontentsline{toc}{chapter}{이 책의 목적과 사용법}
+이 문서는 한 번의 학습 세션을 단순히 기록하는 문서가 아니라, 같은 내용을 다시 처음부터 공부할 수 있도록 재구성한 \textbf{교재}다. 구성은 최신 작업 규범 v5.4의 Learning Unit 구조인 Part A--H를 따른다. Stage 0에 들어가기 전에 실제로 사용한 Initial Baseline 문제도 별도의 진단 문제 모음으로 수록했다.
+
+이 책에서는 평가 판정, 난이도 판정, 통과 여부, 시간 기록, Review Debt와 같은 \textbf{개인 평가 결과를 싣지 않는다}. 대신 학습 과정에서 실제로 제시된 평가 문제는 모두 보존한다. 일부 문제 뒤에는 당시 학습자가 직접 제출한 답안을 함께 실었다. 답안이 수록되지 않은 문제에는 해설이나 정답을 추가하지 않았다.
+
+\begin{notebox}[자료 보존 원칙]
+일부 초기 문제는 당시 문제 원문 전체나 학습자 답안 문장이 현재 기록에 완전하게 남아 있지 않다. 이 경우에는 확인 가능한 문제 핵심 또는 답안의 보존된 요지만 수록하고, 누락된 제약이나 예시를 임의로 만들어 채우지 않는다.
+\end{notebox}
+
+\begin{keybox}[평가 문제를 풀 때의 기본 원칙]
+이 책에 실린 평가 문제를 다시 풀고 싶다면, 먼저 문제만 보고 독립적으로 해결한 뒤 답안이 수록된 문제만 비교하는 것을 권한다. 답안이 수록되지 않은 문제는 문제문만 남겨 두었으므로, 독립 재도전용으로 사용할 수 있다.
+\end{keybox}
+
+\tableofcontents
+
+\mainmatter
+
+% =========================================================
+% Stage -1 Baseline
+% =========================================================
+\part{Stage -1 --- Initial Baseline}
+\chapter{학습 시작점 진단 문제}
+
+\section{Baseline의 역할}
+Initial Baseline은 학습 전에 현재 상태를 확인하기 위한 진단이다. 여기서는 간단한 입력/반복/조건 처리, 시간복잡도 판단, 정수 overflow, 배열 문제의 계약 이해, C++ container 문법, 작은 상태를 이용한 문제 해결 능력을 폭넓게 확인한다.
+
+교재 관점에서 Baseline의 목적은 두 가지다. 첫째, 이후에 배울 개념이 왜 필요한지를 미리 드러낸다. 둘째, 같은 문제를 정답 암기로 해결하는 대신 새 문제에 개념을 전이할 수 있는지 확인하기 위한 출발점을 제공한다.
+
+\section{Foundation Check}
+
+\subsection{FC-1 --- 짝수의 개수와 합}
+\begin{problembox}{Foundation Check 1}
+정수 $N$과 이어서 $N$개의 정수 $x$가 주어진다. 짝수의 개수와 짝수들의 합을 출력한다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++로 완전한 프로그램을 작성한다.
+  \item 시간복잡도와 추가 공간복잡도를 설명한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+N <= 100000
+-1000000000 <= x <= 1000000000
+\end{TextBlock}
+\end{problembox}
+
+\subsection{FC-2 --- 기하급수적으로 증가하는 내부 반복문}
+\begin{problembox}{Foundation Check 2}
+바깥 반복문이 $N$회 실행된다. 각 바깥 반복마다 내부 변수 $j$는 1에서 시작하고, 매 반복마다 $j\mathrel{*}=2$로 두 배가 되며 $j\le N$인 동안 반복한다. 전체 시간복잡도를 구하고 이유를 설명하라.
+\end{problembox}
+
+\begin{answerbox}[학습자 답안 - 기록 보존 요지]
+내부 반복문은 $j=1,2,4,8,\dots$처럼 증가하므로 한 번의 바깥 반복에서 $O(\log N)$번 실행된다. 바깥 반복문은 $N$번 실행되므로 전체 시간복잡도는
+\[
+O(N\log N)
+\]
+이다.
+\end{answerbox}
+
+\subsection{FC-3 --- 대입 전에 발생하는 overflow}
+\begin{problembox}{Foundation Check 3}
+다음 코드는 안전한가? 문제가 있다면 원인을 설명하고 수정 방법을 제시하라.
+\begin{lstlisting}
+int a = 1000000000;
+int b = 1000000000;
+long long result = a * b;
+\end{lstlisting}
+\end{problembox}
+
+\begin{answerbox}[학습자 답안 - 기록 보존 요지]
+문제가 있다. \code{result}가 \code{long long}이어도 오른쪽의 \code{a * b}는 먼저 \code{int * int}로 계산되므로, 대입되기 전에 overflow가 발생할 수 있다. 연산 자체가 \code{long long}으로 이루어지도록 피연산자 중 하나 이상을 먼저 \code{long long}으로 승격해야 한다.
+
+예를 들어 다음과 같이 쓸 수 있다.
+\begin{lstlisting}
+long long result = 1LL * a * b;
+\end{lstlisting}
+\end{answerbox}
+
+\section{Baseline Problem A --- Squares of a Sorted Array}
+\begin{problembox}{문제 A}
+비내림차순으로 정렬된 정수 배열 \code{nums}가 주어진다. 각 원소를 제곱한 값들을 다시 비내림차순으로 정렬한 배열을 반환하라.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++로 해결 방법을 작성한다.
+  \item 시간복잡도와 공간복잡도를 설명한다.
+\end{itemize}
+\end{problembox}
+
+\section{Baseline Problem B --- Remove Duplicates from Sorted Array}
+\begin{problembox}{문제 B}
+비내림차순으로 정렬된 정수 배열 \code{nums}가 주어진다. 중복 원소를 제거하되 별도의 결과 배열을 만드는 대신 \textbf{주어진 배열 자체}의 앞부분을 수정해야 한다. 서로 다른 원소의 개수를 $k$라고 할 때, 배열의 처음 $k$개 위치에는 각 고유 원소가 한 번씩 나타나야 한다. $k$를 반환하라.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item in-place 조건을 지켜야 한다.
+  \item 시간복잡도와 추가 공간복잡도를 설명한다.
+\end{itemize}
+\end{problembox}
+
+\section{Baseline Problem C --- Increasing Triplet Subsequence}
+\begin{problembox}{문제 C}
+정수 배열 \code{nums}가 주어진다. 인덱스 $i<j<k$가 존재하여
+\[
+\code{nums}[i] < \code{nums}[j] < \code{nums}[k]
+\]
+를 만족하면 \code{true}, 그렇지 않으면 \code{false}를 반환하라.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item 목표 시간복잡도: $O(N)$
+  \item 목표 추가 공간복잡도: $O(1)$
+\end{itemize}
+\end{problembox}
+
+% =========================================================
+% Stage 0 S0-A
+% =========================================================
+\part{Stage 0 --- C++ 문제풀이 기반}
+\chapter{S0-A --- C++ Basic Execution}
+
+% =========================================================
+% Part A
+% =========================================================
+\section{Part A --- 위치와 선수지식}
+
+\subsection{현재 위치}
+Stage 0은 이후의 모든 알고리즘 학습에 앞서 C++로 정답 코드를 안정적으로 표현하기 위한 구간이다. 이번 Learning Unit인 S0-A는 다음 내용을 다룬다.
+\begin{itemize}
+  \item 표준 입력과 출력
+  \item 기본 자료형과 변수
+  \item 조건문
+  \item 반복문
+  \item 함수
+  \item scalar 상태를 이용한 기본 상태 전이
+\end{itemize}
+
+다음 Learning Unit인 S0-B에서는 \code{string}, \code{array}, \code{vector}, \code{pair}, iterator, range-for, \code{sort}, \code{reverse}, comparator, reference와 \code{const}를 다룬다. S0-C에서는 Big-O, 입력 크기와 실행 가능성, 정수 범위와 overflow를 더 체계적으로 다룬다.
+
+\subsection{왜 지금 배우는가}
+Competitive Programming에서는 알고리즘 아이디어만 맞는 것으로 충분하지 않다. 입력을 정확히 읽고, 현재 상태를 올바르게 유지하며, 조건을 정확한 순서로 적용하고, 마지막에 요구 형식대로 출력해야 실제 정답이 된다.
+
+예를 들어 다음과 같은 실수는 고급 알고리즘을 몰라서 생기지 않는다.
+\begin{itemize}
+  \item \code{N}을 읽지 않아 반복문이 한 번도 실행되지 않는다.
+  \item 첫 원소만 특별 취급하면서 모든 원소에 적용되어야 할 규칙을 빠뜨린다.
+  \item 조건문에서 값을 올바르게 설정한 뒤 바로 다음 줄에서 다시 덮어쓴다.
+  \item 누적합을 \code{int}에 저장해 overflow가 발생한다.
+  \item 현재 연속 길이를 언제 늘리고 언제 0 또는 1로 되돌려야 하는지 정의하지 않는다.
+\end{itemize}
+
+S0-A의 목표는 이런 기본 실행 오류를 줄이고, 이후의 자료구조와 알고리즘을 코드로 옮길 수 있는 안정적인 기반을 만드는 것이다.
+
+\subsection{선수지식}
+복잡한 알고리즘 지식은 필요하지 않다. 다음 정도를 알고 있으면 충분하다.
+\begin{itemize}
+  \item C++ 프로그램이 \code{main()}에서 시작한다는 사실
+  \item 정수와 실수를 변수에 저장할 수 있다는 사실
+  \item 간단한 산술연산과 비교연산의 의미
+\end{itemize}
+
+% =========================================================
+% Part B
+% =========================================================
+\section{Part B --- 학습 목표}
+이 Unit을 마치면 다음 행동을 독립적으로 수행할 수 있어야 한다.
+
+\begin{enumerate}
+  \item 입력 형식에 맞추어 \code{cin}으로 값을 빠짐없이 읽는다.
+  \item \code{int}, \code{long long}, \code{double}, \code{char}, \code{bool} 중 상황에 맞는 기본 자료형을 선택한다.
+  \item initialization과 assignment를 구분하고, 변수를 안전한 초기 상태로 시작한다.
+  \item \code{if}, \code{else if}, \code{else}로 규칙의 우선순위를 정확히 표현한다.
+  \item \code{for} 또는 \code{while}로 정확히 필요한 횟수만큼 입력을 처리한다.
+  \item 반복 중 유지할 상태 변수의 의미를 문장으로 정의한다.
+  \item 상태를 extend, reset, start-new 중 어떤 방식으로 바꿔야 하는지 판단한다.
+  \item 필요할 때 의미 있는 helper function을 정의하고 호출한다.
+  \item 간단한 single-pass 프로그램의 시간복잡도와 추가 공간복잡도를 설명한다.
+  \item 최소 입력, 0, 부호 변화, reset 지점, 첫 transition 같은 edge case를 직접 구성해 검사한다.
+\end{enumerate}
+
+% =========================================================
+% Part C
+% =========================================================
+\section{Part C --- 개념과 원리}
+
+\subsection{C1. 프로그램을 상태 전이로 바라보기}
+S0-A에서 가장 중요한 관점은 프로그램을 다음 네 단계로 보는 것이다.
+\[
+\text{Input} \longrightarrow \text{State} \longrightarrow \text{Transition} \longrightarrow \text{Output}
+\]
+
+입력은 단순한 숫자의 나열이 아니다. 입력을 읽으면 프로그램 내부의 상태가 바뀌고, 그 상태가 다음 입력을 처리할 기준이 된다. 특히 한 번의 순회로 해결하는 문제에서는 \textbf{현재까지의 정보를 몇 개의 변수에 압축하여 유지하는 것}이 핵심이다.
+
+예를 들어 지금까지 읽은 수의 합만 필요하다면 과거 원소를 모두 저장할 필요가 없다.
+\begin{lstlisting}
+long long sum = 0;
+for (int i = 0; i < N; ++i) {
+    long long x;
+    cin >> x;
+    sum += x;
+}
+\end{lstlisting}
+이때 \code{sum}은 ``지금까지 읽은 값들의 합''이라는 명확한 의미를 가진다.
+
+\subsection{C2. \code{cin}과 입력 스트림}
+\code{cin >> x}는 ``사용자에게 한 줄을 입력받는다''라는 명령이라기보다, 표준 입력 스트림에서 \code{x}의 자료형으로 읽을 수 있는 다음 값을 가져오는 연산이다.
+
+예를 들어
+\begin{lstlisting}
+int a, b;
+cin >> a;
+cin >> b;
+\end{lstlisting}
+에서 입력이
+\begin{TextBlock}
+10 20
+\end{TextBlock}
+이어도 되고,
+\begin{TextBlock}
+10
+20
+\end{TextBlock}
+이어도 된다. 정수 입력에서 공백, 탭, 줄바꿈은 모두 값 사이의 구분자로 작동한다.
+
+따라서 Competitive Programming에서는 문제의 입력 형식을 보고 필요한 값을 정확한 순서로 읽는 것이 중요하다.
+
+\begin{conceptbox}[입력 계약]
+문제가 ``첫 줄에 $N$, 다음에 $N$개의 정수''라고 말한다면 프로그램은 먼저 \code{N}을 읽고, 그 뒤 정확히 $N$개의 값을 읽어야 한다. \code{N}을 0으로 초기화하는 것과 \code{cin >> N;}으로 실제 입력을 읽는 것은 완전히 다른 일이다.
+\end{conceptbox}
+
+\subsection{C3. 변수, 초기화, 대입}
+변수는 현재 상태를 저장하는 이름 붙은 공간이다.
+\begin{lstlisting}
+int count = 0;      // initialization
+count = count + 1;  // assignment
+\end{lstlisting}
+
+초기화는 변수가 처음 만들어질 때 시작값을 정한다. 대입은 이미 존재하는 변수의 값을 바꾼다. 반복문에서 쓰는 상태 변수는 초기값이 곧 알고리즘의 시작 상태이므로 특히 중요하다.
+
+예를 들어 ``현재까지 음수인 잔고가 연속된 길이''를 저장한다면 시작 전에는 아직 어떤 거래도 처리하지 않았으므로 자연스러운 초기값은 0이다.
+
+\subsection{C4. 기본 자료형과 선택 기준}
+S0-A에서 자주 쓰는 기본 자료형은 다음과 같다.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+자료형 & 대표 용도 & 예시 \\
+\midrule
+\code{int} & 작은 정수, 인덱스, 개수 & $N$, loop index \\
+\code{long long} & 큰 정수, 누적합, 곱 & 최대 $10^{14}$ 규모의 합 \\
+\code{double} & 실수 & 비율, 평균 \\
+\code{char} & 문자 하나 & 연산자, 알파벳 \\
+\code{bool} & 참/거짓 & 조건 판정 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+자료형을 고를 때는 입력 하나의 범위만 보지 말고 \textbf{연산 결과의 최대 범위}를 봐야 한다. 예를 들어 $N\le 10^5$, $|x_i|\le 10^9$이면 누적합은 최대 약 $10^{14}$이므로 \code{int}가 아니라 \code{long long}이 필요하다.
+
+\subsection{C5. 연산은 대입 전에 평가된다}
+다음 코드를 보자.
+\begin{lstlisting}
+int a = 1000000000;
+int b = 1000000000;
+long long result = a * b;
+\end{lstlisting}
+\code{result}가 \code{long long}이라고 해서 안전하지 않다. \code{a * b}가 먼저 \code{int} 연산으로 계산된 뒤 그 결과가 \code{long long}에 대입되기 때문이다.
+
+따라서 다음처럼 연산 전에 타입을 올려야 한다.
+\begin{lstlisting}
+long long result = 1LL * a * b;
+\end{lstlisting}
+
+\subsection{C6. 조건문은 규칙의 우선순위를 코드로 옮긴다}
+문제의 규칙이
+\begin{quote}
+$x<0$이면 $-x$, 그렇지 않고 짝수이면 $x/2$, 그 외에는 $2x$
+\end{quote}
+라면 코드도 같은 우선순위를 가져야 한다.
+\begin{lstlisting}
+if (x < 0) {
+    ...
+}
+else if (x % 2 == 0) {
+    ...
+}
+else {
+    ...
+}
+\end{lstlisting}
+
+\code{else if}는 앞 조건이 거짓일 때만 검사된다. 따라서 ``음수이면서 짝수''인 값도 첫 번째 규칙에 의해 처리된다.
+
+\subsection{C7. branch 안의 올바른 값을 뒤에서 덮어쓰지 않는가}
+조건문에서 자주 생기는 오류는 올바른 값을 계산한 뒤 무조건 대입으로 다시 덮어쓰는 것이다.
+\begin{lstlisting}
+if (condition) {
+    current = 1;
+}
+current = 0;  // 위에서 정한 값을 무조건 덮어쓴다.
+\end{lstlisting}
+
+코드를 읽을 때는 ``이 branch가 끝난 뒤 변수 값이 최종적으로 무엇인가?''를 확인해야 한다. 각 대입을 독립적으로 보는 대신, 한 iteration이 끝났을 때의 상태를 추적하는 습관이 필요하다.
+
+\subsection{C8. 반복문은 같은 코드의 반복이 아니라 상태 전이의 반복이다}
+\code{for}문을 ``$N$번 실행''이라고만 이해하면 중요한 부분을 놓치기 쉽다. 더 좋은 관점은 다음과 같다.
+
+\begin{quote}
+각 iteration 시작 시 상태가 어떤 의미를 가지고 있고, 새 입력을 처리한 뒤 그 의미가 유지되도록 상태를 갱신한다.
+\end{quote}
+
+예를 들어 running balance 문제에서
+\begin{quote}
+\code{B}: 다음 거래를 처리하기 직전의 현재 잔고
+\end{quote}
+라고 정의하면 초기값 \code{B=0}도 정상적인 상태다. 그러면 첫 거래 역시 이후 거래와 같은 규칙으로 처리해야 한다는 사실이 자연스럽게 보인다.
+
+\subsection{C9. 상태 변수의 invariant}
+Invariant는 반복 도중 항상 참이어야 하는 상태의 의미다. 복잡한 수학적 문장일 필요는 없다. S0-A에서는 다음처럼 간단한 문장도 강력하다.
+
+\begin{conceptbox}[예시 invariant]
+\code{current}: 현재 원소에서 끝나는, 조건을 만족하는 가장 긴 연속 구간의 길이.
+\end{conceptbox}
+
+이 정의가 있으면 새 원소를 만났을 때 세 가지 질문을 할 수 있다.
+\begin{enumerate}
+  \item 기존 구간을 연장할 수 있는가? $\rightarrow$ \code{current += 1}
+  \item 현재 원소가 조건을 깨는 값인가? $\rightarrow$ \code{current = 0}
+  \item 기존 구간은 끊기지만 현재 원소에서 새 구간을 시작할 수 있는가? $\rightarrow$ \code{current = 1}
+\end{enumerate}
+
+이 세 경우를 구분하지 않으면 0, 같은 부호, 첫 원소 같은 경계에서 오류가 발생하기 쉽다.
+
+\subsection{C10. 첫 원소를 특별 취급할 때의 위험}
+첫 원소를 별도로 처리하는 것 자체가 나쁜 것은 아니다. 문제는 첫 원소를 따로 빼면서 \textbf{모든 원소에 적용되어야 하는 규칙까지 건너뛰는 것}이다.
+
+예를 들어 초기 잔고가 0이고 ``거래 직전 잔고가 0 이하, 거래 직후 양수''가 되는 순간을 세는 문제라면 첫 거래에서도 이 조건을 검사해야 한다. 첫 거래를
+\begin{lstlisting}
+if (i == 1) {
+    balance = x;
+}
+\end{lstlisting}
+처럼 통째로 별도 처리하면 첫 transition에 적용되어야 할 규칙이 빠질 수 있다.
+
+더 안전한 설계는 가능한 한 모든 iteration에 같은 transition을 적용하고, 정말 필요한 상태만 따로 초기화하는 것이다.
+
+\subsection{C11. 함수는 의미 있는 단위를 분리할 때 사용한다}
+함수의 기본 형태는 다음과 같다.
+\begin{lstlisting}
+return_type function_name(parameters) {
+    // work
+    return value;
+}
+\end{lstlisting}
+
+함수는 다음과 같은 경우에 유용하다.
+\begin{itemize}
+  \item 같은 로직을 여러 번 재사용할 때
+  \item 하나의 의미 있는 판정이나 변환을 이름으로 표현하고 싶을 때
+  \item 재귀, DFS, comparator처럼 독립된 동작이 자연스러울 때
+  \item \code{main()}이 지나치게 길어져 기능별 분리가 필요할 때
+\end{itemize}
+
+하지만 \code{x > y} 한 줄을 단지 ``함수를 하나 만들어야 한다''는 조건 때문에 함수로 감싸는 것은 좋은 추상화가 아니다.
+\begin{lstlisting}
+bool greaterThan(long long x, long long y) {
+    return x > y;
+}
+\end{lstlisting}
+이 함수가 틀린 것은 아니지만, 코드의 의미를 크게 개선하지 않는다.
+
+\begin{keybox}[함수 사용 원칙]
+함수는 개수가 중요한 것이 아니라 \textbf{의미 있는 책임을 분리하는가}가 중요하다. 이후 문제에서는 함수 정의 자체가 학습목표이거나 문제 구조상 함수 분리가 자연스러운 경우에만 별도 함수 사용을 강제한다.
+\end{keybox}
+
+\subsection{C12. 시간복잡도: 반복 횟수와 연산 비용}
+한 번의 \code{for}문이 $N$번 실행되고 각 iteration에서 상수 시간 연산만 수행한다면 전체 시간복잡도는 $O(N)$이다.
+\begin{lstlisting}
+for (int i = 0; i < N; ++i) {
+    cin >> x;
+    sum += x;
+}
+\end{lstlisting}
+
+반면 내부 반복 횟수가 $1,2,4,8,\dots$처럼 증가한다면 내부 반복은 $O(\log N)$이고, 이것이 바깥 $N$회 반복 안에 있다면 $O(N\log N)$이 된다.
+
+중요한 것은 ``코드 줄 수''가 아니라 각 연산이 몇 번 실행되는가를 보는 것이다.
+
+\subsection{C13. 추가 공간복잡도: 입력 크기에 따라 늘어나는 저장공간}
+\code{int}, \code{long long} 변수 몇 개만 사용하는 것은 $N$이 커져도 변수 개수가 늘어나지 않으므로 $O(1)$ 추가 공간이다.
+
+반면 입력 $N$개를 \code{vector}에 모두 저장하면 추가 공간은 $O(N)$이다. 과거 원소를 다시 사용할 필요가 없다면 입력을 읽는 즉시 처리하여 $O(1)$ 공간으로 줄일 수 있다.
+
+\subsection{C14. Edge case는 마지막 장식이 아니라 correctness 검증이다}
+좋은 코드는 예시 입력 하나를 통과하는 코드가 아니라, 문제의 모든 조건에서 규칙이 유지되는 코드다. 최종 제출 전에 최소한 다음 유형을 직접 확인한다.
+
+\begin{itemize}
+  \item \textbf{최소 크기}: $N=1$
+  \item \textbf{조건을 전혀 만족하지 않는 경우}: 모두 0, 모두 같은 부호 등
+  \item \textbf{조건을 계속 만족하는 경우}: 끝까지 증가, 끝까지 부호 교대 등
+  \item \textbf{reset 경계}: 유효 구간 중간에 0 또는 규칙 위반 값이 등장
+  \item \textbf{첫 transition}: 초기 상태에서 첫 입력으로 넘어갈 때 조건이 발생하는가
+  \item \textbf{수치 경계}: $\pm 10^9$ 등 제약의 끝값
+\end{itemize}
+
+\subsection{C15. 손으로 trace하는 방법}
+상태 전이 문제에서 가장 효과적인 디버깅 방법 중 하나는 표를 만드는 것이다.
+
+예를 들어 초기 잔고가 0이고 입력이 \code{5 -10 7}이라고 하자. 잔고가 0 이하에서 양수로 바뀌는 횟수를 센다면 다음처럼 추적할 수 있다.
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+입력 & 처리 전 잔고 & 처리 후 잔고 & 전환 횟수 \\
+\midrule
+5 & 0 & 5 & 1 \\
+-10 & 5 & -5 & 1 \\
+7 & -5 & 2 & 2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+이 표는 첫 거래도 정상적인 transition이라는 점을 분명하게 보여준다.
+
+\subsection{C16. 제출 직전의 짧은 검증 루틴}
+코드를 다 작성한 직후에는 다음 순서로 확인한다.
+\begin{enumerate}
+  \item 입력 개수와 반복 횟수가 맞는가?
+  \item 각 상태 변수의 의미를 한 문장으로 설명할 수 있는가?
+  \item 첫 iteration에도 적용되어야 할 규칙을 우회하지 않았는가?
+  \item 조건문의 한 branch에서 만든 값을 뒤에서 덮어쓰지 않는가?
+  \item $N=1$을 직접 넣었는가?
+  \item reset을 일으키는 값을 넣었는가?
+  \item 누적합이나 곱의 최대 범위가 자료형 안에 들어가는가?
+  \item 요구 시간/공간복잡도를 만족하는가?
+\end{enumerate}
+
+% =========================================================
+% Part D Worked Example
+% =========================================================
+\section{Part D --- Worked Example}
+
+\subsection*{D1. 문제}
+\begin{problembox}{Worked Example --- 양수의 합}
+정수 $N$과 이어서 $N$개의 정수가 주어진다. 양수인 값만 모두 더해 합을 출력하라.
+
+\textbf{구현 조건}
+\begin{itemize}
+  \item 입력을 한 번씩 처리하는 방법을 우선 생각한다.
+  \item 합이 커질 수 있으므로 안전한 자료형을 선택한다.
+\end{itemize}
+\end{problembox}
+
+\subsection*{D2. Brute Force}
+가장 직접적인 방법은 모든 값을 배열에 저장한 뒤, 다시 배열을 순회하며 양수만 더하는 것이다. 이 방법은 정답을 구할 수 있다.
+
+\subsection*{D3. Complexity}
+값 $N$개를 저장하고 다시 한 번 순회하면 시간복잡도는 $O(N)$이고 추가 공간복잡도는 $O(N)$이다.
+
+\subsection*{D4. Bottleneck}
+시간은 이미 선형이므로 큰 문제가 없다. 하지만 이 문제에서는 과거의 모든 원소를 나중에 다시 볼 필요가 없다. 따라서 $O(N)$ 저장공간은 불필요하다.
+
+\subsection*{D5. 핵심 관찰}
+현재 입력 \code{x}가 양수인지 여부만 알면, 그 자리에서 바로 합에 반영할 수 있다. 과거 원소 자체는 더 이상 필요하지 않다.
+
+\subsection*{D6. 알고리즘 설계}
+\begin{enumerate}
+  \item $N$을 읽는다.
+  \item \code{sum = 0}으로 시작한다.
+  \item $N$번 반복하며 \code{x}를 하나 읽는다.
+  \item \code{x > 0}이면 \code{sum += x}를 수행한다.
+  \item 반복이 끝나면 \code{sum}을 출력한다.
+\end{enumerate}
+
+\subsection*{D7. 정확성}
+각 입력은 정확히 한 번 처리된다. 양수인 입력은 한 번씩 \code{sum}에 더해지고, 0이나 음수는 더해지지 않는다. 따라서 반복 종료 후 \code{sum}은 정확히 모든 양수의 합이다.
+
+\subsection*{D8. C++ 구현}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+int main() {
+    int N;
+    cin >> N;
+
+    long long sum = 0;
+    for (int i = 0; i < N; ++i) {
+        long long x;
+        cin >> x;
+        if (x > 0) {
+            sum += x;
+        }
+    }
+
+    cout << sum << '\n';
+}
+\end{lstlisting}
+
+\subsection*{D9. Trace}
+입력이 \code{-2, 5, 0, 7}이라면 \code{sum}은 다음처럼 변한다.
+\begin{center}
+\begin{tabular}{rr}
+\toprule
+현재 입력 & sum \\
+\midrule
+-2 & 0 \\
+5 & 5 \\
+0 & 5 \\
+7 & 12 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{D10. Edge Cases}
+\begin{itemize}
+  \item $N=1$, 입력이 양수
+  \item $N=1$, 입력이 0
+  \item 모든 값이 음수
+  \item 모든 값이 양수
+  \item 큰 양수들이 반복되어 합이 \code{int} 범위를 넘는 경우
+\end{itemize}
+
+% =========================================================
+% Part E
+% =========================================================
+\section{Part E --- 중간평가 문제}
+
+\subsection{E-1. 양의 3의 배수 개수와 합}
+\begin{problembox}{중간평가 문제 E-1}
+$N$개의 정수를 읽고, \textbf{양수이면서 3의 배수인 값}들의 개수와 합을 출력하라.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item 당시 문제에서는 \code{main()} 이외의 helper function을 직접 정의하고 실제로 사용하도록 요구했다.
+\end{itemize}
+\end{problembox}
+
+\begin{notebox}[원문 보존 상태]
+이 문제의 당시 전체 제약 조건과 sample은 현재 기록에 완전하게 남아 있지 않다. 따라서 확인 가능한 핵심 요구사항만 수록했다.
+\end{notebox}
+
+\subsection{E-2. 부호/짝홀 변환 후 합}
+\begin{problembox}{중간평가 문제 E-2}
+정수 $N$과 이어서 $N$개의 정수 $x$가 주어진다. 각 $x$를 다음 규칙으로 변환한 뒤 모든 변환값의 합을 출력하라.
+\begin{itemize}
+  \item $x<0$이면 $-x$
+  \item 그렇지 않고 $x$가 짝수이면 $x/2$
+  \item 그 외에는 $2x$
+\end{itemize}
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20
+  \item \code{main()} 이외의 helper function을 하나 이상 정의하고 실제로 사용한다.
+  \item 시간복잡도와 공간복잡도를 설명한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+N <= 100000
+-1000000 <= x <= 1000000
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+long long func(long long x) {
+    long long result = 0;
+    if (x < 0) {
+        result = -x;
+    }
+    else if (x % 2 == 0) {
+        result = x / 2;
+    }
+    else {
+        result = 2 * x;
+    }
+    return result;
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    long long sum = 0;
+    for (int i = 1; i <= N; i += 1) {
+        long long x = 0;
+        cin >> x;
+        sum += func(x);
+    }
+    cout << sum;
+}
+\end{lstlisting}
+
+\textbf{함수의 역할}: \code{func}는 입력된 하나의 정수에 문제의 변환 규칙을 적용한 값을 반환한다.
+
+\textbf{시간복잡도}: 반복문이 $N$번 실행되고 각 iteration의 연산은 $O(1)$이므로 총 $O(N)$이다.
+
+\textbf{공간복잡도}: 입력 전체를 저장하지 않고 몇 개의 scalar 변수만 사용하므로 $O(1)$이다.
+
+\textbf{당시 직접 확인한 edge case}: 없음.
+\end{answerbox}
+
+% =========================================================
+% Part F
+% =========================================================
+\section{Part F --- 최종 성취도 평가 문제}
+
+\subsection{F-1. 부호 교대 구간}
+\begin{problembox}{최종평가 문제 F-1}
+정수 $N$과 이어서 $N$개의 정수가 주어진다. 다음 두 조건을 모두 만족하는 \textbf{연속 구간}의 최대 길이를 출력하라.
+\begin{enumerate}
+  \item 구간 안에 0이 없다.
+  \item 인접한 두 수의 부호가 항상 반대다.
+\end{enumerate}
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20
+  \item 당시 문제에서는 \code{main()} 이외의 함수를 최소 하나 정의하고 실제로 사용하도록 요구했다.
+  \item 요구 시간복잡도: $O(N)$
+  \item 요구 추가 공간복잡도: $O(1)$
+  \item 완성 코드, 함수 역할, 시간복잡도, 공간복잡도, 직접 확인한 edge case를 제출한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+-1000000000 <= x <= 1000000000
+\end{TextBlock}
+
+\textbf{예시 입력}
+\begin{TextBlock}
+8
+1 -2 3 4 -5 6 0 -7
+\end{TextBlock}
+
+\textbf{예시 출력}
+\begin{TextBlock}
+3
+\end{TextBlock}
+\end{problembox}
+
+\subsection{F-2. 잔고 회복 횟수와 최대 잔고}
+\begin{problembox}{최종평가 문제 F-2}
+초기 잔고는 0이다. 정수 $N$과 이어서 $N$개의 정수 $x$가 주어진다. 각 $x$를 순서대로 잔고에 더한다.
+
+각 거래를 처리할 때,
+\begin{itemize}
+  \item 거래 직전 잔고가 0 이하이고
+  \item 거래 직후 잔고가 양수라면
+\end{itemize}
+이를 \textbf{recovery} 1회라고 정의한다.
+
+모든 거래를 처리한 뒤 다음 두 값을 출력하라.
+\begin{enumerate}
+  \item recovery가 발생한 총 횟수
+  \item 모든 거래 직후 잔고들 중 가장 큰 값
+\end{enumerate}
+초기 잔고 0은 두 번째 값의 후보에 포함하지 않는다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20
+  \item 당시 문제에서는 \code{main()} 이외의 함수를 최소 하나 정의하고 실제로 사용하도록 요구했다.
+  \item 요구 시간복잡도: $O(N)$
+  \item 요구 추가 공간복잡도: $O(1)$
+  \item 완성 코드, 함수 역할, 시간복잡도, 공간복잡도, 직접 확인한 edge case를 제출한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+-1000000000 <= x <= 1000000000
+\end{TextBlock}
+
+\textbf{예시 입력}
+\begin{TextBlock}
+7
+-3 5 -4 1 2 -10 12
+\end{TextBlock}
+
+거래 후 잔고는 \code{-3, 2, -2, -1, 1, -9, 3}이다.
+
+\textbf{예시 출력}
+\begin{TextBlock}
+3 3
+\end{TextBlock}
+\end{problembox}
+
+\subsection{개념 보강: 초기 상태와 첫 transition}
+F-2와 같은 문제에서는 초기 상태를 반복문 밖의 예외가 아니라 상태 머신의 시작점으로 보는 것이 중요하다.
+
+초기 잔고가 0이고 입력이 \code{5 -10 7}인 경우를 다시 보자.
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+거래 & 처리 전 잔고 & 처리 후 잔고 & recovery 누적 \\
+\midrule
+5 & 0 & 5 & 1 \\
+-10 & 5 & -5 & 1 \\
+7 & -5 & 2 & 2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+핵심은 첫 거래도 ``처리 전 상태 $\rightarrow$ 처리 후 상태''라는 동일한 transition이라는 점이다. 첫 iteration을 별도로 처리하더라도 recovery 판정 자체를 생략해서는 안 된다.
+
+\subsection{F-3. 기록 경신과 연속 상승}
+\begin{problembox}{최종평가 문제 F-3}
+정수 $N$과 점수 $a_1,a_2,\dots,a_N$이 주어진다. 다음 두 값을 구하라.
+
+\begin{enumerate}
+  \item \textbf{기록 경신 횟수}: $a_i$가 $a_i$ 이전에 등장한 모든 점수보다 엄격하게 크다면 기록 경신이다. 첫 번째 점수 $a_1$은 항상 기록 경신으로 센다.
+  \item \textbf{가장 긴 연속 상승 구간의 길이}: 연속 구간 $a_l,a_{l+1},\dots,a_r$이
+  \[
+  a_l<a_{l+1}<\cdots<a_r
+  \]
+  를 만족할 때 그 길이 $r-l+1$의 최댓값을 구한다.
+\end{enumerate}
+
+기록 경신 횟수와 가장 긴 연속 상승 구간의 길이를 공백으로 구분하여 출력하라.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20
+  \item 당시 문제에서는 \code{main()} 이외의 함수를 최소 하나 정의하고 실제로 사용하도록 요구했다.
+  \item 요구 시간복잡도: $O(N)$
+  \item 요구 추가 공간복잡도: $O(1)$
+  \item 완성 코드, 함수 역할, 시간복잡도, 공간복잡도, 직접 확인한 edge case를 제출한다.
+  \item Visual Studio의 compile/run, breakpoint, step 실행, 변수 확인을 사용할 수 있다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+-1000000000 <= a_i <= 1000000000
+\end{TextBlock}
+
+\textbf{예시 입력}
+\begin{TextBlock}
+8
+3 5 4 6 7 2 3 4
+\end{TextBlock}
+
+\textbf{예시 출력}
+\begin{TextBlock}
+4 3
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+bool func(long long x, long long y) {
+    if (x > y) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main()
+{
+    int N = 0;
+    int r = 0;
+    int L1 = 0;
+    int L2 = 1;
+    long long tempM = -1000000001;
+    long long temp = -1000000001;
+    cin >> N;
+    for (int i = 1; i <= N; i += 1) {
+        long long a = 0;
+        cin >> a;
+        if (func(a, tempM)) {
+            r += 1;
+            L1 += 1;
+            tempM = a;
+        }
+        else if (!func(a, tempM) && func(a, temp)) {
+            L1 += 1;
+        }
+        else if (!func(a, tempM) && !func(a, temp)) {
+            L1 = 1;
+        }
+        if (L1 > L2) {
+            L2 = L1;
+        }
+        temp = a;
+    }
+    cout << r << " " << L2;
+}
+\end{lstlisting}
+
+\textbf{함수의 역할}: \code{func}는 두 정수의 대소를 비교한다.
+
+\textbf{시간복잡도}: $N$번의 반복을 수행하고 각 iteration에서 상수 시간 연산만 하므로 $O(N)$이다.
+
+\textbf{공간복잡도}: 입력 크기와 무관한 수의 scalar 변수만 사용하므로 $O(1)$이다.
+
+\textbf{직접 확인한 edge case}: $N=1$일 때 예상 출력은 \code{1 1}.
+\end{answerbox}
+
+% =========================================================
+% Part G
+% =========================================================
+\section{Part G --- Adaptive Extra Problem}
+
+\subsection{G-1. 누적 잔고의 최저점과 적자 연속 기간}
+\begin{problembox}{Adaptive Extra Problem G-1}
+초기 잔고는 0이다. 정수 $N$과 변화량 $x_1,x_2,\dots,x_N$이 주어진다. 각 변화량을 순서대로 현재 잔고에 더한다. $i$번째 변화량을 처리한 직후의 잔고를 $B_i$라고 한다.
+
+다음 두 값을 출력하라.
+\begin{enumerate}
+  \item 모든 $B_i$ 중 가장 작은 값
+  \item $B_i<0$인 상태가 연속해서 유지된 가장 긴 기간의 길이
+\end{enumerate}
+초기 잔고 0은 첫 번째 값의 후보에도, 두 번째 값의 기간에도 포함하지 않는다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20
+  \item 당시 문제에서는 \code{main()} 이외의 함수를 최소 하나 정의하고 실제로 사용하도록 요구했다.
+  \item 요구 시간복잡도: $O(N)$
+  \item 요구 추가 공간복잡도: $O(1)$
+  \item 완성 코드, 함수 역할, 시간복잡도, 공간복잡도, 직접 확인한 edge case를 제출한다.
+  \item Visual Studio debugger 사용이 허용된다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+-1000000000 <= x_i <= 1000000000
+\end{TextBlock}
+
+\textbf{예시 입력}
+\begin{TextBlock}
+7
+-3 1 -1 5 -4 -2 6
+\end{TextBlock}
+
+각 변화 후 잔고는 \code{-3, -2, -3, 2, -2, -4, 2}이다.
+
+\textbf{예시 출력}
+\begin{TextBlock}
+-4 3
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+
+bool func(long long x, long long y) {
+    if (x > y) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main()
+{
+    long long B = 0;
+    long long b = 1000000001;
+    int N = 0;
+    int r = 0;
+    int L1 = 0;
+    int L2 = 0;
+    cin >> N;
+    for (int i = 1; i <= N; i += 1) {
+        long long x = 0;
+        cin >> x;
+        B += x;
+        if (func(b, B)) {
+            b = B;
+        }
+        if (B < 0) {
+            L1 += 1;
+        }
+        else {
+            L1 = 0;
+        }
+        if (L1 > L2) {
+            L2 = L1;
+        }
+    }
+    cout << b << " " << L2;
+}
+\end{lstlisting}
+
+\textbf{함수의 역할}: \code{func}는 두 값의 대소를 비교한다.
+
+\textbf{시간복잡도}: 반복문이 $N$번 실행되고 각 iteration에서 상수 시간 연산만 수행하므로 $O(N)$이다.
+
+\textbf{공간복잡도}: 입력 크기와 무관한 수의 변수만 사용하므로 $O(1)$이다.
+
+\textbf{직접 확인한 edge case}: $N=1$일 때 \code{x=-123}이면 \code{-123 1}, \code{x=123}이면 \code{123 0}을 예상했다.
+\end{answerbox}
+
+% =========================================================
+% Part H
+% =========================================================
+\section{Part H --- 숙달 점검과 복습}
+
+이 교재판에서는 개인 평가 판정을 기록하지 않는다. 대신 S0-A의 핵심 능력을 다시 점검할 수 있는 질문과 복습 기준을 제공한다.
+
+\subsection{H1. 개념 자기점검}
+다음 질문에 자료 없이 답할 수 있는지 확인하라.
+\begin{enumerate}
+  \item \code{cin >> a >> b;}는 입력 스트림에서 어떤 순서로 값을 읽는가?
+  \item \code{long long result = a * b;}에서 \code{a}, \code{b}가 \code{int}라면 왜 overflow가 대입 전에 발생할 수 있는가?
+  \item \code{if / else if / else}와 서로 독립적인 여러 개의 \code{if}는 어떤 차이가 있는가?
+  \item 반복문에서 ``현재 상태 변수의 invariant''를 문장으로 정의하면 어떤 장점이 있는가?
+  \item 첫 원소를 별도 처리하는 것이 위험할 수 있는 이유는 무엇인가?
+  \item 연속 구간 문제에서 현재 길이를 0으로 reset하는 경우와 1로 start-new하는 경우는 어떻게 다른가?
+  \item 입력 $N$개를 저장하지 않고도 한 번의 순회로 해결할 수 있는 문제의 특징은 무엇인가?
+  \item 함수가 의미 있는 추상화가 되는 경우와 단순 wrapper에 불과한 경우를 구분할 수 있는가?
+  \item $N=10^5$, $|x_i|\le10^9$인 누적합 문제에서 왜 \code{long long}이 필요한가?
+\end{enumerate}
+
+\subsection{H2. 구현 자기점검}
+\begin{checklistbox}[코드 작성 후 체크리스트]
+\begin{itemize}
+  \item[$\square$] 문제에서 요구한 모든 입력을 읽었는가?
+  \item[$\square$] 반복 횟수가 정확한가?
+  \item[$\square$] 현재 상태 변수의 의미를 한 문장으로 설명할 수 있는가?
+  \item[$\square$] 첫 iteration이 일반 규칙을 우회하지 않는가?
+  \item[$\square$] branch 안의 값이 뒤에서 덮어써지지 않는가?
+  \item[$\square$] $N=1$을 직접 테스트했는가?
+  \item[$\square$] reset을 유발하는 입력을 테스트했는가?
+  \item[$\square$] 모든 값이 조건을 만족하는 경우를 테스트했는가?
+  \item[$\square$] 모든 값이 조건을 만족하지 않는 경우를 테스트했는가?
+  \item[$\square$] 합/곱의 최대 크기를 계산해 자료형을 선택했는가?
+  \item[$\square$] 시간복잡도와 추가 공간복잡도를 설명할 수 있는가?
+\end{itemize}
+\end{checklistbox}
+
+\subsection{H3. 이 Unit 이후에 연결되는 내용}
+S0-A에서 익힌 실행 능력은 다음 주제에서 그대로 사용된다.
+\begin{itemize}
+  \item \textbf{S0-B}: \code{vector}, \code{string}, \code{array}, \code{pair}, iterator, \code{sort} 등 container/STL을 사용하더라도 상태 전이와 edge-case 검증은 동일하게 필요하다.
+  \item \textbf{S0-C}: 지금까지 직관적으로 다룬 $O(N)$, $O(N\log N)$, 정수 범위와 overflow를 더 체계적으로 정리한다.
+  \item \textbf{이후 알고리즘}: two pointers, sliding window, DP, graph traversal에서도 결국 반복문의 각 시점에 어떤 상태가 유지되는지가 correctness의 핵심이 된다.
+\end{itemize}
+
+\subsection{H4. 문제 제시 형식에 대한 운영 원칙}
+앞으로 평가 문제를 제시할 때는 학습자가 답안 작성 전에 반드시 확인해야 하는 내용을 먼저 볼 수 있도록 다음 순서를 사용한다.
+\begin{enumerate}
+  \item 문제 설명
+  \item \textbf{구현 및 제출 조건}
+  \item 제약 조건
+  \item 예시 입력/출력
+\end{enumerate}
+
+또한 별도 함수 사용은 모든 문제에 일률적으로 강제하지 않는다. 함수 정의 자체가 학습 목표이거나 문제 구조상 기능 분리가 자연스러운 경우에만 요구한다.
+

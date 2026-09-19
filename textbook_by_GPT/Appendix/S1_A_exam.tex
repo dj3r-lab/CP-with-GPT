@@ -1,0 +1,37 @@
+\chapter{S1-A 평가 문제 및 재평가 이력 색인}
+
+\begin{longtable}{p{1.6cm}p{4.8cm}p{1.7cm}p{1.7cm}p{5.0cm}}
+\toprule
+\textbf{구분} & \textbf{문제} & \textbf{결과} & \textbf{T\_solve} & \textbf{핵심 평가/보강 요소} \\
+\midrule
+E-1 & Ticker Directory & PASS & 19:51 & ordered key $\to$ value, dynamic update, lexicographic FIRST \\
+F-1 & Live Value Pool & PASS & 12:32 & \code{multiset}, duplicate preservation, one-occurrence erase, min/max \\
+G-0 & Symbol Balance Queries & FAIL & 8:11 & string hash payload $L$, expected complexity \\
+G-1 & AtCoder ABC073 C --- Write and Erase & VOID & 3:55 & membership toggle, assessment pause, C++20 \code{contains} \\
+G-2 & First Appearance Log & FAIL & 14:02 & first occurrence, hash membership, worst-case complexity \\
+G-3 & AtCoder ABC235 C --- The Kth Time Query & FAIL & 24:09 & key $\to$ positions, iterator validity, 1-based indexing, copy/reference \\
+G-4 & Active ID Registry & PASS & 17:08 & unordered state, expected vs worst-case hash complexity \\
+G-5 & AtCoder ABC298 C --- Cards Query Problem & FAIL & 31:27 & forward/reverse index, \code{map::value\_type}, output cost \\
+G-6 & AtCoder ABC253 C --- Max - Min Query & FAIL & 8:50 & operation cost, amortized/global accounting \\
+G-7 & AtCoder ABC217 D --- Cutting Woods & FAIL & 22:31 & ordered set, predecessor/successor, member \code{lower\_bound} \\
+G-8 & AtCoder ABC241 D --- Sequence Query & PASS & 19:12 & \code{multiset<long long>}, lower/upper bound, boundary safety \\
+\bottomrule
+\end{longtable}
+
+\section{External CP 출처}
+\begin{itemize}
+\item AtCoder ABC073 C --- \url{https://atcoder.jp/contests/abc073/tasks/abc073_c}
+\item AtCoder ABC235 C --- \url{https://atcoder.jp/contests/abc235/tasks/abc235_c}
+\item AtCoder ABC298 C --- \url{https://atcoder.jp/contests/abc298/tasks/abc298_c}
+\item AtCoder ABC253 C --- \url{https://atcoder.jp/contests/abc253/tasks/abc253_c}
+\item AtCoder ABC217 D --- \url{https://atcoder.jp/contests/abc217/tasks/abc217_d}
+\item AtCoder ABC241 D --- \url{https://atcoder.jp/contests/abc241/tasks/abc241_d}
+\end{itemize}
+
+\begin{notebox}[기록 해석]
+FAIL 문제도 교재에서 제거하지 않는다. 실제 제출과 실패 이유, 그 뒤의 remediation을 함께 남기는 것이 이 색인의 목적이다. VOID는 학습자 실패가 아니라 평가 절차상 무효이며 mastery FAIL 수에 포함하지 않는다.
+\end{notebox}
+
+\begin{notebox}[평가 문제 재사용 주의]
+이미 풀이, 해설, 핵심 관찰 또는 remediation에 노출된 문제는 이후 독립 평가 문제로 재사용하지 않는다. 이 색인은 학습 기록과 복습을 위한 것이다.
+\end{notebox}

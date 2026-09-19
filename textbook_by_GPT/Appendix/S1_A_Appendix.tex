@@ -1,0 +1,133 @@
+\chapter{S1-A 빠른 Associative Container 참고}
+
+\section{map}
+\begin{lstlisting}
+map<string, int> mp;
+mp["BTC"] = 100;
+
+auto it = mp.find("BTC");
+if (it != mp.end()) {
+    cout << it->second << '\n';
+}
+
+mp.erase("BTC");
+\end{lstlisting}
+
+\section{unordered\_map}
+\begin{lstlisting}
+unordered_map<string, int> freq;
+++freq["apple"];
+
+// expected O(1) lookup/insert,
+// worst case can degrade with collisions
+\end{lstlisting}
+
+\section{set}
+\begin{lstlisting}
+set<int> s;
+s.insert(10);
+s.insert(10); // duplicate not added
+
+if (s.find(10) != s.end()) {
+    cout << "exists\n";
+}
+\end{lstlisting}
+
+\section{unordered\_set}
+\begin{lstlisting}
+unordered_set<int> active;
+active.insert(7);
+active.erase(7);
+\end{lstlisting}
+
+\section{multiset}
+\begin{lstlisting}
+multiset<int> ms;
+ms.insert(5);
+ms.insert(5);
+
+auto it = ms.find(5);
+if (it != ms.end()) {
+    ms.erase(it); // erase one occurrence
+}
+\end{lstlisting}
+
+\section{최소값과 최대값}
+\begin{lstlisting}
+if (!s.empty()) {
+    int minimum = *s.begin();
+    int maximum = *prev(s.end());
+}
+\end{lstlisting}
+
+\section{lower\_bound와 upper\_bound}
+\begin{lstlisting}
+set<int> s = {3, 7, 12, 20};
+
+auto a = s.lower_bound(7);  // 7
+auto b = s.upper_bound(7);  // 12
+auto c = s.lower_bound(9);  // 12
+auto d = s.upper_bound(20); // end()
+\end{lstlisting}
+
+\section{predecessor와 successor}
+\begin{lstlisting}
+auto right = s.lower_bound(x);
+
+if (right != s.end()) {
+    cout << *right; // >= x minimum
+}
+
+if (right != s.begin()) {
+    auto left = prev(right);
+    cout << *left; // < x maximum
+}
+\end{lstlisting}
+
+\section{map 순회와 const auto\&}
+\begin{lstlisting}
+map<int, multiset<int>> boxes;
+
+for (const auto& [box, cards] : boxes) {
+    cout << box << ' ' << cards.size() << '\n';
+}
+\end{lstlisting}
+
+\section{Forward / Reverse Index}
+\begin{lstlisting}
+map<int, multiset<int>> box_to_cards;
+map<int, set<int>> card_to_boxes;
+
+box_to_cards[box].insert(card);
+card_to_boxes[card].insert(box);
+\end{lstlisting}
+
+\section{복잡도 빠른 표}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3.5cm}XX}
+\toprule
+Container & 대표 연산 & 핵심 성질 \\
+\midrule
+\code{map} / \code{set} & $O(\log N)$ & ordered \\
+\code{multiset} & $O(\log N)$ insert/find & ordered, duplicates \\
+\code{unordered\_map} / \code{unordered\_set} & expected $O(1)$ & unordered, hash worst case 존재 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{S1-A에서 실제로 발생한 오류 빠른 점검}
+\begin{longtable}{p{5.2cm}p{9.0cm}}
+\toprule
+\textbf{오류 패턴} & \textbf{점검 질문} \\
+\midrule
+문자열 hash를 $O(1)$로만 처리 & 총 문자열 payload $L$을 정의해야 하는가? 길이 상한이 상수인가? \\
+\code{find()} 후 즉시 dereference & 먼저 \code{it != end()}를 확인했는가? \\
+0-based / 1-based 혼동 & 문제의 출력 위치 정의가 몇 번째 원소인가? \\
+Mapped container 복사 & 읽기만 한다면 \code{const auto\&} 또는 \code{const T\&}가 가능한가? \\
+Reverse query 전체 scan & 반대 방향 index를 update 때 함께 유지해야 하는가? \\
+\code{pair<int,V>}로 map 순회 & 실제 \code{map::value\_type}은 \code{pair<const K,V>}임을 반영했는가? \\
+Ordered container operation cost 혼동 & \code{find}, \code{erase(iterator)}, \code{begin}, \code{prev(end)}의 비용을 각각 알고 있는가? \\
+Set을 골랐지만 선형 순회 & \code{lower\_bound}/\code{upper\_bound}로 직접 경계를 찾을 수 있는가? \\
+Iterator boundary & \code{prev(it)} 전 \code{it != begin()}, dereference 전 \code{it != end()}인가? \\
+\bottomrule
+\end{longtable}

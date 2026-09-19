@@ -1,0 +1,179 @@
+\documentclass[11pt,a4paper,openany]{book}
+
+% =========================================================
+% Language and fonts
+% =========================================================
+\usepackage{kotex}
+\usepackage{fontspec}
+\setmainfont{Noto Serif CJK KR}
+\setsansfont{Noto Sans CJK KR}
+\setmonofont{DejaVu Sans Mono}
+\setmonohangulfont{D2Coding}
+% =========================================================
+% Page layout and typography
+% =========================================================
+\usepackage[margin=22mm,headheight=16pt]{geometry}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{setspace}
+\setstretch{1.13}
+\setlist{itemsep=3pt,topsep=4pt}
+
+% =========================================================
+% Mathematics and tables
+% =========================================================
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+
+% =========================================================
+% Code and verbatim
+% =========================================================
+\usepackage{listings}
+\usepackage{fvextra}
+
+% =========================================================
+% Boxes
+% =========================================================
+\usepackage[most]{tcolorbox}
+
+% =========================================================
+% Hyperlinks / headers
+% =========================================================
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=blue,
+  citecolor=black,
+  pdfborder={0 0 0},
+  pdftitle={Competitive Programming Textbook - S0-A C++ Basic Execution},
+  pdfauthor={ChatGPT assisted study material}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\fancyfoot[C]{Competitive Programming - S0-A C++ Basic Execution}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead[LE,RO]{\thepage}
+  \fancyfoot[C]{Competitive Programming - S0-A C++ Basic Execution}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+
+% =========================================================
+% Colors
+% =========================================================
+\definecolor{codebackground}{RGB}{248,248,248}
+\definecolor{codeframe}{RGB}{185,185,185}
+\definecolor{softblue}{RGB}{239,246,252}
+\definecolor{softgreen}{RGB}{240,249,242}
+\definecolor{softyellow}{RGB}{252,248,232}
+\definecolor{softgray}{RGB}{246,246,246}
+\definecolor{softviolet}{RGB}{246,242,251}
+
+% =========================================================
+% Listings
+% =========================================================
+\lstdefinestyle{cppstyle}{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape,
+  stringstyle=\ttfamily,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=8pt,
+  frame=single,
+  rulecolor=\color{codeframe},
+  backgroundcolor=\color{codebackground},
+  breaklines=true,
+  breakatwhitespace=false,
+  showstringspaces=false,
+  keepspaces=true,
+  tabsize=4,
+  columns=fullflexible
+}
+\lstset{style=cppstyle}
+
+\DefineVerbatimEnvironment{TextBlock}{Verbatim}{
+  fontsize=\small,
+  frame=single,
+  framesep=3mm,
+  breaklines=true
+}
+
+% =========================================================
+% Box environments
+% =========================================================
+\newtcolorbox{keybox}[1][핵심]{
+  enhanced,breakable,title={#1},fonttitle=\bfseries,
+  colback=softblue,colframe=black,boxrule=0.7pt,arc=1mm,
+  %left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=8pt,after skip=8pt
+}
+\newtcolorbox{conceptbox}[1][개념]{
+  enhanced,breakable,title={#1},fonttitle=\bfseries,
+  colback=softgreen,colframe=black,boxrule=0.7pt,arc=1mm,
+  %left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=8pt,after skip=8pt
+}
+\newtcolorbox{problembox}[1]{
+  enhanced,breakable,title={#1},fonttitle=\bfseries,
+  colback=white,colframe=black,boxrule=0.9pt,arc=1mm,
+  left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=10pt,after skip=10pt
+}
+\newtcolorbox{answerbox}[1][학습자 제출 답안]{
+  enhanced,breakable,title={#1},fonttitle=\bfseries,
+  colback=softviolet,colframe=black,boxrule=0.7pt,arc=1mm,
+  %left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=8pt,after skip=8pt
+}
+\newtcolorbox{notebox}[1][참고]{
+  enhanced,breakable,title={#1},fonttitle=\bfseries,
+  colback=softyellow,colframe=black,boxrule=0.6pt,arc=1mm,
+  %left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=8pt,after skip=8pt
+}
+\newtcolorbox{checklistbox}[1][체크리스트]{
+  enhanced,breakable,title={#1},fonttitle=\bfseries,
+  colback=softgray,colframe=black,boxrule=0.7pt,arc=1mm,
+  %left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=8pt,after skip=8pt
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+% =========================================================
+% Main contents
+% =========================================================
+\input{Main_Contents/S0_A_Basic_Execution.tex}
+\input{Main_Contents/S0_B_Basic_Containers_STL.tex}
+
+
+
+% =========================================================
+% Appendix
+% =========================================================
+\appendix
+\input{Appendix/S0_A_Appendix.tex}
+\input{Appendix/S0_A_exam.tex}
+\input{Appendix/S0_B_Appendix.tex}
+\input{Appendix/S0_B_exam.tex}
+\end{document}

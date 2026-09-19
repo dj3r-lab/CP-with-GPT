@@ -1,0 +1,1190 @@
+% =========================================================
+% Stage 0 S0-B
+% =========================================================
+\chapter{S0-B --- Basic Containers \& STL}
+
+% =========================================================
+% Part A
+% =========================================================
+\section{Part A --- 위치와 선수지식}
+
+\subsection{현재 위치}
+S0-A에서 표준 입력과 출력, 기본 자료형, 조건문, 반복문, 함수, scalar 상태 전이를 다뤘다면 S0-B에서는 여러 값을 저장하고 순회하고 정렬하기 위한 C++ 표준 container와 STL의 기초를 다룬다.
+
+이번 Learning Unit의 핵심 범위는 다음과 같다.
+\begin{itemize}
+  \item \code{string}
+  \item \code{array}
+  \item \code{vector}
+  \item \code{pair}
+  \item index loop, range-based \code{for}, iterator
+  \item \code{begin()}, \code{end()}
+  \item \code{sort()}, \code{reverse()}
+  \item custom comparator
+  \item pass-by-value, reference, \code{const} reference
+\end{itemize}
+
+\subsection{왜 지금 배우는가}
+Competitive Programming에서는 입력이 하나의 값이 아니라 배열, 문자열, 레코드 목록으로 주어지는 경우가 많다. 이때 중요한 것은 단순히 container 문법을 외우는 것이 아니라 다음을 스스로 판단하는 것이다.
+\begin{itemize}
+  \item 고정 크기와 가변 크기 중 어느 형태가 필요한가?
+  \item 원소의 index가 필요한가, 값만 순회하면 되는가?
+  \item 정렬 기본 순서로 충분한가, custom comparator가 필요한가?
+  \item 함수에 container를 넘길 때 복사해야 하는가, 원본을 수정해야 하는가, 읽기만 하면 되는가?
+\end{itemize}
+
+이 판단은 이후 two pointers, sliding window, binary search, graph, DP 등 거의 모든 알고리즘 구현에서 반복해서 사용된다.
+
+\subsection{Core Decision Boundary}
+S0-B에서는 다음 선택 기준을 핵심 경계로 본다.
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.0cm}X}
+\toprule
+선택 상황 & 판단 기준 \\
+\midrule
+\code{array} vs \code{vector} & 컴파일 시점에 고정된 크기인가, 실행 중 정해지거나 변할 수 있는 크기인가? \\
+index loop vs range-for & index가 필요한가, 값 자체만 순회하면 되는가? \\
+기본 \code{sort} vs comparator & 기본 오름차순/사전순으로 충분한가, 여러 우선순위 규칙이 필요한가? \\
+값 전달 vs reference & 복사가 필요한가, 원본을 수정해야 하는가, 읽기만 하면서 복사는 피하고 싶은가? \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Immediate Coverage Floor}
+이 Unit을 즉시 통과하기 위한 최소 증거는 다음과 같이 잡는다.
+\begin{itemize}
+  \item \code{vector}와 \code{string}을 이용한 독립 구현
+  \item 기본 STL 알고리즘을 실제 코드에서 사용
+  \item 최소 하나의 선택 이유 설명: \code{array}/\code{vector}, 기본 정렬/comparator, 값/reference 중 하나 이상
+\end{itemize}
+
+% =========================================================
+% Part B
+% =========================================================
+\section{Part B --- 학습 목표}
+이 Unit을 마치면 다음 행동을 독립적으로 수행할 수 있어야 한다.
+
+\begin{enumerate}
+  \item \code{string}, \code{array}, \code{vector}, \code{pair}의 역할을 구분한다.
+  \item \code{vector}에 원소를 추가하고 index 또는 iterator로 접근한다.
+  \item \code{pair}의 \code{first}, \code{second}를 이용해 두 값을 하나의 record로 묶는다.
+  \item index loop, range-based \code{for}, iterator loop 중 상황에 맞는 순회를 선택한다.
+  \item \code{begin()}과 \code{end()}가 나타내는 iterator 범위를 설명한다.
+  \item \code{sort()}와 \code{reverse()}를 사용할 수 있다.
+  \item 기본 정렬 규칙과 다른 우선순위가 필요한 경우 comparator를 작성한다.
+  \item comparator가 strict ordering을 표현해야 한다는 점을 이해한다.
+  \item \code{T}, \code{T\&}, \code{const T\&} 전달 방식의 차이를 설명한다.
+  \item container나 문자열을 불필요하게 복사하지 않도록 함수 매개변수를 설계한다.
+  \item \code{sort}의 기본 시간복잡도 $O(N\log N)$과 선형 순회의 $O(N)$을 구분한다.
+  \item signed/unsigned 비교와 iterator invalidation 같은 기본 안전성 이슈를 인식한다.
+\end{enumerate}
+
+% =========================================================
+% Part C
+% =========================================================
+\section{Part C --- 개념과 원리}
+
+\subsection{C1. \code{string}: 문자 하나가 아니라 문자열 container}
+\code{string}은 문자들의 연속된 sequence를 다루는 표준 타입이다.
+\begin{lstlisting}
+string s = "apple";
+cout << s.size();       // 5
+cout << s[0];           // 'a'
+s.push_back('!');
+\end{lstlisting}
+
+\code{cin >> s;}는 공백 전까지의 한 token을 읽는다. 공백을 포함한 한 줄 전체를 읽어야 한다면 \code{getline}을 사용한다.
+
+\begin{notebox}[문자열 비교]
+\code{s1 < s2}는 기본적으로 사전식(lexicographic) 비교를 한다. 문자열 길이 자체를 먼저 비교하고 싶다면 \code{s.size()}를 별도로 비교해야 한다.
+\end{notebox}
+
+\subsection{C2. \code{array}: 크기가 타입의 일부인 고정 크기 container}
+\begin{lstlisting}
+array<int, 5> a = {1, 2, 3, 4, 5};
+\end{lstlisting}
+
+\code{array<int,5>}와 \code{array<int,10>}은 서로 다른 타입이다. 따라서 크기가 컴파일 시점에 고정되어 있고 바뀌지 않는 경우에 적합하다.
+
+\subsection{C3. \code{vector}: 실행 중 크기를 정할 수 있는 연속 container}
+\begin{lstlisting}
+vector<int> v;
+v.push_back(10);
+v.push_back(20);
+\end{lstlisting}
+
+또는 처음부터 크기를 정할 수 있다.
+\begin{lstlisting}
+vector<int> v(100);
+\end{lstlisting}
+
+initializer list도 사용할 수 있다.
+\begin{lstlisting}
+vector<int> v = {3, 1, 4, 1, 5};
+\end{lstlisting}
+
+\code{push\_back()}은 평균적으로 amortized $O(1)$이다. 다만 내부 저장 공간이 부족해지면 더 큰 메모리 공간으로 재할당(reallocation)할 수 있으며, 이때 기존 원소를 가리키던 iterator나 reference가 무효화될 수 있다.
+
+\subsection{C4. \code{pair}: 두 값을 하나의 record로 묶기}
+\begin{lstlisting}
+pair<string, int> p = {"apple", 5};
+cout << p.first;   // apple
+cout << p.second;  // 5
+\end{lstlisting}
+
+여러 record가 필요하다면 다음처럼 쓸 수 있다.
+\begin{lstlisting}
+vector<pair<string, int>> records;
+records.push_back({"alice", 90});
+records.push_back({"bob", 80});
+\end{lstlisting}
+
+C++17에서는 structured binding도 사용할 수 있다.
+\begin{lstlisting}
+for (const auto& [name, score] : records) {
+    cout << name << ' ' << score << '\n';
+}
+\end{lstlisting}
+
+\subsection{C5. 세 가지 대표 순회 방식}
+index가 필요하다면 index loop가 자연스럽다.
+\begin{lstlisting}
+for (size_t i = 0; i < v.size(); ++i) {
+    cout << i << ' ' << v[i] << '\n';
+}
+\end{lstlisting}
+
+값만 필요하다면 range-based \code{for}가 간결하다.
+\begin{lstlisting}
+for (const auto& x : v) {
+    cout << x << '\n';
+}
+\end{lstlisting}
+
+iterator를 직접 다루어야 한다면 다음과 같이 쓴다.
+\begin{lstlisting}
+for (auto it = v.begin(); it != v.end(); ++it) {
+    cout << *it << '\n';
+}
+\end{lstlisting}
+
+\subsection{C6. \code{begin()}과 \code{end()}: 원소도 index도 아닌 iterator}
+다음 vector를 생각하자.
+\begin{lstlisting}
+vector<int> v = {10, 20, 30, 40};
+\end{lstlisting}
+
+\code{v.begin()}은 첫 번째 원소를 가리키는 iterator이고, \code{v.end()}는 마지막 원소 바로 다음 위치를 나타내는 iterator다.
+
+\begin{center}
+\begin{tabular}{c|cccc|c}
+index & 0 & 1 & 2 & 3 & 4에 해당하는 위치 \\
+\hline
+값 & 10 & 20 & 30 & 40 & 실제 원소 없음 \\
+iterator & \code{begin()} & & & & \code{end()} \\
+\end{tabular}
+\end{center}
+
+iterator가 가리키는 실제 원소를 얻으려면 dereference 연산자 \code{*}를 사용한다.
+\begin{lstlisting}
+auto it = v.begin();
+cout << *it;  // 10
+\end{lstlisting}
+
+\code{v.end()}는 실제 원소를 가리키지 않으므로 다음 코드는 잘못된 사용이다.
+\begin{lstlisting}
+cout << *v.end();  // invalid
+\end{lstlisting}
+
+STL의 범위는 일반적으로 반열린 구간 $[\text{first},\text{last})$를 사용한다. 따라서
+\begin{lstlisting}
+sort(v.begin(), v.end());
+\end{lstlisting}
+는 첫 원소부터 \code{end()} 직전, 즉 vector 전체를 정렬한다.
+
+\subsection{C7. \code{auto}: 초기값으로부터 타입 추론}
+\code{auto}는 타입이 없는 변수를 만드는 키워드가 아니다. 컴파일러가 초기값을 보고 정적 타입을 추론하게 한다.
+\begin{lstlisting}
+auto x = 10;       // int
+auto y = 3.14;     // double
+auto c = 'a';      // char
+auto it = v.begin();
+\end{lstlisting}
+
+마지막 줄에서 실제 iterator 타입을 길게 적는 대신 \code{auto}를 쓰는 것이 특히 편리하다.
+
+다만 \code{auto}는 기본적으로 값 타입을 추론하므로 reference를 유지하고 싶으면 \code{\&}를 함께 써야 한다.
+\begin{lstlisting}
+for (auto x : v) {        // copy
+    // ...
+}
+
+for (auto& x : v) {       // modifiable reference
+    // ...
+}
+
+for (const auto& x : v) { // read-only reference
+    // ...
+}
+\end{lstlisting}
+
+\subsection{C8. reference: 기존 객체의 또 다른 이름}
+다음을 보자.
+\begin{lstlisting}
+int x = 10;
+int& r = x;
+\end{lstlisting}
+
+\code{r}은 \code{x}의 값을 복사한 새 \code{int}가 아니다. 이미 존재하는 \code{x} 객체에 대한 reference, 즉 alias다.
+\begin{lstlisting}
+r = 20;
+cout << x;  // 20
+\end{lstlisting}
+
+반면 다음은 복사다.
+\begin{lstlisting}
+int x = 10;
+int r = x;
+r = 20;
+cout << x;  // 10
+\end{lstlisting}
+
+\begin{keybox}[reference 선언 읽기]
+\code{int\& r = x;}는 ``\code{r}을 \code{int} 객체 \code{x}에 대한 reference로 선언하고 \code{x}에 bind한다''라고 읽는 것이 정확하다.
+\end{keybox}
+
+reference는 선언할 때 참조 대상을 정해야 하며, 한 번 bind된 reference를 나중에 다른 객체의 reference로 다시 바꾸는 것은 아니다.
+
+\subsection{C9. 함수 매개변수에서의 값, reference, const}
+다음 세 선언을 비교하자.
+\begin{lstlisting}
+void f1(int& x) { ... }
+void f2(int x) { ... }
+void f3(const int x) { ... }
+\end{lstlisting}
+
+자연어로 읽으면 다음과 같다.
+\begin{itemize}
+  \item \code{int\& x}: 호출자가 넘긴 원본 \code{int}를 직접 참조하며, 함수 내부에서 원본을 수정할 수 있다.
+  \item \code{int x}: 전달받은 값을 복사하여 함수의 지역 변수 \code{x}로 사용한다.
+  \item \code{const int x}: 전달받은 값을 복사하되 함수 내부에서 그 복사본을 수정하지 못한다.
+\end{itemize}
+
+큰 객체를 읽기만 할 때는 다음 형태가 중요하다.
+\begin{lstlisting}
+void process(const vector<int>& v) {
+    // v is not copied and cannot be modified through this reference
+}
+\end{lstlisting}
+
+이는 ``vector 전체를 복사하지 않고 원본을 참조하되, 이 함수에서는 수정하지 않겠다''라는 뜻이다.
+
+\subsection{C10. 일반 reference와 reference parameter의 관계}
+다음 두 코드에서 \code{int\& a} 자체의 타입 의미는 같다.
+\begin{lstlisting}
+int& a = x;
+\end{lstlisting}
+\begin{lstlisting}
+void func(int& a) {
+    // ...
+}
+\end{lstlisting}
+
+첫 번째는 선언하는 순간 \code{x}에 bind된다. 두 번째는 함수가 호출될 때 실제 argument에 bind되는 reference parameter다.
+\begin{lstlisting}
+int x = 10;
+int y = 20;
+
+func(x);  // this call: a refers to x
+func(y);  // this call: a refers to y
+\end{lstlisting}
+
+따라서 reference parameter는 ``각 함수 호출에서 전달된 원본 객체에 붙는 alias''라고 이해할 수 있다.
+
+\subsection{C11. \code{sort()}와 기본 정렬}
+\code{sort(first,last)}는 $[\text{first},\text{last})$ 범위를 오름차순으로 정렬한다.
+\begin{lstlisting}
+vector<int> v = {4, 1, 3, 2};
+sort(v.begin(), v.end());
+// {1, 2, 3, 4}
+\end{lstlisting}
+
+일반적인 comparison sort의 시간복잡도는 $O(N\log N)$이다.
+
+\code{pair}는 기본적으로 첫 번째 원소를 먼저 비교하고, 같으면 두 번째 원소를 비교하는 lexicographic ordering을 갖는다.
+
+\subsection{C12. custom comparator}
+기본 순서가 아닌 정렬이 필요하면 comparator를 전달한다.
+\begin{lstlisting}
+bool cmp(const pair<string, int>& a,
+         const pair<string, int>& b)
+{
+    if (a.second != b.second) {
+        return a.second > b.second;
+    }
+    return a.first < b.first;
+}
+\end{lstlisting}
+
+\code{cmp(a,b)}의 의미는 ``\code{a}가 \code{b}보다 앞에 와야 하는가?''이다.
+
+comparator는 strict ordering을 표현해야 한다. 같은 두 원소에 대해 \code{cmp(a,a)}가 참이 되는 \code{<=} 형태는 피해야 한다.
+
+\subsection{C13. comparator 매개변수에서 \code{const \&}를 쓰는 이유}
+네 형태를 비교하면 의미가 분명해진다.
+\begin{lstlisting}
+bool cmp(string s1, string s2);             // copies strings
+bool cmp(string& s1, string& s2);           // no copy, may modify
+bool cmp(const string s1, const string s2); // copies, local copies const
+bool cmp(const string& s1, const string& s2); // no copy, read-only
+\end{lstlisting}
+
+문자열이나 record처럼 복사 비용이 있을 수 있는 객체를 비교만 할 때는 마지막 형태가 가장 자연스럽다.
+
+\begin{keybox}[기억할 기준]
+\code{\&}는 ``복사 대신 원본을 참조하는가''와 관련되고, \code{const}는 ``그 reference를 통해 수정할 수 있는가''와 관련된다.
+\end{keybox}
+
+\subsection{C14. \code{int}, \code{long long}, \code{size\_t}}
+C++에는 여러 정수형이 있지만 CP에서 자주 만나는 대표적인 세 타입은 다음과 같다.
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+타입 & signed 여부 & 전형적 크기 & 대표 용도 \\
+\midrule
+\code{int} & signed & 보통 32-bit & 일반 정수, 작은 index/개수 \\
+\code{long long} & signed & 최소 64-bit & 큰 합, 큰 곱, 누적값 \\
+\code{size\_t} & unsigned & 보통 64-bit 환경에서 64-bit & container 크기, 메모리 크기 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\code{size\_t}는 ``양수라서 쓰는 타입''이라기보다 container의 크기나 메모리 크기를 표현하는 unsigned integer type이다. \code{vector::size()}와 \code{string::size()}가 반환하는 타입 계열도 여기에 해당한다.
+
+\subsection{C15. signed/unsigned 비교 경고}
+다음 코드를 보자.
+\begin{lstlisting}
+for (int j = 0; j < v.size(); ++j) {
+    // ...
+}
+\end{lstlisting}
+
+\code{j}는 signed \code{int}, \code{v.size()}는 unsigned \code{size\_t} 계열이므로 compiler가 signed/unsigned 비교 경고를 낼 수 있다.
+
+정방향으로만 증가하고 $N$이 작은 문제에서는 실제 오류가 발생하지 않을 수도 있다. 그러나 일반적으로 signed 음수가 unsigned와 비교되면 큰 양수로 변환될 수 있다.
+
+예를 들어 개념적으로 \code{-1}이 64-bit unsigned로 변환되면 매우 큰 양수가 될 수 있다. 따라서 다음과 같은 비교는 사람의 직관과 다른 결과를 만들 수 있다.
+\begin{lstlisting}
+int j = -1;
+size_t n = 10;
+// j < n may not behave like mathematical -1 < 10
+\end{lstlisting}
+
+index가 필요 없는 출력이라면 range-based \code{for}가 더 자연스러울 수 있다.
+\begin{lstlisting}
+for (const string& s : v) {
+    cout << s << '\n';
+}
+\end{lstlisting}
+
+\subsection{C16. unsigned 역순 순회의 함정}
+다음 형태는 위험하다.
+\begin{lstlisting}
+for (size_t i = v.size() - 1; i >= 0; --i) {
+    // ...
+}
+\end{lstlisting}
+
+\code{size\_t}는 unsigned이므로 \code{i==0}에서 감소시키면 음수 \code{-1}이 아니라 매우 큰 값으로 underflow한다. 또한 unsigned 값에 대해 \code{i >= 0}은 항상 참이다.
+
+역순 순회에서는 이러한 unsigned 특성을 의식해야 한다.
+
+% =========================================================
+% Part D
+% =========================================================
+\section{Part D --- Worked Example}
+
+\subsection{D1. 학생 점수 record 정렬}
+다음 목표를 생각하자.
+\begin{quote}
+학생의 이름과 점수를 입력받아 점수가 높은 학생부터 출력한다. 점수가 같으면 이름이 사전순으로 빠른 학생을 먼저 출력한다.
+\end{quote}
+
+두 값을 한 record로 묶기 위해 \code{pair<string,int>}를 사용하고, 여러 record를 저장하기 위해 \code{vector}를 사용한다.
+
+\begin{lstlisting}
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+bool cmp(const pair<string, int>& a,
+         const pair<string, int>& b)
+{
+    if (a.second != b.second) {
+        return a.second > b.second;
+    }
+    return a.first < b.first;
+}
+
+int main()
+{
+    int N;
+    cin >> N;
+
+    vector<pair<string, int>> students;
+
+    for (int i = 0; i < N; ++i) {
+        string name;
+        int score;
+        cin >> name >> score;
+        students.push_back({name, score});
+    }
+
+    sort(students.begin(), students.end(), cmp);
+
+    for (const auto& student : students) {
+        cout << student.first << ' '
+             << student.second << '\n';
+    }
+}
+\end{lstlisting}
+
+\subsection{D2. 이 예제에서 확인할 것}
+\begin{itemize}
+  \item \code{vector<pair<string,int>>}는 여러 record를 순서대로 저장한다.
+  \item comparator는 record를 복사하지 않도록 \code{const \&}로 받는다.
+  \item \code{sort(students.begin(), students.end(), cmp)}에서 \code{begin()}과 \code{end()}는 전체 정렬 범위를 나타낸다.
+  \item 출력에서 index가 필요하지 않으므로 range-based \code{for}가 자연스럽다.
+  \item 전체 시간복잡도는 정렬이 지배하므로 $O(N\log N)$이다. 문자열 비교 비용까지 일반화하면 문자열 길이도 고려할 수 있다.
+\end{itemize}
+
+% =========================================================
+% Part E
+% =========================================================
+\section{Part E --- 중간평가 문제}
+
+\subsection{E-1. Word Catalog}
+\begin{problembox}{중간평가 문제 E-1 --- Word Catalog}
+$N$개의 영어 소문자 문자열이 주어진다. 모든 문자열을 다음 규칙으로 정렬하여 출력하라.
+\begin{enumerate}
+  \item 길이가 짧은 문자열이 먼저 온다.
+  \item 길이가 같다면 사전순으로 빠른 문자열이 먼저 온다.
+\end{enumerate}
+같은 문자열이 여러 번 주어져도 중복을 제거하지 않는다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20로 완전한 프로그램을 작성한다.
+  \item 정렬 규칙이 항상 만족되는 이유를 설명한다.
+  \item 시간복잡도와 공간복잡도를 설명한다.
+  \item 주요 edge case를 제시한다.
+  \item 직접 측정한 풀이 시간을 기록한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+1 <= 각 문자열의 길이 <= 30
+문자열은 영어 소문자로만 이루어진다.
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+bool cmp(const string& s1, const string& s2) {
+    if (s1.size() != s2.size()) {
+        return s1.size() < s2.size();
+    }
+    return s1 < s2;
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    vector<string> v = {};
+    for (int i = 1; i <= N; i += 1) {
+        string s = "str";
+        cin >> s;
+        v.push_back(s);
+    }
+    sort(v.begin(), v.end(), cmp);
+    for (int j = 0; j < v.size(); j += 1) {
+        cout << v[j] << '\n';
+    }
+}
+\end{lstlisting}
+
+\textbf{정렬 설명}: 두 문자열의 길이가 다르면 짧은 문자열을 먼저 두고, 길이가 같으면 사전순으로 빠른 문자열을 먼저 둔다.
+
+\textbf{시간복잡도}: 입력 및 저장은 $O(N)$, 정렬은 $O(N\log N)$이므로 전체는 $O(N\log N)$이다. 문제에서 문자열 길이가 최대 30으로 제한되어 있으므로 문자열 비교 비용은 $N$에 대한 asymptotic 표기에서 상수로 볼 수 있다.
+
+\textbf{공간복잡도}: 최대 길이 30인 문자열을 $N$개 저장하므로 문제의 제한 아래에서 $O(N)$이다.
+
+\textbf{주요 edge case}: $N=1$, 중복 문자열이 존재하는 경우.
+
+\textbf{T\_solve}: 10분 17초.
+\end{answerbox}
+
+% =========================================================
+% Q&A after Part E
+% =========================================================
+\section{중간평가 이후 학습 질의응답}
+
+\subsection{Q1. comparator의 argument에서 \code{const}와 \code{\&}를 빼면 어떻게 되는가?}
+학습자는 comparator를 다음처럼 작성했을 때 \code{const}와 \code{\&}의 의미를 질문했다.
+\begin{lstlisting}
+bool cmp(const string& s1, const string& s2)
+\end{lstlisting}
+
+비교하면 다음과 같다.
+\begin{itemize}
+  \item \code{bool cmp(string s1, string s2)}: 각 비교 호출에서 문자열을 복사한다.
+  \item \code{bool cmp(string\& s1, string\& s2)}: 복사는 피하지만 원본을 수정할 수 있는 interface가 된다.
+  \item \code{bool cmp(const string s1, const string s2)}: 여전히 복사하며, 복사본만 수정하지 못한다.
+  \item \code{bool cmp(const string\& s1, const string\& s2)}: 복사하지 않고 읽기만 한다.
+\end{itemize}
+
+\code{sort}는 comparator를 여러 번 호출하므로 큰 객체를 값으로 전달하면 불필요한 복사가 반복될 수 있다. 따라서 읽기 전용 비교에는 \code{const T\&}가 자연스럽다.
+
+\subsection{Q2. \code{int j < v.size()} 경고는 왜 생기는가?}
+\code{int}는 signed이고 \code{v.size()}의 반환형은 unsigned \code{size\_t} 계열이기 때문이다. 현재 문제처럼 \code{j}가 0에서 시작해 증가하고 $N\le100000$인 경우에는 실제 오류가 발생하지 않지만, compiler는 일반적인 signed/unsigned 변환 위험을 경고한다.
+
+특히 signed 음수를 unsigned와 비교하면 음수가 매우 큰 양수로 변환될 수 있다.
+
+가능한 대안은 다음과 같다.
+\begin{lstlisting}
+for (size_t j = 0; j < v.size(); ++j) {
+    cout << v[j] << '\n';
+}
+\end{lstlisting}
+
+index가 필요 없다면 다음이 더 단순하다.
+\begin{lstlisting}
+for (const string& s : v) {
+    cout << s << '\n';
+}
+\end{lstlisting}
+
+\subsection{Q3. 정수를 표현하는 타입에는 무엇이 있는가?}
+학습자는 \code{int}, \code{long long}, \code{size\_t}의 관계를 질문했다. 이 셋만 있는 것은 아니며, C++에는 \code{short}, \code{int}, \code{long}, \code{long long}과 각각의 unsigned 형태가 있다.
+
+CP에서는 다음처럼 단순화해 기억할 수 있다.
+\begin{itemize}
+  \item 일반적인 작은 정수: \code{int}
+  \item 계산 결과가 약 $\pm2\times10^9$ 범위를 넘을 수 있음: \code{long long}
+  \item container의 크기와 직접 맞춰 쓰는 크기/index: \code{size\_t}
+\end{itemize}
+
+다만 값이 양수라는 이유만으로 무조건 \code{size\_t}를 선택하는 것은 아니다. 점수나 가격처럼 개념적으로 정수인 값은 양수 범위라도 \code{int}를 사용할 수 있다.
+
+\subsection{Q4. \code{v.begin()}과 \code{v.end()}는 원소인가, index인가?}
+둘 다 아니다. iterator다. \code{v.begin()}은 첫 원소의 위치, \code{v.end()}는 마지막 원소 바로 다음 위치를 나타낸다.
+
+\begin{lstlisting}
+auto it = v.begin();
+cout << *it;  // iterator가 가리키는 실제 원소
+\end{lstlisting}
+
+\code{sort(v.begin(), v.end())}는 $[\code{begin()},\code{end()})$ 범위, 즉 vector 전체를 정렬한다.
+
+\subsection{Q5. \code{auto}는 무엇인가?}
+\code{auto}는 초기값을 보고 compiler가 타입을 추론하도록 하는 키워드다.
+\begin{lstlisting}
+auto x = 10;          // int
+auto it = v.begin();  // vector<int>::iterator 계열
+\end{lstlisting}
+
+동적 타입을 의미하지 않는다. C++는 여전히 정적 타입 언어이며, compile time에 타입이 결정된다.
+
+또한 reference를 유지하려면 직접 \code{\&}를 써야 한다.
+\begin{lstlisting}
+for (auto x : v) { }        // copy
+for (auto& x : v) { }       // reference
+for (const auto& x : v) { } // read-only reference
+\end{lstlisting}
+
+\subsection{Q6. \code{int\& r = x;}에서 새로 정의되는 \code{r}이 ``복사되지 않는다''는 말은 무엇인가?}
+``\code{r}을 복사하지 않는다''는 뜻이 아니다. \code{x}의 값을 복사해 새로운 \code{int} 객체를 만들지 않는다는 뜻이다.
+
+\begin{lstlisting}
+int x = 10;
+int& r = x;
+\end{lstlisting}
+
+여기서 \code{x}와 \code{r}은 같은 \code{int} 객체를 부르는 두 이름이다. 따라서 \code{r=20;}을 실행하면 \code{x}도 20이 된다.
+
+\subsection{Q7. 함수의 \code{int\& x}, \code{int x}, \code{const int x}는 어떻게 다른가?}
+\begin{lstlisting}
+void func1(int& x) { ... }
+void func2(int x) { ... }
+void func3(const int x) { ... }
+\end{lstlisting}
+
+자연어로 옮기면 다음과 같다.
+\begin{itemize}
+  \item \code{int\& x}: 호출자의 원본 \code{int}를 직접 참조하고 수정할 수 있다.
+  \item \code{int x}: 값을 복사해 지역 변수로 사용한다. 원본은 바뀌지 않는다.
+  \item \code{const int x}: 값을 복사하되 함수 안에서 그 복사본도 수정하지 않는다.
+\end{itemize}
+
+큰 container를 읽기만 할 때 자주 쓰는 형태는 \code{const T\&}이다.
+
+\subsection{Q8. 일반 reference 선언과 reference parameter는 엄밀히 다른 의미인가?}
+\code{int\& a}라는 타입 의미 자체는 같다. 차이는 bind되는 시점이다.
+\begin{lstlisting}
+int& a = x;       // declaration time: a binds to x
+\end{lstlisting}
+
+반면
+\begin{lstlisting}
+void func(int& a) {
+    // a binds to the argument of each call
+}
+\end{lstlisting}
+은 함수 호출 시 전달된 argument에 bind된다.
+
+% =========================================================
+% Part F
+% =========================================================
+\section{Part F --- 최종 성취도 평가 문제}
+
+\subsection{F-1. Priority List}
+\begin{problembox}{최종평가 문제 F-1 --- Priority List}
+$N$개의 레코드가 주어진다. 각 레코드는 문자열 \code{name}과 정수 \code{priority}로 구성된다.
+
+다음 우선순위로 정렬한다.
+\begin{enumerate}
+  \item \code{priority}가 큰 레코드가 먼저 온다.
+  \item \code{priority}가 같다면 \code{name}의 길이가 짧은 레코드가 먼저 온다.
+  \item 두 조건도 같다면 \code{name}이 사전순으로 빠른 레코드가 먼저 온다.
+\end{enumerate}
+
+먼저 정렬된 전체 목록을 출력하고, 이어서 그 목록의 정확한 역순을 출력한다. 동일한 \code{(name, priority)} 레코드가 여러 번 입력되어도 모두 보존한다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20을 사용한다.
+  \item 출력 작업은 별도의 함수 \code{print\_records}에서 수행해야 한다.
+  \item \code{print\_records}는 출력할 레코드 container 전체를 매개변수로 받아야 한다.
+  \item \code{print\_records}는 호출자의 container를 수정해서는 안 된다.
+  \item \code{print\_records} 호출 때문에 container 전체가 복사되어서는 안 된다.
+  \item 역순 출력을 위해 원본 레코드 전체를 복제한 새로운 $O(N)$ 크기 container를 만들어서는 안 된다.
+  \item 중복 레코드를 제거해서는 안 된다.
+  \item 완전한 코드, 정렬 이유, 함수 매개변수 선택 이유, 시간복잡도, 공간복잡도, edge case, 직접 측정한 풀이 시간을 제출한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+1 <= name의 길이 <= 30
+name은 영어 소문자로만 이루어진다.
+-1000000000 <= priority <= 1000000000
+\end{TextBlock}
+
+\textbf{예제 입력}
+\begin{TextBlock}
+7
+pear 3
+a 5
+kiwi 3
+fig 5
+plum 3
+fig 5
+banana 3
+\end{TextBlock}
+
+\textbf{예제 출력}
+\begin{TextBlock}
+FORWARD
+a 5
+fig 5
+fig 5
+kiwi 3
+pear 3
+plum 3
+banana 3
+REVERSED
+banana 3
+plum 3
+pear 3
+kiwi 3
+fig 5
+fig 5
+a 5
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+bool print_records(const pair<string, int>& p1,
+                   const pair<string, int>& p2) {
+    if (p1.second != p2.second) {
+        return p1.second > p2.second;
+    }
+    else if (p1.second == p2.second &&
+             p1.first.size() != p2.first.size()) {
+        return p1.first.size() < p2.first.size();
+    }
+    else if (p1.second == p2.second &&
+             p1.first.size() == p2.first.size()) {
+        return p1.first < p2.first;
+    }
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    vector<pair<string, int>> v = {};
+    for (int i = 1; i <= N; i += 1) {
+        string n = "name";
+        int p = 0;
+        cin >> n >> p;
+        pair<string, int> P = { n, p };
+        v.push_back(P);
+    }
+    cout << "FORWARD" << '\n';
+    sort(v.begin(), v.end(), print_records);
+    for (int i = 0; i < v.size(); i += 1) {
+        string name = v[i].first;
+        int pri = v[i].second;
+        cout << name << " " << pri << '\n';
+    }
+    cout << "REVERSED" << '\n';
+    reverse(v.begin(), v.end());
+    for (int i = 0; i < v.size(); i += 1) {
+        string name = v[i].first;
+        int pri = v[i].second;
+        cout << name << " " << pri << '\n';
+    }
+}
+\end{lstlisting}
+
+\textbf{정렬 설명}: priority가 다르면 priority만 비교하고, 같으면 이름 길이를 비교하며, 그것도 같으면 이름을 사전순으로 비교한다.
+
+\textbf{매개변수 설명}: 레코드는 \code{pair<string,int>}이고, 레코드를 복사하지 않고 수정하지 않기 위해 comparator의 두 매개변수를 \code{const \&}로 받았다.
+
+\textbf{시간복잡도}: 선형 입력/출력 및 \code{reverse}는 $O(N)$, \code{sort}는 $O(N\log N)$이므로 전체 $O(N\log N)$.
+
+\textbf{공간복잡도}: 입력 record 저장에 $O(N)$.
+
+\textbf{주요 edge case}: $N=1$, 중복 record와 여러 priority가 섞인 경우.
+
+\textbf{T\_solve}: 24분 20초.
+\end{answerbox}
+
+\subsection{개념 보강: comparator와 container 처리 함수의 역할 구분}
+두 함수는 모두 \code{const \&}를 사용할 수 있지만 역할이 다르다.
+
+\begin{lstlisting}
+bool cmp(const pair<string, int>& a,
+         const pair<string, int>& b)
+{
+    // compare two records
+}
+
+void print_records(
+    const vector<pair<string, int>>& records)
+{
+    // read and print the whole container
+}
+\end{lstlisting}
+
+첫 번째 함수는 \textbf{레코드 두 개}의 순서를 판단한다. 두 번째 함수는 \textbf{레코드 전체 container}를 전달받아 처리한다. 문제의 함수 interface 조건을 읽을 때 ``함수 이름''뿐 아니라 ``함수가 받아야 하는 대상과 책임''을 함께 확인해야 한다.
+
+\subsection{F-2. Item Ordering}
+\begin{problembox}{최종평가 재평가 문제 F-2 --- Item Ordering}
+$N$개의 상품 record가 주어진다. 각 record는 문자열 \code{name}과 정수 \code{cost}로 구성된다.
+
+모든 record를 다음 순서로 정렬한다.
+\begin{enumerate}
+  \item \code{cost}가 작은 record가 먼저 온다.
+  \item \code{cost}가 같다면 \code{name} 길이가 긴 record가 먼저 온다.
+  \item 두 조건도 같다면 \code{name}이 사전순으로 빠른 record가 먼저 온다.
+\end{enumerate}
+
+정렬된 전체 목록을 출력한 뒤, 그 목록의 정확한 역순을 다시 출력한다. 동일한 \code{(name,cost)} record도 모두 유지한다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20을 사용한다.
+  \item record는 \code{vector<pair<string,int>>}에 저장한다.
+  \item 출력은 반드시 별도의 함수 \code{write\_list}에서 수행한다.
+  \item \code{write\_list}는 전체 \code{vector<pair<string,int>>}를 하나의 매개변수로 받아야 한다.
+  \item 호출자의 container를 수정해서는 안 된다.
+  \item 호출할 때 container 전체가 복사되어서는 안 된다.
+  \item 역순 출력을 위해 원본과 같은 크기의 새로운 $O(N)$ record container를 만들면 안 된다.
+  \item 중복 record를 삭제하면 안 된다.
+  \item 완전한 코드, 정렬 이유, 함수 매개변수 선택 이유, 시간복잡도, 공간복잡도, edge case, 직접 측정한 풀이 시간을 제출한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+1 <= name의 길이 <= 30
+name은 영어 소문자로만 구성된다.
+-1000000000 <= cost <= 1000000000
+\end{TextBlock}
+
+\textbf{예제 입력}
+\begin{TextBlock}
+8
+kiwi 5
+a 2
+pear 5
+fig 2
+plum 5
+banana 5
+fig 2
+zz 5
+\end{TextBlock}
+
+\textbf{예제 출력}
+\begin{TextBlock}
+NORMAL
+fig 2
+fig 2
+a 2
+banana 5
+kiwi 5
+pear 5
+plum 5
+zz 5
+BACKWARD
+zz 5
+plum 5
+pear 5
+kiwi 5
+banana 5
+a 2
+fig 2
+fig 2
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+bool cmp(const pair<string, int>& r1,
+         const pair<string, int>& r2)
+{
+    string name1 = r1.first;
+    int cost1 = r1.second;
+
+    string name2 = r2.first;
+    int cost2 = r2.second;
+
+    if (cost1 != cost2) {
+        return cost1 < cost2;
+    }
+    else if (cost1 == cost2 &&
+             name1.size() != name2.size()) {
+        return name1.size() > name2.size();
+    }
+    else if (cost1 == cost2 &&
+             name1.size() == name2.size()) {
+        return name1 < name2;
+    }
+    else {
+
+    }
+}
+
+void write_list(const vector<pair<string, int>>& v) {
+    cout << "NORMAL" << '\n';
+    for (int i = 0; i < v.size(); i += 1) {
+        string name = v[i].first;
+        int cost = v[i].second;
+        cout << name << " " << cost << '\n';
+    }
+    cout << "BACKWARD" << '\n';
+    for (int i = 1; i <= v.size(); i += 1) {
+        string name = v[v.size() - i].first;
+        int cost = v[v.size() - i].second;
+        cout << name << " " << cost << '\n';
+    }
+}
+
+int main()
+{
+    int N = 0;
+    vector<pair<string, int>> v = {};
+    cin >> N;
+    for (int i = 1; i <= N; i += 1) {
+        string name = "n";
+        int cost = 0;
+        cin >> name >> cost;
+        pair<string, int> p = {name, cost};
+        v.push_back(p);
+    }
+    sort(v.begin(), v.end(), cmp);
+    write_list(v);
+}
+\end{lstlisting}
+
+\textbf{정렬 설명}: cost가 다르면 cost 오름차순으로 정렬하고, 같으면 이름 길이 내림차순, 다시 같으면 사전순으로 정렬한다.
+
+\textbf{매개변수 설명}: 여러 상품을 담은 \code{vector<pair<string,int>>}를 복사하거나 수정할 필요가 없으므로 \code{const \&}로 받는다.
+
+\textbf{시간복잡도}: 입력과 출력은 $O(N)$, 정렬은 $O(N\log N)$이므로 전체 $O(N\log N)$.
+
+\textbf{공간복잡도}: 입력 record를 저장하는 vector가 $O(N)$.
+
+\textbf{주요 edge case}: $N=1$, 같은 이름/다른 cost, 중복 record가 있는 경우.
+
+\textbf{T\_solve}: 20분 51초.
+\end{answerbox}
+
+\subsection{코드 품질 보강: 논리적으로 exhaustive여도 return을 명시하기}
+위 comparator에서는 세 조건이 논리적으로 가능한 모든 경우를 덮지만, 함수 끝에 syntactic return이 없는 형태라 compiler가 ``control reaches end of non-void function'' 경고를 낼 수 있다.
+
+다음처럼 마지막 경우를 직접 return으로 두면 더 명확하다.
+\begin{lstlisting}
+bool cmp(const pair<string, int>& r1,
+         const pair<string, int>& r2)
+{
+    if (r1.second != r2.second) {
+        return r1.second < r2.second;
+    }
+    if (r1.first.size() != r2.first.size()) {
+        return r1.first.size() > r2.first.size();
+    }
+    return r1.first < r2.first;
+}
+\end{lstlisting}
+
+또한 comparator 내부에서
+\begin{lstlisting}
+string name1 = r1.first;
+string name2 = r2.first;
+\end{lstlisting}
+처럼 문자열을 다시 복사할 필요는 없다. 이미 매개변수를 \code{const \&}로 받았으므로 \code{r1.first}, \code{r2.first}를 직접 읽으면 된다.
+
+% =========================================================
+% Part G
+% =========================================================
+\section{Part G --- Adaptive Extra Problem}
+
+\subsection{G-1. Record Highs and Longest Nondecreasing Segment}
+\begin{problembox}{Adaptive Extra Problem G-1}
+정수 수열 \code{v}가 주어진다. 다음 두 값을 구하라.
+\begin{enumerate}
+  \item 첫 번째 원소를 제외하고, 지금까지 등장한 모든 이전 원소보다 \textbf{엄격하게 큰} 원소의 개수
+  \item 연속 부분구간 중 값이 감소하지 않는 가장 긴 구간의 길이
+\end{enumerate}
+두 번째 조건은
+\[
+\code{v}[i] \le \code{v}[i+1] \le \cdots \le \code{v}[j]
+\]
+를 만족하는 가장 긴 연속 구간의 길이를 뜻한다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+  \item C++17 또는 C++20을 사용한다.
+  \item 입력 수열은 \code{vector<int>}에 저장한다.
+  \item 분석은 반드시 별도의 함수 \code{analyze}에서 수행한다.
+  \item \code{analyze}는 전체 vector를 매개변수로 받아야 한다.
+  \item 호출자의 vector를 수정해서는 안 된다.
+  \item 호출로 vector 전체가 복사되어서는 안 된다.
+  \item 반환형은 반드시 \code{pair<int,int>}여야 한다.
+  \item 반환값의 첫 번째 성분은 record high 개수, 두 번째 성분은 가장 긴 nondecreasing 연속 구간 길이다.
+  \item 전체 알고리즘의 시간복잡도는 $O(N)$이어야 한다.
+  \item 원본 vector 외에 $O(N)$ 크기의 추가 container를 만들면 안 된다.
+  \item 완전한 코드, 두 계산의 correctness 설명, 매개변수 선택 이유, 시간복잡도, 공간복잡도와 edge case, 직접 측정한 풀이 시간을 제출한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 100000
+-1000000000 <= v[i] <= 1000000000
+\end{TextBlock}
+
+\textbf{예제 입력}
+\begin{TextBlock}
+8
+3 3 5 4 4 6 7 2
+\end{TextBlock}
+
+\textbf{예제 출력}
+\begin{TextBlock}
+3 4
+\end{TextBlock}
+\end{problembox}
+
+\begin{answerbox}[학습자 제출 답안]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+pair<int, int> analyze(const vector<int>& v) {
+    pair<int, int> result = {};
+    int record_count = -1;
+    int longest_length = 0;
+    int temp_length = 0;
+    int max = -1e9-1;
+    int previous = -1e9 - 1;
+
+    for (int i = 0; i < v.size(); i += 1) {
+        int current = v[i];
+        if (v[i] > max) {
+            record_count += 1;
+            max = v[i];
+        }
+        if (v[i] >= previous) {
+            temp_length += 1;
+
+            if (temp_length > longest_length) {
+                longest_length = temp_length;
+            }
+        }
+        else {
+            temp_length = 1;
+        }
+        previous = v[i];
+    }
+
+    result = { record_count, longest_length };
+
+    return result;
+}
+
+int main()
+{
+    int N = 0;
+    vector<int> v = {};
+    cin >> N;
+    for (int i = 1; i <= N; i += 1) {
+        int n = 0;
+        cin >> n;
+        v.push_back(n);
+    }
+    pair<int, int> ans = analyze(v);
+    cout << ans.first << " " << ans.second << '\n';
+}
+\end{lstlisting}
+
+\textbf{record high 설명}: 현재 원소가 이전 최대값보다 클 때만 최대값을 갱신하고 count를 증가시킨다. 첫 원소를 record high 개수에서 제외하기 위해 초기 count를 \code{-1}로 두었으며, 초기 최대값은 문제의 가능한 최솟값보다 작게 둔다.
+
+\textbf{longest nondecreasing 설명}: 현재 원소가 바로 전 원소 이상이면 현재 구간 길이를 1 증가시키고, 작아지면 현재 원소 하나에서 새 구간을 시작하므로 길이를 1로 만든다. 가장 큰 현재 구간 길이를 별도 변수에 저장한다.
+
+\textbf{매개변수 설명}: 입력 vector를 복사하거나 수정할 필요가 없으므로 \code{const \&}로 받는다.
+
+\textbf{시간복잡도}: vector를 한 번 순회하며 각 iteration에서 상수 시간 연산만 하므로 $O(N)$.
+
+\textbf{공간복잡도}: 입력 vector 저장에 $O(N)$, 입력 vector를 제외한 추가 공간은 scalar와 pair뿐이므로 $O(1)$.
+
+\textbf{주요 edge case}: $N=1$, \code{v=\{12789\}}일 때 출력은 \code{0 1}.
+
+\textbf{T\_solve}: 24분 21초.
+\end{answerbox}
+
+\subsection{개념 보강: 문제 제한보다 작은 sentinel과 상태 초기화}
+학습자 코드는 초기값을 다음처럼 두었다.
+\begin{lstlisting}
+int max = -1e9 - 1;
+int previous = -1e9 - 1;
+\end{lstlisting}
+
+문제의 최솟값이 $-10^9$이므로 입력보다 작은 sentinel을 둘 수 있다. 다만 \code{1e9}는 floating-point literal이므로, 정수 범위를 명확하게 표현하려면 다음처럼 정수 literal을 직접 쓰는 방식이 더 읽기 쉽다.
+\begin{lstlisting}
+int maximum = -1000000001;
+int previous = -1000000001;
+\end{lstlisting}
+
+또는 첫 원소로 상태를 초기화한 뒤 index 1부터 순회하는 구조도 가능하다. 어느 방식을 사용하든 핵심은 \textbf{초기 상태의 의미와 첫 iteration의 동작을 명확히 설명할 수 있는가}이다.
+
+% =========================================================
+% Part H
+% =========================================================
+\section{Part H --- 숙달 점검과 복습}
+
+\subsection{H1. 개념 자기점검}
+다음 질문에 자료 없이 답할 수 있는지 확인하라.
+\begin{enumerate}
+  \item \code{vector}와 \code{array}를 선택하는 가장 기본적인 기준은 무엇인가?
+  \item \code{v.begin()}과 \code{v.end()}는 원소, index, iterator 중 무엇인가?
+  \item 왜 \code{*v.end()}는 유효한 원소 접근이 아닌가?
+  \item STL 범위 $[\text{first},\text{last})$에서 마지막 iterator가 제외되는 이유를 설명할 수 있는가?
+  \item \code{auto}는 동적 타입인가? 아니라면 정확히 무엇인가?
+  \item \code{for (auto x : v)}, \code{for (auto\& x : v)}, \code{for (const auto\& x : v)}의 차이는 무엇인가?
+  \item \code{int r = x;}와 \code{int\& r = x;}는 객체 관점에서 어떻게 다른가?
+  \item \code{T x}, \code{T\& x}, \code{const T\& x} 함수 매개변수의 차이를 설명할 수 있는가?
+  \item comparator의 \code{cmp(a,b)}가 참이라는 것은 무엇을 뜻하는가?
+  \item comparator에서 \code{<=}를 쓰면 왜 문제가 될 수 있는가?
+  \item \code{sort}의 시간복잡도는 무엇인가?
+  \item \code{int i < v.size()}에서 경고가 생길 수 있는 이유는 무엇인가?
+  \item unsigned index로 역순 순회할 때 어떤 underflow 위험이 있는가?
+  \item \code{pair<string,int>}를 어떤 종류의 문제에서 쓰면 자연스러운가?
+  \item container 전체를 읽기만 하는 함수에서 왜 \code{const vector<T>\&}가 자주 사용되는가?
+\end{enumerate}
+
+\subsection{H2. 구현 자기점검}
+\begin{checklistbox}[S0-B 코드 작성 후 체크리스트]
+\begin{itemize}
+  \item[$\square$] 입력 크기가 고정인지 가변인지 확인했는가?
+  \item[$\square$] index가 정말 필요한가, range-for로 충분한가?
+  \item[$\square$] \code{begin()}과 \code{end()}의 범위를 정확히 사용했는가?
+  \item[$\square$] \code{end()}를 dereference하지 않았는가?
+  \item[$\square$] 기본 정렬과 custom comparator 중 적절한 방식을 선택했는가?
+  \item[$\square$] comparator가 strict ordering을 만족하는가?
+  \item[$\square$] comparator에 모든 return 경로가 명시되어 있는가?
+  \item[$\square$] 큰 문자열/container를 불필요하게 값으로 복사하지 않는가?
+  \item[$\square$] 읽기 전용 큰 객체에 \code{const \&}를 고려했는가?
+  \item[$\square$] 문제에서 요구한 함수 이름뿐 아니라 함수의 역할과 parameter 대상까지 확인했는가?
+  \item[$\square$] signed/unsigned 비교 경고가 있는가?
+  \item[$\square$] unsigned 역순 순회가 underflow하지 않는가?
+  \item[$\square$] 중복 record를 보존해야 하는 문제에서 실수로 제거하지 않았는가?
+  \item[$\square$] 전체 저장 공간과 auxiliary space를 구분해서 설명할 수 있는가?
+\end{itemize}
+\end{checklistbox}
+
+\subsection{H3. S0-B에서 형성해야 할 핵심 사고}
+S0-B의 핵심은 STL API 이름을 외우는 것이 아니다. 다음 질문을 코드 작성 전에 스스로 던지는 습관이 중요하다.
+\begin{enumerate}
+  \item 데이터를 어떤 단위로 저장해야 하는가?
+  \item container의 크기와 변경 가능성은 어떤가?
+  \item 순회에서 index가 필요한가?
+  \item 정렬 순서는 기본 순서인가, 복합 우선순위인가?
+  \item 함수에 값을 복사할 필요가 있는가?
+  \item 원본 수정이 필요한가, 읽기만 하면 되는가?
+  \item 문제의 interface 조건이 구현 구조에 정확히 반영되었는가?
+\end{enumerate}
+
+\subsection{H4. 다음 Unit과의 연결}
+다음 Learning Unit인 S0-C에서는 이번 Unit에서 이미 사용한 복잡도와 정수형 판단을 더 체계적으로 다룬다.
+\begin{itemize}
+  \item $O(N)$, $O(N\log N)$, $O(N^2)$의 성장 차이
+  \item 입력 크기로부터 실행 가능성을 추정하는 방법
+  \item 전체 공간복잡도와 auxiliary space의 구분
+  \item \code{int}, \code{long long}의 범위
+  \item overflow가 연산 중 어느 시점에 발생하는가
+  \item 자료형 선택을 문제의 최대 가능한 값에서 역산하는 방법
+\end{itemize}
+

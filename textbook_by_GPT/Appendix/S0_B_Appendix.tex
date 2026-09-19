@@ -1,0 +1,55 @@
+\chapter{빠른 C++ STL 문법 참고}
+
+\section{vector}
+\begin{lstlisting}
+vector<int> v;
+v.push_back(10);
+v.push_back(20);
+
+cout << v.size();
+cout << v[0];
+\end{lstlisting}
+
+\section{pair}
+\begin{lstlisting}
+pair<string, int> p = {"alice", 90};
+cout << p.first << ' ' << p.second;
+\end{lstlisting}
+
+\section{iterator}
+\begin{lstlisting}
+auto it = v.begin();
+cout << *it;
+++it;
+\end{lstlisting}
+
+\section{range-based for}
+\begin{lstlisting}
+for (const auto& x : v) {
+    cout << x << '\n';
+}
+\end{lstlisting}
+
+\section{sort와 comparator}
+\begin{lstlisting}
+bool cmp(const pair<string, int>& a,
+         const pair<string, int>& b)
+{
+    if (a.second != b.second) {
+        return a.second > b.second;
+    }
+    return a.first < b.first;
+}
+
+sort(records.begin(), records.end(), cmp);
+\end{lstlisting}
+
+\section{read-only container parameter}
+\begin{lstlisting}
+void print_values(const vector<int>& v) {
+    for (const int& x : v) {
+        cout << x << '\n';
+    }
+}
+\end{lstlisting}
+
