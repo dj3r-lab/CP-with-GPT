@@ -814,3 +814,189 @@ NO
 \begin{notebox}[평가 상태]
 현재 상태: Pending. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조에 대한 힌트를 제공하지 않는다.
 \end{notebox}
+
+
+\begin{answerbox}[F-1 제출 --- Hypothetical/Test Override]
+\textbf{코드}: 가상의 정답 코드
+
+\textbf{자료구조}: 정답 자료구조
+
+\textbf{핵심 상태 설명}: 정답 설명
+
+\textbf{CANCEL/KEEP 중첩 시 connectivity, cluster size, cluster count 정확성 설명}: 정답 설명
+
+\textbf{시간복잡도}: 정답 시간복잡도
+
+\textbf{공간복잡도}: 정답 공간복잡도
+
+\textbf{edge case}: case1, case2, case3
+
+\textbf{T\_solve}: 2분 11초
+\end{answerbox}
+
+\begin{notebox}[F-1 최종평가 판정]
+\textbf{결과}: PASS --- Hypothetical/Test Override
+
+S117-A는 작업 규범의 동작을 시험하기 위한 가상 Learning Unit이며, 사용자가 이번 placeholder 제출도 정답으로 처리하도록 명시적으로 요청했다. 따라서 테스트 절차상 Final PASS로 기록한다.
+
+실제 C++ 코드와 구체적인 correctness/complexity 논증이 제공된 것은 아니므로 이 PASS는 실제 알고리즘 숙달의 독립 evidence가 아니다. 실제 커리큘럼 Capability, Confidence, Review Debt에는 영향을 주지 않는다. 힌트 요청은 없었으며, T\_solve는 사용자가 제출한 2분 11초를 그대로 기록한다.
+\end{notebox}
+
+% =========================================================
+% Part G
+% =========================================================
+\section{Part G --- Adaptive Extra Problems}
+
+\subsection{G-A. Temporary Group Scores --- GPT-generated}
+
+\begin{problembox}{Extra Problem G-A --- Temporary Group Scores}
+$1$번부터 $N$번까지의 계정이 있고, 계정 $i$의 초기 점수는 $W_i$다. 처음에는 각 계정이 서로 다른 하나의 group을 이룬다.
+
+총 $Q$개의 명령을 순서대로 처리한다.
+\begin{itemize}
+\item \code{1 a b}: 계정 $a$와 $b$가 속한 두 group을 하나로 합친다. 이미 같은 group이면 상태는 변하지 않는다.
+\item \code{2 a x}: 계정 $a$의 현재 점수를 $x$로 변경한다.
+\item \code{3}: 현재의 모든 group 구성과 모든 계정 점수를 checkpoint stack의 맨 위에 저장한다.
+\item \code{4}: 가장 최근 checkpoint의 전체 상태로 되돌리고 그 checkpoint를 stack에서 제거한다.
+\item \code{5 a}: 현재 계정 $a$가 속한 group의 점수 합을 출력한다.
+\end{itemize}
+
+checkpoint는 중첩될 수 있다. 명령 \code{4}는 아직 제거되지 않은 checkpoint가 하나 이상 있을 때만 주어진다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item C++17 또는 C++20으로 완전한 프로그램을 작성한다.
+\item checkpoint마다 $O(N)$ 전체 상태를 복사하는 방식은 허용되지 않는다.
+\item query마다 group의 모든 계정을 순회하여 합을 다시 계산하는 방식은 허용되지 않는다.
+\item 사용한 자료구조와 핵심 상태를 설명한다.
+\item merge, 점수 변경, rollback이 함께 존재해도 group sum이 정확히 복원되는 이유를 설명한다.
+\item 전체 시간복잡도와 공간복잡도를 분석한다.
+\item 최소 3개의 주요 edge case를 제시한다.
+\item 직접 측정한 \code{T\_solve}를 제출한다.
+\item 이 평가 시도 중 GPT에게 힌트나 자신의 접근 검토를 요청하면 해당 시도는 종료된다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N, Q <= 200000
+1 <= W_i, x <= 1000000000
+1 <= a, b <= N
+명령 4가 주어질 때 checkpoint stack은 비어 있지 않다.
+\end{TextBlock}
+
+\textbf{Input}
+\begin{TextBlock}
+N Q
+W_1 W_2 ... W_N
+command_1
+command_2
+...
+command_Q
+\end{TextBlock}
+
+각 command는 다음 중 하나다.
+\begin{TextBlock}
+1 a b
+2 a x
+3
+4
+5 a
+\end{TextBlock}
+
+\textbf{Output}
+각 \code{5 a} 명령에 대해 현재 해당 group의 점수 합을 한 줄에 하나씩 출력한다.
+
+\textbf{예제 입력}
+\begin{TextBlock}
+4 12
+10 20 30 40
+5 1
+3
+1 1 2
+2 2 100
+5 1
+3
+1 2 3
+5 3
+4
+5 3
+4
+5 1
+\end{TextBlock}
+
+\textbf{예제 출력}
+\begin{TextBlock}
+10
+110
+140
+30
+10
+\end{TextBlock}
+\end{problembox}
+
+\begin{notebox}[G-A 평가 상태]
+현재 상태: Pending. Validation Tier B. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조를 제공하지 않는다.
+\end{notebox}
+
+\subsection{G-B. AtCoder ABC171 D --- Replacing --- External CP}
+
+\begin{problembox}{Extra Problem G-B --- AtCoder ABC171 D: Replacing}
+$N$개의 양의 정수로 이루어진 수열 $A$가 있다. $Q$개의 연산을 순서대로 수행한다.
+
+$i$번째 연산에서는 현재 수열에서 값이 $B_i$인 모든 원소를 $C_i$로 바꾼다. 각 연산 직후 수열 전체 원소의 합을 출력한다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item C++17 또는 C++20으로 완전한 프로그램을 작성한다.
+\item 공식 제한시간은 2초, 메모리 제한은 1024 MiB다.
+\item 사용한 자료구조와 유지하는 핵심 상태를 설명한다.
+\item 각 연산 후 출력되는 합이 정확한 이유를 설명한다.
+\item 전체 시간복잡도와 공간복잡도를 분석한다.
+\item 최소 3개의 주요 edge case를 제시한다.
+\item 직접 측정한 \code{T\_solve}를 제출한다.
+\item 이미 이 문제를 풀었거나 editorial/해설/핵심 관찰을 본 적이 있다면 풀이를 시작하기 전에 그 사실만 알린다. 이 경우 노출 오염으로 처리하고 새 외부 문제로 교체한다.
+\item 이 평가 시도 중 GPT에게 힌트나 자신의 접근 검토를 요청하면 해당 시도는 종료된다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N, Q, A_i, B_i, C_i <= 100000
+B_i != C_i
+각 연산 후의 합은 signed 32-bit integer 범위를 넘을 수 있다.
+\end{TextBlock}
+
+\textbf{Input}
+\begin{TextBlock}
+N
+A_1 A_2 ... A_N
+Q
+B_1 C_1
+B_2 C_2
+...
+B_Q C_Q
+\end{TextBlock}
+
+\textbf{Output}
+각 연산 직후 수열 전체 원소의 합을 한 줄에 하나씩 출력한다.
+
+\textbf{예제 입력}
+\begin{TextBlock}
+4
+1 2 3 4
+3
+1 2
+3 4
+2 4
+\end{TextBlock}
+
+\textbf{예제 출력}
+\begin{TextBlock}
+11
+12
+16
+\end{TextBlock}
+\end{problembox}
+
+\begin{notebox}[G-B 평가 상태]
+현재 상태: Pending. External CP / Validation Tier A. 활성 평가 중에는 정답 방향을 노출할 수 있는 세부 주제 조합을 기록하지 않는다.
+\end{notebox}
