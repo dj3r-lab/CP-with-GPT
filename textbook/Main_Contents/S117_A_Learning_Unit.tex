@@ -467,3 +467,89 @@ root 탐색 $\rightarrow$ union by size $\rightarrow$ 변경 전 정보 기록 $
 \end{quote}
 
 즉 이 Unit에서 구현 자체를 학습 목표에 포함한 이유는, Rollback DSU 문제에서 자료구조를 선택하는 것만으로는 충분하지 않고 실제 시험 환경에서 필요한 구조를 직접 작성할 가능성이 높기 때문이다.
+
+
+% =========================================================
+% Part E
+% =========================================================
+\section{Part E --- 중간평가}
+
+\subsection{E-1. Checkpoint Network}
+\begin{problembox}{중간평가 E-1 --- Checkpoint Network}
+$1$번부터 $N$번까지의 서버가 있다. 처음에는 어떤 두 서로 다른 서버도 연결되어 있지 않다.
+
+총 $Q$개의 명령을 순서대로 처리한다. 명령은 다음 네 종류다.
+\begin{itemize}
+\item \code{1 a b}: 서버 $a$와 $b$가 속한 두 네트워크를 하나로 합친다. 이미 같은 네트워크라면 상태는 변하지 않는다.
+\item \code{2}: 현재 연결 상태를 checkpoint stack의 맨 위에 저장한다.
+\item \code{3}: 가장 최근에 저장한 checkpoint의 연결 상태로 되돌리고, 그 checkpoint를 stack에서 제거한다.
+\item \code{4 a b}: 현재 서버 $a$와 $b$가 같은 네트워크에 속하면 \code{YES}, 아니면 \code{NO}를 출력한다.
+\end{itemize}
+
+checkpoint는 중첩될 수 있다. \code{3}은 항상 아직 제거되지 않은 checkpoint가 하나 이상 존재할 때만 주어진다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item C++17 또는 C++20으로 완전한 프로그램을 작성한다.
+\item 모든 명령을 전체적으로 충분히 빠르게 처리해야 한다. $O(NQ)$ 또는 checkpoint마다 $O(N)$ 상태 전체를 복사하는 방식은 허용되지 않는다.
+\item 사용한 자료구조와 핵심 상태가 무엇인지 설명한다.
+\item 알고리즘이 checkpoint의 상태를 정확히 복원하는 이유를 설명한다.
+\item 전체 시간복잡도와 공간복잡도를 분석한다.
+\item 최소 3개의 주요 edge case를 제시한다.
+\item 직접 측정한 \code{T\_solve}를 제출한다.
+\item 이 평가 시도 중 GPT에게 힌트나 접근 검토를 요청하면 해당 시도는 종료된다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N <= 200000
+1 <= Q <= 200000
+1 <= a, b <= N
+명령 3이 주어질 때 checkpoint stack은 비어 있지 않다.
+\end{TextBlock}
+
+\textbf{Input}
+\begin{TextBlock}
+N Q
+command_1
+command_2
+...
+command_Q
+\end{TextBlock}
+
+각 command는 다음 중 하나다.
+\begin{TextBlock}
+1 a b
+2
+3
+4 a b
+\end{TextBlock}
+
+\textbf{Output}
+각 \code{4 a b} 명령에 대해 정답을 한 줄에 하나씩 출력한다.
+
+\textbf{예제 입력}
+\begin{TextBlock}
+5 9
+1 1 2
+2
+1 2 3
+4 1 3
+2
+1 4 5
+3
+4 4 5
+4 1 3
+\end{TextBlock}
+
+\textbf{예제 출력}
+\begin{TextBlock}
+YES
+NO
+YES
+\end{TextBlock}
+\end{problembox}
+
+\begin{notebox}[평가 상태]
+현재 상태: Pending. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조에 대한 힌트를 제공하지 않는다.
+\end{notebox}
