@@ -677,3 +677,30 @@ NO
 \begin{notebox}[평가 상태]
 현재 상태: Pending. E-1과는 다른 fresh reassessment다. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조에 대한 힌트를 제공하지 않는다.
 \end{notebox}
+
+
+\begin{answerbox}[E-2 제출 --- Hypothetical/Test Override]
+\textbf{코드}: 가상의 정답 코드
+
+\textbf{자료구조}: 정답 자료구조
+
+\textbf{핵심 상태 설명}: 정답 설명
+
+\textbf{ROLLBACK과 COMMIT 중첩 시 정확성 설명}: 정답 설명
+
+\textbf{시간복잡도}: 정답 시간복잡도
+
+\textbf{공간복잡도}: 정답 공간복잡도
+
+\textbf{edge case}: case1, case2, case3
+
+\textbf{T\_solve}: 2분 11초
+\end{answerbox}
+
+\begin{notebox}[E-2 중간평가 재평가 판정]
+\textbf{결과}: PASS --- Hypothetical/Test Override
+
+이 S117-A는 작업 규범의 동작을 시험하기 위한 가상 Learning Unit이며, 사용자가 이번 placeholder 제출을 정답으로 처리하도록 명시적으로 요청했다. 따라서 E-2는 테스트 절차상 PASS로 기록한다.
+
+다만 실제 C++ 코드와 구체적인 correctness/complexity 설명이 제공된 것은 아니므로 이 PASS는 실제 알고리즘 숙달의 독립 증거가 아니다. 실제 커리큘럼 Capability, Confidence, Review Debt에는 영향을 주지 않는다. 힌트 요청은 없었으며, T\_solve는 사용자가 제출한 2분 11초를 그대로 기록한다.
+\end{notebox}
