@@ -1,0 +1,44 @@
+\chapter{S117-A 빠른 참고 --- Rollback DSU}
+
+\section{핵심 상태}
+\begin{lstlisting}
+vector<int> parent;
+vector<int> sz;
+vector<Change> history;
+\end{lstlisting}
+
+\section{왜 path compression을 빼는가}
+Rollback에서는 한 연산이 만드는 변경 수를 작고 추적 가능하게 유지하는 것이 중요하다. path compression은 \code{find()}만으로 여러 \code{parent}를 바꾸므로 기본 Rollback DSU에서는 보통 사용하지 않는다.
+
+\section{핵심 연산 complexity}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+연산 & 복잡도 \\
+\midrule
+\code{find(x)} & $O(\log N)$ worst-case \\
+\code{unite(a,b)} & $O(\log N)$ \\
+\code{snapshot()} & $O(1)$ \\
+successful union 1개 undo & $O(1)$ \\
+\code{rollback(token)} & 취소하는 union 수가 $K$이면 $O(K)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{snapshot 패턴}
+\begin{lstlisting}
+int token = dsu.snapshot();
+
+// temporary changes
+
+dsu.rollback(token);
+\end{lstlisting}
+
+\section{체크리스트}
+\begin{itemize}
+\item path compression을 실수로 넣지 않았는가?
+\item successful union 전에 복구 정보를 history에 저장했는가?
+\item rollback은 LIFO 순서로 수행하는가?
+\item child root의 parent와 parent root의 이전 size를 모두 복원하는가?
+\item snapshot token이 현재 history 범위에서 유효한가?
+\end{itemize}
