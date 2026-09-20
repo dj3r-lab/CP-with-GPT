@@ -1,19 +1,15 @@
 % =========================================================
-% Stage 117 S117-A (Hypothetical/Test Unit)
+% Stage 117 S117-A
 % =========================================================
-\part{Stage 117 --- Hypothetical Advanced Structures}
+\part{Stage 117 --- Advanced Structures}
 \chapter{S117-A --- Rollback Union-Find (DSU with Undo)}
-
-\begin{notebox}[가상 Learning Unit]
-S117-A는 현재 실제 커리큘럼에 존재하지 않는 가상 Unit이다. 이 자료는 학습자료 운영 구조와 기록 절차를 시험하기 위해 만든다. 따라서 이 Unit의 진행은 실제 S1-A 숙달도, Review Debt, 다음 진도에 영향을 주지 않는다. 다만 여기에서 설명하는 Rollback Union-Find 자체는 실제 competitive programming에서 사용하는 기법이다.
-\end{notebox}
 
 % =========================================================
 % Part A
 % =========================================================
 \section{Part A --- 위치와 선수지식}
 
-\subsection{A1. 가상의 현재 위치}
+\subsection{A1. 선수지식}
 이 Unit은 다음 내용을 이미 학습했다고 가정한다.
 \begin{itemize}
 \item 기본 Union-Find / Disjoint Set Union (DSU)
@@ -62,12 +58,6 @@ Rollback DSU는 다음과 같은 고급 문제의 기반이 될 수 있다.
 \item \textbf{path compression 사용 vs 미사용}: rollback이 필요한 상태에서 \code{find()}가 광범위한 변경을 일으켜도 되는가?
 \item \textbf{전체 상태 복사 vs 변경 로그}: snapshot마다 $O(N)$ 복사가 필요한가, 실제로 바뀐 필드만 기록할 수 있는가?
 \end{enumerate}
-
-이 가상 Unit의 Immediate Coverage Floor는 실제 평가를 실시하게 될 경우 다음 두 종류의 evidence를 요구한다고 가정한다.
-\begin{itemize}
-\item rollback DSU의 canonical implementation 하나
-\item ordinary DSU와 rollback DSU 중 무엇이 필요한지 선택해야 하는 contrastive problem 하나
-\end{itemize}
 
 % =========================================================
 % Part B
@@ -440,11 +430,6 @@ int main() {
 \item 작은 집합과 큰 집합의 순서를 뒤집어 입력해도 union by size가 올바르게 동작하는지
 \end{itemize}
 
-\begin{notebox}[Part E는 다음 응답에서]
-작업 규범에 따라 중간평가인 Part E는 이 응답에서 제시하지 않는다. Part A~D의 내용에 대한 질문과 토론이 끝난 뒤 별도의 응답에서 시작한다.
-\end{notebox}
-
-
 \subsection*{Q1. 실제 코딩 테스트에서도 직접 구현해야 하는가?}
 대체로 그렇다. 특히 Rollback DSU는 C++ 표준 라이브러리에 제공되는 자료구조가 아니므로, 문제가 이 기능을 요구하면 보통 직접 구현해야 한다.
 
@@ -550,42 +535,6 @@ YES
 \end{TextBlock}
 \end{problembox}
 
-\begin{notebox}[평가 상태]
-현재 상태: Pending. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조에 대한 힌트를 제공하지 않는다.
-\end{notebox}
-
-
-\begin{answerbox}[학습자 제출 답안]
-\textbf{코드}: 가상의 오답 코드
-
-\textbf{자료구조}: vector
-
-\textbf{핵심 상태}: 가상의 설명
-
-\textbf{checkpoint 복원 이유}: 가상의 설명
-
-\textbf{시간복잡도}: 시간복잡도 설명
-
-\textbf{공간복잡도}: 미제시
-
-\textbf{edge case}: case1, case2, case3
-
-\textbf{T\_solve}: 1분 2초
-\end{answerbox}
-
-\begin{notebox}[중간평가 판정]
-\textbf{결과}: FAIL --- Implementation
-
-완전한 C++17/20 프로그램이 제출되지 않았고, 자료구조 선택과 핵심 상태·정확성·시간복잡도 설명이 검증 가능한 내용으로 제시되지 않았다. 공간복잡도는 값 자체가 누락되었고, edge case도 실제 입력 조건이나 상태 전이와 연결된 사례가 아니다. 따라서 제출 조건과 correctness를 독립적으로 확인할 수 없다.
-
-힌트 요청은 없었다. 이 문제는 평가 완료 후 학습용으로 전환되며, 이후 정식 재평가는 동일 문제 재사용이 아니라 동급의 새로운 문제로 실시한다. 이 S117-A 자체가 Hypothetical/Test Unit이므로 실제 커리큘럼 Capability/Confidence/Review Debt에는 영향을 주지 않는다.
-\end{notebox}
-
-
-\begin{notebox}[재평가 전 보강 --- 제출 완전성]
-E-1의 실패 원인은 구체적인 알고리즘 오개념이 아니라 실제 C++ 프로그램과 검증 가능한 설명이 제출되지 않은 데 있었다. 따라서 이번 재평가에서는 완전한 코드, 구체적인 자료구조/상태, correctness, 시간·공간복잡도, 실제 edge case, 직접 측정한 \code{T\_solve}를 모두 제출해야 한다. 이는 제출 형식 보강이며 E-2의 정답 방향에 대한 힌트는 아니다.
-\end{notebox}
-
 \subsection{E-2. Nested Network Transactions}
 \begin{problembox}{중간평가 재평가 E-2 --- Nested Network Transactions}
 $1$번부터 $N$번까지의 서버가 있다. 처음에는 어떤 두 서로 다른 서버도 연결되어 있지 않다.
@@ -673,38 +622,6 @@ NO
 NO
 \end{TextBlock}
 \end{problembox}
-
-\begin{notebox}[평가 상태]
-현재 상태: Pending. E-1과는 다른 fresh reassessment다. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조에 대한 힌트를 제공하지 않는다.
-\end{notebox}
-
-
-\begin{answerbox}[E-2 제출 --- Hypothetical/Test Override]
-\textbf{코드}: 가상의 정답 코드
-
-\textbf{자료구조}: 정답 자료구조
-
-\textbf{핵심 상태 설명}: 정답 설명
-
-\textbf{ROLLBACK과 COMMIT 중첩 시 정확성 설명}: 정답 설명
-
-\textbf{시간복잡도}: 정답 시간복잡도
-
-\textbf{공간복잡도}: 정답 공간복잡도
-
-\textbf{edge case}: case1, case2, case3
-
-\textbf{T\_solve}: 2분 11초
-\end{answerbox}
-
-\begin{notebox}[E-2 중간평가 재평가 판정]
-\textbf{결과}: PASS --- Hypothetical/Test Override
-
-이 S117-A는 작업 규범의 동작을 시험하기 위한 가상 Learning Unit이며, 사용자가 이번 placeholder 제출을 정답으로 처리하도록 명시적으로 요청했다. 따라서 E-2는 테스트 절차상 PASS로 기록한다.
-
-다만 실제 C++ 코드와 구체적인 correctness/complexity 설명이 제공된 것은 아니므로 이 PASS는 실제 알고리즘 숙달의 독립 증거가 아니다. 실제 커리큘럼 Capability, Confidence, Review Debt에는 영향을 주지 않는다. 힌트 요청은 없었으며, T\_solve는 사용자가 제출한 2분 11초를 그대로 기록한다.
-\end{notebox}
-
 
 % =========================================================
 % Part F
@@ -811,37 +728,6 @@ NO
 \end{TextBlock}
 \end{problembox}
 
-\begin{notebox}[평가 상태]
-현재 상태: Pending. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조에 대한 힌트를 제공하지 않는다.
-\end{notebox}
-
-
-\begin{answerbox}[F-1 제출 --- Hypothetical/Test Override]
-\textbf{코드}: 가상의 정답 코드
-
-\textbf{자료구조}: 정답 자료구조
-
-\textbf{핵심 상태 설명}: 정답 설명
-
-\textbf{CANCEL/KEEP 중첩 시 connectivity, cluster size, cluster count 정확성 설명}: 정답 설명
-
-\textbf{시간복잡도}: 정답 시간복잡도
-
-\textbf{공간복잡도}: 정답 공간복잡도
-
-\textbf{edge case}: case1, case2, case3
-
-\textbf{T\_solve}: 2분 11초
-\end{answerbox}
-
-\begin{notebox}[F-1 최종평가 판정]
-\textbf{결과}: PASS --- Hypothetical/Test Override
-
-S117-A는 작업 규범의 동작을 시험하기 위한 가상 Learning Unit이며, 사용자가 이번 placeholder 제출도 정답으로 처리하도록 명시적으로 요청했다. 따라서 테스트 절차상 Final PASS로 기록한다.
-
-실제 C++ 코드와 구체적인 correctness/complexity 논증이 제공된 것은 아니므로 이 PASS는 실제 알고리즘 숙달의 독립 evidence가 아니다. 실제 커리큘럼 Capability, Confidence, Review Debt에는 영향을 주지 않는다. 힌트 요청은 없었으며, T\_solve는 사용자가 제출한 2분 11초를 그대로 기록한다.
-\end{notebox}
-
 % =========================================================
 % Part G
 % =========================================================
@@ -934,10 +820,6 @@ command_Q
 \end{TextBlock}
 \end{problembox}
 
-\begin{notebox}[G-A 평가 상태]
-현재 상태: Pending. Validation Tier B. 사용자의 독립 제출 전에는 풀이 방향, 자료구조 선택, 핵심 관찰, 구현 구조를 제공하지 않는다.
-\end{notebox}
-
 \subsection{G-B. AtCoder ABC171 D --- Replacing --- External CP}
 
 \begin{problembox}{Extra Problem G-B --- AtCoder ABC171 D: Replacing}
@@ -997,100 +879,20 @@ B_Q C_Q
 \end{TextBlock}
 \end{problembox}
 
-\begin{notebox}[G-B 평가 상태]
-현재 상태: Pending. External CP / Validation Tier A. 활성 평가 중에는 정답 방향을 노출할 수 있는 세부 주제 조합을 기록하지 않는다.
-\end{notebox}
-
-
-\begin{answerbox}[G-A 제출 --- Hypothetical/Test Override]
-\textbf{코드}: 가상의 정답 코드
-
-\textbf{자료구조}: 정답 자료구조
-
-\textbf{핵심 상태 설명}: 정답 설명
-
-\textbf{시간복잡도}: 정답 시간복잡도
-
-\textbf{공간복잡도}: 정답 공간복잡도
-
-\textbf{edge case}: case1, case2, case3
-
-\textbf{T\_solve}: 2분 11초
-\end{answerbox}
-
-\begin{notebox}[G-A 판정]
-\textbf{결과}: PASS --- Hypothetical/Test Override
-
-사용자가 S117-A를 작업 규범 시험용 가상 Unit으로 명시하고 이번 placeholder 제출도 정답으로 처리하도록 요청했으므로 테스트 절차상 PASS로 기록한다. 실제 코드와 구체적인 correctness/complexity 논증이 제공된 것은 아니므로 실제 숙달 evidence로 사용하지 않는다.
-\end{notebox}
-
-\begin{answerbox}[G-B 제출 --- Hypothetical/Test Override]
-\textbf{코드}: 가상의 정답 코드
-
-\textbf{자료구조}: 정답 자료구조
-
-\textbf{핵심 상태 설명}: 정답 설명
-
-\textbf{시간복잡도}: 정답 시간복잡도
-
-\textbf{공간복잡도}: 정답 공간복잡도
-
-\textbf{edge case}: case1, case2, case3
-
-\textbf{T\_solve}: 2분 11초
-\end{answerbox}
-
-\begin{notebox}[G-B 판정]
-\textbf{결과}: PASS --- Hypothetical/Test Override
-
-동일한 테스트 조건에 따라 PASS로 기록한다. 외부 문제에 대한 실제 풀이 검증 결과가 아니라 workflow simulation이며, 실제 Capability/Confidence/Review Debt에는 영향을 주지 않는다.
-\end{notebox}
-
-\begin{notebox}[Part G 완료]
-GPT-generated Extra와 External CP Extra가 모두 테스트 절차상 PASS로 기록되었다. S117-A는 Hypothetical/Test Unit이므로 실제 커리큘럼 숙달 상태는 변경하지 않는다. 다음 표준 단계는 Part H다.
-\end{notebox}
-
-
 % =========================================================
 % Part H
 % =========================================================
-\section{Part H --- 숙달 기록과 복습}
+\section{Part H --- 복습}
 
-\begin{notebox}[S117-A 종료 상태]
-이 Unit은 학습자료 제작 작업 규범과 기록 workflow를 시험하기 위한 \textbf{Hypothetical/Test Learning Unit}이다. Parts A--H의 운영 흐름은 완료되었지만, E-2/F-1/G-A/G-B의 PASS는 모두 사용자의 명시적 테스트 override에 따른 simulated PASS다. 따라서 실제 알고리즘 숙달 증거로 사용하지 않는다.
-\end{notebox}
-
-\subsection{H1. 평가 이력 요약}
+\begin{checklistbox}[복습 체크리스트]
 \begin{itemize}
-\item \textbf{E-1 --- Checkpoint Network}: Tier B, R1/I3 (Provisional), FAIL --- Implementation, \code{T\_solve}=1분 2초, 힌트 없음. 실제 코드 대신 placeholder가 제출되어 미통과 처리했다.
-\item \textbf{E-2 --- Nested Network Transactions}: Tier B, R1/I3 (Provisional), PASS --- Hypothetical/Test Override, \code{T\_solve}=2분 11초, 힌트 없음.
-\item \textbf{F-1 --- Experimental Clusters}: Tier B, R2/I3 (Provisional), PASS --- Hypothetical/Test Override, \code{T\_solve}=2분 11초, 힌트 없음.
-\item \textbf{G-A --- Temporary Group Scores}: GPT-generated Extra, Tier B, R2/I3 (Provisional), PASS --- Hypothetical/Test Override, \code{T\_solve}=2분 11초, 힌트 없음.
-\item \textbf{G-B --- AtCoder ABC171 D --- Replacing}: External CP Extra, Tier A, R2/I2 (Comparative), PASS --- Hypothetical/Test Override, \code{T\_solve}=2분 11초, 힌트 없음.
+\item ordinary DSU와 Rollback DSU 중 어떤 구조가 필요한지 문제 조건으로 구분할 수 있는가?
+\item rollback이 필요한 구현에서 path compression을 일반적으로 제외하는 이유를 설명할 수 있는가?
+\item union by size를 사용했을 때 path compression 없이도 \code{find()}가 $O(\log N)$인 이유를 설명할 수 있는가?
+\item successful union 하나를 되돌리기 위해 어떤 정보를 history에 저장해야 하는지 설명할 수 있는가?
+\item \code{history.size()}를 snapshot token으로 사용하는 원리를 설명할 수 있는가?
+\item 중첩된 snapshot/transaction에서 변경을 LIFO 순서로 복원해야 하는 이유를 설명할 수 있는가?
+\item connectivity 외에 component size, component count, aggregate 값을 함께 관리할 때 어떤 상태를 rollback 대상에 포함해야 하는지 판단할 수 있는가?
+\item 전체 상태 복사와 change logging의 시간·공간 trade-off를 비교할 수 있는가?
 \end{itemize}
-
-\subsection{H2. Mastery Record}
-\begin{itemize}
-\item \textbf{Capability Level}: Not Assigned. 실제 C++ 코드와 correctness/complexity 설명을 독립적으로 검증한 PASS evidence가 없으므로 L0--L5를 부여하지 않는다.
-\item \textbf{Confidence Status}: Unverified.
-\item \textbf{Evidence Context}: Hypothetical/Test Override. 실제 Immediate/Delayed/Mixed mastery evidence로 사용하지 않는다.
-\item \textbf{Unit Coverage Status}: Workflow Complete --- Hypothetical/Test Only.
-\item \textbf{Review Debt}: None. 테스트용 placeholder 제출에서 실제 학습 약점을 추론하지 않는다.
-\item \textbf{Retest Needed}: 테스트 workflow 자체에는 없음.
-\end{itemize}
-
-\subsection{H3. 시간 기록 해석}
-사용자가 보고한 시간은 E-1이 1분 2초, E-2/F-1/G-A/G-B가 각각 2분 11초다. 다만 테스트 override 제출에는 실제 accepted-quality final code가 존재하지 않으므로 이 시간들은 \textbf{workflow 검증용 metadata}일 뿐 실제 구현 속도나 coding-test readiness의 증거로 해석하지 않는다.
-
-\subsection{H4. 오류와 약점 해석}
-E-1의 FAIL은 placeholder 제출을 실제 평가 기준으로 처리했을 때 발생한 Implementation FAIL이다. 이후 PASS들은 사용자의 명시적 override로 시뮬레이션한 결과다. 따라서 이 기록만으로 Rollback DSU 구현 능력, 자료구조 선택 능력, complexity 분석 능력, 구현 안정성에 대한 실제 강점 또는 반복 약점을 추론하지 않는다.
-
-\subsection{H5. 다음 행동}
-S117-A는 실제 커리큘럼 진도에 포함하지 않으므로 실제 다음 Learning Unit, Capability, Confidence, Review Debt를 변경하지 않는다. 이 주제를 실제 학습 대상으로 전환하려면 이미 노출된 E-1/E-2/F-1/G-A/G-B를 정식 evidence로 재사용하지 않고, 새로운 문제에서 실제 코드와 설명을 독립적으로 제출하여 다시 평가해야 한다.
-
-\begin{notebox}[최종 상태]
-\textbf{S117-A workflow status}: Complete.\\
-\textbf{Real mastery status}: Not assessed.\\
-\textbf{Actual curriculum impact}: None.\\
-\textbf{Journal update}: 불필요 --- 실제 Unit 진행 상태, Capability/Confidence, Review Debt, 다음 학습 행동에 변화가 없기 때문이다.
-\end{notebox}
+\end{checklistbox}
