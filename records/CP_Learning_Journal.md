@@ -11,12 +11,12 @@
 ## 1. Current Position
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
-- Most Recently Completed Learning Unit: S0-C — Complexity & Numeric Safety
-- Current Learning Unit: S1-A — Associative Containers
-- Next Assessment: S1-A ordered-set remediation checkpoint before further formal reassessment — Cutting Woods
+- Most Recently Completed Learning Unit: S1-A — Associative Containers
+- Current Learning Unit: S1-B — Sorting & Bounds (not yet started)
+- Next Assessment: None. Start S1-B Parts A-D first; Part E must be presented later in a separate response.
 - Priority Class: Core
-- Learning Status: S0-C Parts A-H complete and immediate progression gate satisfied. S1-A Part E and Part F both PASSed on Attempt 1. Part G GPT-generated Extra A (Symbol Balance Queries) FAILed on Complexity on 2026-09-18 despite correct code and correct unordered_map selection: the time analysis omitted total string payload L and treated string-key hashing as O(1). This repeats the existing cross-unit N-vs-L structural weakness, so further S1-A formal assessment is paused under §39.3 until a complexity remediation checkpoint is passed. The subsequently submitted External CP problem AtCoder ABC073 C is recorded as VOID because the formal-assessment pause was already active; it is not mastery evidence and must not be reused.
-- Last Updated: 2026-09-18
+- Learning Status: S1-A Parts A-H complete. Part E and Part F PASSed on Attempt 1. Part G ultimately completed after remediation: GPT-generated fresh reassessment Active ID Registry PASS and final External CP reassessment AtCoder ABC241 D — Sequence Query PASS (T_solve 19:12). S1-A Capability is L4 / Provisional. Immediate progression gate is satisfied. Review Debt remains Open / Medium and is non-blocking; delayed/mixed validation is still required for Confirmed confidence and for the reverse-index/static-vs-dynamic decision boundaries.
+- Last Updated: 2026-09-21
 
 ---
 
@@ -27,7 +27,7 @@
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High (checkpoint passed; transfer revalidation pending) | Fresh transfer reassessment |
-| S1-A — Associative Containers | L4 | Provisional | Immediate | In Progress — Part E PASS; Part F PASS; fresh GPT Extra PASS; ABC298 C FAIL; ABC253 C code-correct/complexity FAIL; ordered-container remediation PASS | Open — Medium | Fresh External CP reassessment — ABC217 D |
+| S1-A — Associative Containers | L4 | Provisional | Immediate | Complete — Parts A-H complete; Immediate Progression Gate Satisfied; Part G completed after fresh GPT + External CP PASS | Open — Medium | Delayed/Mixed assessment |
 
 ---
 
@@ -259,19 +259,48 @@ Retest Needed: Yes — immediate remediation checkpoint, then fresh equivalent t
 
 ---
 
+
+## 6A. S1-A Part H Closure — 2026-09-21
+
+### Final immediate mastery state
+- Learning Unit: S1-A — Associative Containers
+- Part E: PASS — Ticker Directory
+- Part F: PASS — Live Value Pool
+- Part G: Complete
+  - GPT-generated fresh reassessment: PASS — Active ID Registry
+  - Final External CP reassessment: PASS — AtCoder ABC241 D — Sequence Query
+- Capability: L4 — Selection
+- Confidence: Provisional
+- Evidence Context: Immediate
+- Unit Coverage: Sufficient for Provisional; immediate progression gate satisfied
+- Review Debt: Open / Medium
+- Immediate Retest Needed: No
+- Next Unit: S1-B — Sorting & Bounds
+
+### Core Decision Boundary Coverage
+- key→value + ordering: Immediate PASS
+- duplicate-preserving ordered dynamic state: Immediate PASS
+- unordered membership/state + expected/worst-case complexity: Immediate PASS
+- predecessor/successor ordered boundary query: Immediate PASS after remediation and fresh ABC241 D transfer
+- forward/reverse index: remediation passed, but fresh independent formal transfer not yet confirmed
+- static sorted sequence vs dynamic ordered container: not yet independently confirmed
+
+### Interpretation
+S1-A can progress to S1-B because the Immediate Coverage Floor and progression gate are satisfied. Confidence remains Provisional because all mastery evidence is immediate and two Core Decision Boundaries still need delayed/mixed independent confirmation. The residual Medium debt is non-blocking but remains a review priority.
+
+---
+
 ## 7. Next Learning Action
 
-1. The targeted remediation review block was **PASSed on 2026-09-18** in learning mode.
-2. Fresh GPT-generated reassessment `Active ID Registry` **PASSed** independently; expected/worst-case unordered-container analysis transferred correctly.
-3. `AtCoder ABC298 C — Cards Query Problem` **FAILed on Complexity**: type-3 queries lacked a reverse card→boxes index, and the range-for pair type caused hidden multiset copies.
-4. The bidirectional-index / `map::value_type` remediation checkpoint subsequently **PASSed** in learning mode.
-5. Fresh External CP `AtCoder ABC253 C — Max - Min Query` produced correct code and correct `multiset` selection, but **FAILed on Complexity**: type-3 min/max access was analyzed as O(log|S|) instead of O(1), and the type-2 deletion-total derivation did not correctly distinguish `find` from `erase(iterator)` or sum successful removals across all queries.
-6. The ordered-container/global-accounting remediation checkpoint subsequently **PASSed** in learning mode. Fresh External CP reassessment is now authorized; keep S1-A Review Debt at **Medium** until clean independent transfer.
-6. For S0-C Confidence promotion, obtain delayed mixed evidence after either:
-   - at least 3 days have passed, or
-   - at least two additional Learning Units have been studied,
-   with the S0-C topic not disclosed in advance.
-7. If the later delayed mixed assessment passes, promote S0-C from **L3 / Provisional** to **L3 / Confirmed** and close only the debt directly resolved by that evidence.
+1. S1-A Part H is complete. Do not continue adding immediate S1-A reassessment problems.
+2. Begin S1-B — Sorting & Bounds with Parts A-D only.
+3. Keep S1-A Review Debt at Medium and non-blocking.
+4. In a later delayed/mixed assessment, hide the target topic and re-check:
+   - ordered associative-container boundary operations,
+   - complexity accounting,
+   - forward/reverse index recognition,
+   - static sorted sequence vs dynamic ordered container choice.
+5. S0-C remains eligible for delayed mixed confirmation under the same long-term review framework.
 
 ---
 
