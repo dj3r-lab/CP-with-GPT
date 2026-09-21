@@ -374,3 +374,193 @@ int main() {
 O(N\log N+Q\log N)
 \]
 이고 명시적 입력 저장 공간은 $O(N)$이다.
+
+
+\section{보충 Q\&A --- Iterator Type과 가능한 연산}
+
+\subsection{Iterator는 pointer-like abstraction이다}
+Iterator는 container 또는 sequence의 한 위치를 나타내며, 그 위치의 원소에 접근하고 다음 위치로 이동하기 위한 객체다. 문법은 pointer와 비슷하지만 반드시 raw pointer인 것은 아니다.
+
+\begin{lstlisting}
+vector<int> v = {10, 20, 30};
+
+vector<int>::iterator it = v.begin();
+cout << *it;   // 10
+
+++it;
+cout << *it;   // 20
+\end{lstlisting}
+
+실전에서는 긴 실제 타입 대신 \code{auto}를 자주 사용한다.
+
+\begin{lstlisting}
+auto it = v.begin();
+\end{lstlisting}
+
+\subsection{\code{iterator}와 \code{const\_iterator}}
+
+\begin{lstlisting}
+vector<int> v = {10, 20, 30};
+
+vector<int>::iterator it = v.begin();
+*it = 99; // allowed
+
+vector<int>::const_iterator cit = v.cbegin();
+// *cit = 99; // error
+\end{lstlisting}
+
+\code{const\_iterator}는 iterator가 가리키는 원소를 읽을 수는 있지만 그 iterator를 통해 수정할 수는 없다. const container의 \code{begin()}은 읽기 전용 iterator를 반환하며, \code{cbegin()}과 \code{cend()}를 사용하면 non-const container에서도 읽기 전용 순회를 명시할 수 있다.
+
+\subsection{Iterator category}
+C++17에서 핵심 iterator category는 input, output, forward, bidirectional, random-access이다. C++20 iterator concepts에서는 contiguous iterator가 random-access보다 더 강한 category로 추가된다.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3.2cm}X}
+\toprule
+Category & 핵심 능력 \\
+\midrule
+Input & \code{*it}로 읽고 \code{++it}로 전진하는 single-pass 순회 \\
+Output & \code{*it = value} 형태의 쓰기와 \code{++it} 전진 \\
+Forward & forward traversal + multi-pass; 같은 sequence를 반복 순회 가능 \\
+Bidirectional & forward + \code{--it} 후진 \\
+Random-access & bidirectional + \code{it+n}, \code{it-n}, \code{+=}, \code{-=}, \code{it[n]}, iterator 차이와 순서 비교 \\
+Contiguous (C++20) & random-access + 원소가 실제 저장소에서도 연속 배치됨 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{대표 container의 iterator category}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.2cm}X}
+\toprule
+대상 & iterator 성질 \\
+\midrule
+\code{vector}, \code{array}, \code{string} & random-access; 저장소는 contiguous \\
+\code{deque} & random-access, non-contiguous \\
+\code{list} & bidirectional \\
+\code{forward\_list} & forward \\
+\code{set}, \code{map}, \code{multiset}, \code{multimap} & bidirectional \\
+\code{unordered\_set}, \code{unordered\_map} 계열 & forward \\
+\code{istream\_iterator} & input \\
+\code{ostream\_iterator} & output \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{가능한 대표 연산}
+\begin{itemize}
+\item 읽기 가능한 iterator: \code{*it}
+\item 객체 원소: \code{it->member}는 보통 \code{(*it).member}의 축약
+\item 한 칸 전진: \code{++it}, \code{it++}
+\item bidirectional 이상: \code{--it}, \code{it--}
+\item random-access: \code{it+n}, \code{it-n}, \code{it += n}, \code{it -= n}
+\item random-access: \code{it[n]}는 대략 \code{*(it+n)}
+\item random-access: 같은 range의 두 iterator에 대해 \code{b-a}
+\item random-access: \code{a < b}, \code{a <= b}, \code{a > b}, \code{a >= b}
+\end{itemize}
+
+\begin{keybox}[S1-B에서 중요한 차이]
+\code{vector<int>::iterator}는 random-access이므로 \code{right-left}가 가능하다. \code{set<int>::iterator}는 bidirectional이므로 \code{right-left}를 사용할 수 없다.
+\end{keybox}
+
+\subsection{\code{next}, \code{prev}, \code{advance}, \code{distance}}
+
+\begin{lstlisting}
+auto a = next(it, 3);   // it is unchanged
+auto b = prev(it, 2);   // bidirectional or stronger
+
+advance(it, 5);         // it itself moves
+
+auto d = distance(first, last);
+\end{lstlisting}
+
+Random-access iterator에서 여러 칸 이동과 두 iterator 사이 distance 계산은 보통 $O(1)$이다. Forward/bidirectional iterator에서는 실제로 한 칸씩 이동해야 하므로 $O(n)$이 될 수 있다.
+
+\begin{lstlisting}
+set<int> s = {1, 3, 5, 7};
+
+auto it = s.find(7);
+auto idx = distance(s.begin(), it); // O(N), not O(1)
+\end{lstlisting}
+
+\subsection{Algorithm이 요구하는 iterator}
+\begin{itemize}
+\item \code{find}: input iterator 수준으로 가능
+\item \code{copy}: 읽는 쪽 input iterator + 쓰는 쪽 output iterator
+\item \code{reverse}: bidirectional 이동뿐 아니라 원소 swap 가능성도 필요
+\item \code{sort}: random-access iterator가 필요하므로 vector/deque/array에는 가능하지만 list/set에는 직접 사용할 수 없음
+\item generic \code{lower\_bound}: forward iterator로도 호출할 수 있지만 random-access가 아니면 iterator 이동 총량이 선형일 수 있음
+\end{itemize}
+
+\begin{keybox}[\code{set}에서는 member \code{lower\_bound}]
+\begin{lstlisting}
+set<int> s;
+
+auto it = s.lower_bound(x); // O(log N)
+\end{lstlisting}
+
+ordered tree container에서는 member function이 tree 구조를 직접 사용한다. 반대로
+
+\begin{lstlisting}
+auto it = lower_bound(s.begin(), s.end(), x);
+\end{lstlisting}
+
+처럼 generic algorithm을 사용하면 comparison 수는 logarithmic일 수 있어도 bidirectional iterator를 전진시키는 총 비용은 $O(N)$이 될 수 있다.
+\end{keybox}
+
+\subsection{\code{begin}/\code{end}와 반열린 range}
+STL의 전형적인 range는
+\[
+[\code{begin()},\code{end()})
+\]
+이다. \code{end()}는 마지막 원소가 아니라 마지막 원소 다음 위치다.
+
+\begin{lstlisting}
+for (auto it = v.begin(); it != v.end(); ++it) {
+    cout << *it << '\n';
+}
+\end{lstlisting}
+
+따라서 \code{*v.end()}는 잘못이다. Bidirectional iterator이고 range가 비어 있지 않다면 \code{--end()} 또는 \code{prev(end())}로 마지막 원소에 갈 수 있다.
+
+\subsection{Associative container iterator의 수정 가능성}
+
+\begin{lstlisting}
+map<int, string> mp;
+auto it = mp.begin();
+
+// it->first = 10;   // error: key is const
+it->second = "new";  // allowed
+\end{lstlisting}
+
+\code{map<K,V>::value\_type}은 \code{pair<const K,V>}다. key를 iterator를 통해 바꾸면 ordering 자체가 깨질 수 있으므로 key는 수정할 수 없다. \code{set}에서도 저장된 key를 iterator로 직접 수정할 수 없다.
+
+\subsection{Reverse iterator}
+
+\begin{lstlisting}
+for (auto it = v.rbegin(); it != v.rend(); ++it) {
+    cout << *it << ' ';
+}
+\end{lstlisting}
+
+reverse iterator에서는 \code{++it}가 underlying sequence에서는 뒤쪽 원소에서 앞쪽 원소 방향으로 이동한다.
+
+\subsection{Iterator invalidation}
+Iterator는 container 수정 뒤에도 자동으로 안전한 것이 아니다.
+
+\begin{itemize}
+\item \code{vector}: reallocation이 일어나면 기존 iterator가 모두 무효화된다. reallocation이 없어도 insert/erase 위치 이후 iterator는 영향을 받을 수 있다.
+\item \code{list}, \code{map}, \code{set}: 일반적인 insert는 기존 iterator를 보존하며, erase는 지운 원소의 iterator를 무효화하는 것이 기본 패턴이다.
+\item unordered container: rehash가 발생하면 iterator가 무효화될 수 있다.
+\end{itemize}
+
+\subsection{실전 점검 순서}
+\begin{enumerate}
+\item 어느 container에서 나온 iterator인가?
+\item iterator category는 무엇인가?
+\item 읽기 전용인가, 원소 수정이 가능한가?
+\item \code{++}만 필요한가, \code{--}도 필요한가, \code{+n}이나 subtraction까지 필요한가?
+\item algorithm이 요구하는 iterator category와 writable/swappable 성질을 만족하는가?
+\item container 수정 뒤 iterator가 invalidate되지 않았는가?
+\end{enumerate}

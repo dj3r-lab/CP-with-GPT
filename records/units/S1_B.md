@@ -75,3 +75,27 @@ sorted [2,3,5,5,8,10]
 
 ## Evaluation State
 No S1-B formal assessment problem has been presented. Part E must be a later separate response. No S1-B PASS/FAIL, Capability, R/I calibration, or Review Debt is created by Parts A-D alone.
+
+
+## Q&A — Iterator Type과 가능한 연산
+
+The learner requested a detailed explanation of iterator types and supported operations before Part E.
+
+Key points covered:
+- iterator is a pointer-like abstraction, not necessarily a raw pointer;
+- explicit types such as `vector<int>::iterator` and practical use of `auto`;
+- `iterator` vs `const_iterator`, plus `cbegin/cend`;
+- C++17 categories: input, output, forward, bidirectional, random-access;
+- C++20 adds the contiguous iterator concept;
+- container mapping: vector/array/string random-access; deque random-access; list bidirectional; forward_list forward; ordered associative containers bidirectional; unordered associative containers forward;
+- operation hierarchy: dereference, increment, decrement, arithmetic, indexing, iterator subtraction/order comparison;
+- `vector` iterator subtraction is valid, `set` iterator subtraction is not;
+- `next/prev/advance/distance` and the fact that distance/advance may be O(N) for non-random-access iterators;
+- algorithm requirements: sort needs random-access; reverse needs bidirectional traversal plus swappable elements; find works with input iterators;
+- generic `std::lower_bound` on set iterators can require O(N) iterator increments even though comparisons are logarithmic; use `set::lower_bound` for O(log N);
+- half-open range [begin,end), and end() must not be dereferenced;
+- map iterator exposes `pair<const K,V>`: key is immutable but mapped value can be modified;
+- reverse_iterator direction semantics;
+- iterator invalidation patterns for vector, node-based ordered containers, and unordered-container rehash.
+
+This was learning-mode Q&A only. No S1-B assessment was started and no PASS/FAIL/mastery evidence was created.

@@ -1,0 +1,113 @@
+\chapter{S1-B 빠른 Sorting \& Iterator 참고}
+
+\section{Iterator category 빠른 표}
+\begin{longtable}{p{3.3cm}p{10.2cm}}
+\toprule
+\textbf{Category} & \textbf{대표 능력} \\
+\midrule
+Input & 읽기 \code{*it}, 전진 \code{++it}; single-pass 가능 \\
+Output & 쓰기 \code{*it=value}, 전진 \code{++it} \\
+Forward & multi-pass forward traversal \\
+Bidirectional & forward + \code{--it} \\
+Random-access & \code{+n}, \code{-n}, \code{+=}, \code{-=}, \code{it[n]}, iterator subtraction/order comparison \\
+Contiguous (C++20) & random-access + contiguous storage \\
+\bottomrule
+\end{longtable}
+
+\section{Container별 iterator}
+\begin{longtable}{p{5cm}p{8.5cm}}
+\toprule
+\textbf{Container/Source} & \textbf{Iterator 성질} \\
+\midrule
+\code{vector}, \code{array}, \code{string} & random-access; contiguous storage \\
+\code{deque} & random-access, non-contiguous \\
+\code{list} & bidirectional \\
+\code{forward\_list} & forward \\
+\code{set}, \code{map}, \code{multiset}, \code{multimap} & bidirectional \\
+unordered associative containers & forward \\
+\code{istream\_iterator} & input \\
+\code{ostream\_iterator} & output \\
+\bottomrule
+\end{longtable}
+
+\section{S1-B 핵심 연산}
+\begin{lstlisting}
+auto it = v.begin();
+
+*it;          // dereference
+++it;         // forward
+--it;         // bidirectional or stronger
+
+it + n;       // random-access
+it - n;
+it += n;
+it -= n;
+it[n];
+b - a;        // iterator distance, random-access
+\end{lstlisting}
+
+\section{\code{iterator} vs \code{const\_iterator}}
+\begin{lstlisting}
+vector<int> v = {1, 2, 3};
+
+auto it = v.begin();
+*it = 10; // allowed
+
+auto cit = v.cbegin();
+// *cit = 10; // error
+\end{lstlisting}
+
+\section{Generic utilities}
+\begin{lstlisting}
+auto a = next(it, 3);
+auto b = prev(it, 2);
+advance(it, 5);
+auto d = distance(first, last);
+\end{lstlisting}
+
+Random-access iterator에서는 여러 칸 이동과 distance가 $O(1)$인 반면, forward/bidirectional iterator에서는 $O(n)$일 수 있다.
+
+\section{\code{vector}와 \code{set}의 중요한 차이}
+\begin{lstlisting}
+// vector: random-access
+auto count = right - left;
+
+// set: bidirectional
+// right - left; // error
+auto count2 = distance(left, right); // potentially O(N)
+\end{lstlisting}
+
+\section{Ordered container의 bound}
+\begin{lstlisting}
+set<int> s;
+
+auto it1 = s.lower_bound(x); // O(log N)
+
+// Generic lower_bound on set iterators can incur
+// linear iterator movement.
+auto it2 = lower_bound(s.begin(), s.end(), x);
+\end{lstlisting}
+
+\section{Half-open range}
+\[
+[\code{begin()},\code{end()})
+\]
+\code{end()}는 마지막 원소 다음 위치이므로 dereference하지 않는다.
+
+\section{\code{map} iterator}
+\begin{lstlisting}
+map<int, string> mp;
+auto it = mp.begin();
+
+// it->first = 7;    // error
+it->second = "new";  // allowed
+\end{lstlisting}
+
+\code{map<K,V>::value\_type}은 \code{pair<const K,V>}다.
+
+\section{Iterator invalidation 빠른 점검}
+\begin{itemize}
+\item \code{vector}: reallocation 시 전체 iterator 무효화; insert/erase 위치 이후도 주의
+\item \code{list}/\code{map}/\code{set}: insert는 대체로 기존 iterator 보존; erase된 원소 iterator는 무효
+\item unordered container: rehash 시 iterator 무효화 가능
+\end{itemize}
