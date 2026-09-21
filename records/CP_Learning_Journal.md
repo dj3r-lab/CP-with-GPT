@@ -1,7 +1,7 @@
 # CP Learning Journal
 
 > **Status:** Active  
-> **Curriculum standard:** Competitive Programming 학습자료 제작 작업 규범 v5.5  
+> **Curriculum standard:** Competitive Programming 학습자료 제작 작업 규범 v5.8  
 > **Calibration registry:** CP_Calibration_Anchor_Registry v1.1  
 > **Authoritative quantitative record:** `CP_Learning_Record.xlsx`  
 > **Policy:** 문제별 정형 데이터는 xlsx에 기록하고, 이 파일은 Learning Unit 진행 상태, Capability/Confidence, Review Debt, 다음 학습 행동과 장기 성장 해석을 요약한다.
@@ -26,7 +26,7 @@
 |---|---|---|---|---|---|---|
 | S0-A — C++ Basic Execution | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied | None | Delayed/Mixed Assessment |
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
-| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — High (checkpoint passed; transfer revalidation pending) | Fresh transfer reassessment |
+| S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Delayed/Mixed transfer reassessment |
 | S1-A — Associative Containers | L4 | Provisional | Immediate | Complete — Parts A-H complete; Immediate Progression Gate Satisfied; Part G completed after fresh GPT + External CP PASS | Open — Medium | Delayed/Mixed assessment |
 
 ---
@@ -40,7 +40,7 @@
 ### S0-B — Low
 - Character-boundary implementation: uppercase `Z` was omitted in AtCoder ABC104 B.
 
-### S0-C — High
+### S0-C — Medium
 - Part E and Part F established correct numeric-safety reasoning and resolved the earlier mixed-type promotion misconception.
 - GPT-generated Extra A (`Reverse Archive Score`) had correct submitted C++ code, but the formal analysis failed on transfer:
   - outputting all stored strings was treated as O(N), although writing all output characters costs O(L);
@@ -48,7 +48,7 @@
   - `std::string::size()` was treated as `int`; its actual type is `string::size_type`, so the usual arithmetic conversions must be checked explicitly.
 - External Extra B (`AtCoder ABC238 B — Pizza`) was passed independently, showing correct state tracking, sorting-based circular-gap evaluation, O(N log N) reasoning, and integer-range analysis.
 - Extra A FAIL does not revoke the S0-C Final PASS or progression gate.
-- The same N-vs-L / aggregate-payload error recurred in S1-A Part G Extra A on 2026-09-18: string-key hash operations were treated as O(1) and L was omitted from the required time analysis. The debt was escalated to High. A remediation checkpoint on 2026-09-18 was subsequently passed: the learner correctly distinguished N/M from Lu/Lq/L, recognized constant-bounded string length as allowing O(N+M) while retaining L-based structural analysis, distinguished transient strings from accumulated container storage, and explained the state/space side effect of operator[]. Formal reassessment may resume, but the debt remains open pending fresh transfer evidence.
+- The same N-vs-L / aggregate-payload error recurred in S1-A Part G Extra A on 2026-09-18: string-key hash operations were treated as O(1) and L was omitted from the required time analysis. The debt was escalated to High at that point. A remediation checkpoint on 2026-09-18 was subsequently passed: the learner correctly distinguished N/M from Lu/Lq/L, recognized constant-bounded string length as allowing O(N+M) while retaining L-based structural analysis, distinguished transient strings from accumulated container storage, and explained the state/space side effect of operator[]. Later fresh transfer evidence improved the aggregate-size accounting; the debt is now Medium and remains open pending delayed/mixed confirmation.
 
 ### S1-A — Medium
 - Part E and Part F PASS evidence remains valid; L4 Selection evidence is not revoked.
@@ -59,7 +59,7 @@
 - Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgraded S1-A Review Debt from High to Medium.
 - Fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem` then FAILed on Complexity. The submitted `map<int, multiset<int>>` correctly represents sorted duplicate-preserving box contents, but type-3 queries scan all boxes instead of maintaining a reverse card→ordered unique boxes index. In addition, `const pair<int, multiset<int>>&` does not match `map<int,multiset<int>>::value_type` (`pair<const int,multiset<int>>`), so each range-for iteration constructs a temporary and copies the multiset. Type-2 traversal cost was also overstated as O(c log c); iterating an already ordered multiset is O(c) plus output.
 
-Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C High, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium until this transfers cleanly to a fresh External CP assessment.
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C Medium, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium after the clean ABC241 D external transfer and now waits for delayed/mixed confirmation.
 
 ---
 
