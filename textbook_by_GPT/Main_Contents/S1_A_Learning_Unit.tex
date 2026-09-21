@@ -1463,3 +1463,33 @@ ABC241 D Sequence Query & PASS & 19:12 & lower/upper bound, predecessor/successo
 \item custom comparator와 정렬 기준
 \item ordered container와 정렬된 sequence의 trade-off
 \end{itemize}
+
+
+\subsection{H6. 최종 Mastery Record}
+
+\begin{itemize}
+\item \textbf{Learning Unit}: S1-A --- Associative Containers
+\item \textbf{Part E}: PASS --- Ticker Directory
+\item \textbf{Part F}: PASS --- Live Value Pool
+\item \textbf{Part G}: 완료 --- GPT-generated fresh reassessment \textit{Active ID Registry} PASS, 최종 External CP reassessment AtCoder ABC241 D \textit{Sequence Query} PASS
+\item \textbf{Capability}: L4 --- Selection
+\item \textbf{Confidence}: Provisional
+\item \textbf{Evidence Context}: Immediate
+\item \textbf{Unit Coverage}: Sufficient for Provisional; immediate progression gate satisfied
+\item \textbf{Review Debt}: Open --- Medium
+\item \textbf{Immediate Retest}: No
+\item \textbf{Next Review}: delayed/mixed assessment에서 ordered associative-container 선택, complexity accounting, reverse-index 선택 경계를 재검증
+\end{itemize}
+
+\paragraph{Core Decision Boundary Coverage.}
+\begin{itemize}
+\item key $\to$ value + ordering 필요: \textbf{Immediate PASS} --- Ticker Directory에서 \code{map} 선택.
+\item duplicate-preserving ordered dynamic state: \textbf{Immediate PASS} --- Live Value Pool과 ABC241 D에서 \code{multiset} 선택.
+\item ordering 불필요 + hash 기반 membership/state 및 expected/worst-case complexity: \textbf{Immediate PASS} --- Active ID Registry.
+\item predecessor/successor와 ordered boundary query: \textbf{Immediate PASS} --- ABC217 D 실패 후 remediation을 거쳐 ABC241 D에서 독립 PASS.
+\item forward/reverse index 선택: \textbf{Not Yet Independently Confirmed} --- ABC298 C 실패 후 remediation은 통과했지만 fresh independent formal PASS가 아직 없다.
+\item static sorted sequence vs dynamic ordered container: \textbf{Not Yet Independently Confirmed} --- 다음 Unit S1-B와 delayed/mixed evidence에서 보완한다.
+\end{itemize}
+
+\paragraph{종료 판정.}
+S1-A의 Immediate Coverage Floor와 progression gate는 충족되었다. 따라서 다음 Learning Unit인 S1-B --- Sorting \& Bounds로 진행한다. 다만 여러 External CP 시도에서 operation-selection 및 complexity 설명 오류가 반복되었으므로 Confidence는 Provisional로 유지하고 Review Debt Medium을 닫지 않는다. Confirmed 승격은 주제 cue가 제거된 delayed/mixed assessment에서 Core Decision Boundary가 다시 독립적으로 검증된 뒤 판단한다.
