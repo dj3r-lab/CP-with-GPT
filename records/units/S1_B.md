@@ -3,9 +3,9 @@
 Status: In Progress — Parts A-D complete
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Not yet assessed
+Assessment Status: Part E E-1 Pending
 Confidence: Unverified for S1-B
-Next formal step: Part E in a separate response after learner discussion/Q&A
+Next formal step: learner submission for Part E E-1
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -99,3 +99,67 @@ Key points covered:
 - iterator invalidation patterns for vector, node-based ordered containers, and unordered-container rehash.
 
 This was learning-mode Q&A only. No S1-B assessment was started and no PASS/FAIL/mastery evidence was created.
+
+
+## Part E — Intermediate Assessment
+
+### E-1 — Static Score Queries
+Status: Pending
+Source: GPT-generated
+Validation Tier: B
+Validation Evidence:
+- complete C++17 reference solution compiled and executed;
+- sample output matched;
+- 200 randomized batches matched an independent brute-force oracle;
+- explicit boundary checks covered N=1, absent values, duplicate values, equal L/R, and extreme allowed values.
+Difficulty: R2/I2
+Calibration: Comparative / Provisional
+Calibration Registry: CP_Calibration_Anchor_Registry v1.1
+Calibration rationale:
+- recognition is a simple variation of the just-learned static sorted-bound query pattern, so it is above fully explicit R1 but below hidden-selection R3;
+- implementation uses one standard preprocessing/query pattern with several strict/non-strict boundaries, consistent with I2;
+- compared against the Registry, it is structurally closer to R2/I2 anchors such as Sqrt(x) than to R3/I2 selection-heavy problems.
+Mode: Independent formal assessment; compiler/run allowed; C++ syntax/API lookup only.
+Hints: None provided.
+Result: Pending
+
+Problem statement:
+N fixed integer scores A_i are given, followed by Q queries:
+- 1 x: output count of A_i < x
+- 2 x: output count of A_i = x
+- 3 L R: output count of L < A_i <= R
+
+Submission requirements:
+- complete C++17 program;
+- handle N,Q <= 200000;
+- explain total time and space complexity in N,Q;
+- explain numeric safety;
+- provide at least two edge cases;
+- submit measured T_solve;
+- no solution/editorial search, other-person/AI help, hints, or approach review during the attempt; standard C++ syntax/API lookup is allowed.
+
+Constraints:
+- 1 <= N,Q <= 200000
+- -1e9 <= A_i,x,L,R <= 1e9
+- L <= R
+
+Sample:
+Input
+8 6
+5 1 5 2 9 5 7 2
+1 5
+2 5
+3 2 7
+1 -10
+2 2
+3 9 9
+
+Output
+3
+3
+4
+0
+2
+0
+
+No learner answer has been submitted yet.

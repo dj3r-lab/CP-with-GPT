@@ -564,3 +564,72 @@ Iterator는 container 수정 뒤에도 자동으로 안전한 것이 아니다.
 \item algorithm이 요구하는 iterator category와 writable/swappable 성질을 만족하는가?
 \item container 수정 뒤 iterator가 invalidate되지 않았는가?
 \end{enumerate}
+
+
+\section{Part E --- 중간평가}
+
+\subsection{E-1. Static Score Queries}
+
+\begin{problembox}{Intermediate Assessment --- Static Score Queries}
+정수 점수 $A_1,\dots,A_N$이 처음에 한 번 주어지고 이후에는 변경되지 않는다. 이어서 $Q$개의 query가 주어진다.
+
+각 query는 다음 세 종류 중 하나다.
+\begin{itemize}
+\item \code{1 x}: $A_i<x$를 만족하는 점수의 개수를 출력한다.
+\item \code{2 x}: $A_i=x$를 만족하는 점수의 개수를 출력한다.
+\item \code{3 L R}: $L<A_i\le R$을 만족하는 점수의 개수를 출력한다.
+\end{itemize}
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item C++17로 완전한 프로그램을 작성한다.
+\item 모든 query를 주어진 최대 제약조건 안에서 처리할 수 있어야 한다.
+\item 코드와 함께 전체 시간복잡도와 공간복잡도를 $N,Q$를 사용하여 설명한다.
+\item 사용한 정수 타입이 안전한지 설명한다.
+\item 최소 두 개의 edge case를 제시한다.
+\item \code{T\_solve}를 직접 측정하여 함께 제출한다. 문제를 읽기 시작한 시점부터 accepted-quality final code가 완성될 때까지를 측정한다.
+\item compiler/run은 사용할 수 있다. 문제 해설·정답 검색, 다른 사람이나 AI의 도움, 현재 시도에 대한 힌트 또는 접근 검토는 사용할 수 없다. 표준 C++ 문법/API 확인만 허용한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N, Q <= 200000
+-1000000000 <= A_i <= 1000000000
+-1000000000 <= x, L, R <= 1000000000
+L <= R
+\end{TextBlock}
+
+\textbf{Input}
+
+첫째 줄에 $N$과 $Q$가 주어진다.
+
+둘째 줄에 $N$개의 정수 $A_1,\dots,A_N$이 주어진다.
+
+다음 $Q$개의 줄에는 각 query가 한 줄에 하나씩 주어진다.
+
+\textbf{Output}
+
+각 query에 대한 답을 한 줄에 하나씩 출력한다.
+
+\textbf{Sample Input}
+\begin{TextBlock}
+8 6
+5 1 5 2 9 5 7 2
+1 5
+2 5
+3 2 7
+1 -10
+2 2
+3 9 9
+\end{TextBlock}
+
+\textbf{Sample Output}
+\begin{TextBlock}
+3
+3
+4
+0
+2
+0
+\end{TextBlock}
+\end{problembox}
