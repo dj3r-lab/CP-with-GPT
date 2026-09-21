@@ -13,9 +13,9 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
 - Current Learning Unit: S1-B — Sorting & Bounds (Parts A-D complete)
-- Next Assessment: S1-B Part E E-1 — Static Score Queries (Pending learner submission).
+- Next Assessment: S1-B Part F — Final Assessment.
 - Priority Class: Core
-- Learning Status: S1-B has started. Parts A-D are complete: sorting as preprocessing, custom comparator/tie-breaking, sorted-vector lower_bound/upper_bound, duplicate/range counting, and sorted vector vs ordered-container selection were covered with a complete worked example. No S1-B formal assessment evidence exists yet, so S1-B mastery remains unverified. S1-A remains L4 / Provisional with Open / Medium non-blocking Review Debt.
+- Learning Status: S1-B Part E E-1 Static Score Queries PASS on Attempt 1 (Tier B, R2/I2, T_solve 11:29, no hints). Submitted C++17 was correct and passed sample, learner edge cases, and 2,000 randomized differential tests. Capability is L3 / Provisional from immediate evidence. A non-blocking explanation error remains: lower_bound/upper_bound do not linearly scan to the last element; on vector random-access iterators the search is logarithmic. Part F is next and should cover remaining decision boundaries, especially custom comparator/selection.
 - Last Updated: 2026-09-21
 
 ---
@@ -28,7 +28,7 @@
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Delayed/Mixed transfer reassessment |
 | S1-A — Associative Containers | L4 | Provisional | Immediate | Complete — Parts A-H complete; Immediate Progression Gate Satisfied; Part G completed after fresh GPT + External CP PASS | Open — Medium | Delayed/Mixed assessment |
-| S1-B — Sorting & Bounds | — | Unverified | Immediate assessment pending | In Progress — Parts A-D complete; Part E E-1 presented | None | Await E-1 submission |
+| S1-B — Sorting & Bounds | L3 | Provisional | Immediate | In Progress — Part E PASS; Part F pending | None | Part F — Final Assessment |
 
 ---
 
@@ -293,8 +293,8 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 
 ## 7. Next Learning Action
 
-1. S1-B Part E E-1 is active. Await the learner's independent final submission without giving hints or approach validation.
-2. If the learner requests a hint or approach review before final submission, mark the attempt FAIL — Hint Requested and move that problem to learning mode.
+1. S1-B Part E E-1 is complete with PASS. Proceed next to Part F — Final Assessment in a separate assessment response.
+2. Part F should independently cover remaining S1-B boundaries, especially custom comparator / selection, while preserving no-hint evaluation integrity.
 3. Keep S1-A Review Debt at Medium and non-blocking.
 4. In a later delayed/mixed assessment, hide the target topic and re-check:
    - ordered associative-container boundary operations,
