@@ -3,9 +3,9 @@
 Status: In Progress — Parts A-D complete
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 Pending
-Confidence: Unverified for S1-B
-Next formal step: learner submission for Part E E-1
+Assessment Status: Part E E-1 PASS
+Confidence: Provisional for S1-B
+Next formal step: Part F — Final Assessment
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -104,7 +104,7 @@ This was learning-mode Q&A only. No S1-B assessment was started and no PASS/FAIL
 ## Part E — Intermediate Assessment
 
 ### E-1 — Static Score Queries
-Status: Pending
+Status: PASS
 Source: GPT-generated
 Validation Tier: B
 Validation Evidence:
@@ -121,7 +121,7 @@ Calibration rationale:
 - compared against the Registry, it is structurally closer to R2/I2 anchors such as Sqrt(x) than to R3/I2 selection-heavy problems.
 Mode: Independent formal assessment; compiler/run allowed; C++ syntax/API lookup only.
 Hints: None provided.
-Result: Pending
+Result: PASS
 
 Problem statement:
 N fixed integer scores A_i are given, followed by Q queries:
@@ -162,4 +162,34 @@ Output
 2
 0
 
-No learner answer has been submitted yet.
+Learner submission:
+- T_solve: 11:29
+- Hints: None
+- First-pass Correct: Yes
+- Result: PASS
+- Failure Attribution: N/A
+- Capability evidence: L3 Implementation, with correct static sorted-vector boundary use
+- Confidence: Provisional / Immediate
+- Review Debt: None
+
+Validation:
+- C++17 compile succeeded; only an unused-variable warning for Type-1 up_b.
+- sample matched;
+- both learner edge cases matched;
+- 2,000 randomized differential tests against an independent brute-force oracle matched.
+
+Correctness:
+- Type 1: lower_bound(x)-begin() counts values < x.
+- Type 2: upper_bound(x)-lower_bound(x) counts values == x.
+- Type 3: upper_bound(R)-upper_bound(L) counts L < value <= R.
+
+Complexity:
+- Final O(N log N + Q log N) = O((N+Q) log N) is correct.
+- Non-blocking explanation error: the claim that the search examines all elements when the target is near the end is false for vector random-access lower_bound/upper_bound; the range is narrowed logarithmically.
+- Stored input space is O(N). Input/query integers fit int; iterator subtraction yields vector<int>::difference_type with magnitude at most N.
+
+Edge cases:
+1. N=1, A=1234 with queries (<123), (=1234), (12,1357] -> 0,1,1.
+2. N=1, A=1e9 with query (999999999,1e9] -> 1.
+
+No retest is needed. Part F should assess remaining S1-B decision boundaries, especially custom comparator / selection.
