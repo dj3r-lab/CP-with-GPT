@@ -633,3 +633,73 @@ L <= R
 0
 \end{TextBlock}
 \end{problembox}
+
+\subsection{E-1 제출 및 판정}
+
+\begin{answerbox}[학습자 제출 코드]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+
+using namespace std;
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    int Q = 0;
+    cin >> Q;
+    vector<int> v = {};
+    for (int i = 0; i < N; i += 1) {
+        int Ai = 0;
+        cin >> Ai;
+        v.push_back(Ai);
+    }
+    sort(v.begin(), v.end());
+    for (int i = 0; i < Q; i += 1) {
+        int a = 0;
+        int x = 0;
+        int L = 0;
+        int R = 0;
+        cin >> a;
+        auto bgn = v.begin();
+        if (a == 1) {
+            cin >> x;
+            auto low_b = lower_bound(v.begin(), v.end(), x);
+            auto up_b = upper_bound(v.begin(), v.end(), x);
+            cout << low_b - bgn << '\n';
+        }
+        else if (a == 2) {
+            cin >> x;
+            auto low_b = lower_bound(v.begin(), v.end(), x);
+            auto up_b = upper_bound(v.begin(), v.end(), x);
+            cout << up_b - low_b << '\n';
+        }
+        else if (a == 3) {
+            cin >> L >> R;
+            auto low_b = upper_bound(v.begin(), v.end(), L);
+            auto up_b = upper_bound(v.begin(), v.end(), R);
+            cout << up_b - low_b << '\n';
+        }
+    }
+}
+\end{lstlisting}
+\end{answerbox}
+
+\paragraph{학습자 제출 분석.}
+학습자는 전체 시간복잡도를 $O(N\log N+Q\log N)=O((N+Q)\log N)$, 저장 공간을 $O(N)$으로 설명했다. 정수 범위가 \code{int}에 안전하다고 판단했고 두 개의 edge case를 제시했다. 제출한 풀이 시간은 \code{T\_solve = 11:29}다.
+
+\paragraph{판정: PASS.}
+세 query 구현은 모두 정확하다. Type 1은 \code{lower\_bound(x)-begin()}으로 $x$ 미만 개수를, Type 2는 \code{upper\_bound(x)-lower\_bound(x)}로 $x$와 같은 값의 개수를, Type 3은 \code{upper\_bound(R)-upper\_bound(L)}로 $L<A_i\le R$의 개수를 계산한다.
+
+제출 코드는 C++17로 컴파일되었고 sample, 제출한 두 edge case, 2,000개 randomized differential test를 모두 통과했다. 전체 시간복잡도 결론은 정확하다. 다만 ``마지막 원소라면 모든 원소를 탐색한다''는 설명은 부정확하다. random-access iterator를 사용하는 \code{lower\_bound}/\code{upper\_bound}는 범위를 절반씩 좁혀 logarithmic comparison search를 수행한다.
+
+전체 저장 공간은 입력 vector 때문에 $O(N)$이다. 정수 값과 query 값은 \code{int}에 안전하며 iterator 차이의 크기는 최대 $N$이다. 실제 iterator 차이의 타입은 \code{vector<int>::difference\_type} 계열이라는 점은 별도로 구분한다.
+
+Type 1의 \code{up\_b}는 계산하지만 사용하지 않는 비차단 불필요 코드다.
