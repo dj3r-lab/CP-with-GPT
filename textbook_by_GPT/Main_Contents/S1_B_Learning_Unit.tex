@@ -1,0 +1,376 @@
+% =========================================================
+% Stage 1 S1-B
+% =========================================================
+\chapter{S1-B --- Sorting \& Bounds}
+
+\section{Part A --- 위치와 선수지식}
+
+\subsection{현재 위치}
+S1-B는 Stage 1의 두 번째 Learning Unit이다. S0-B에서 \code{sort}와 custom comparator의 기본 문법을 접했고, S1-A에서는 \code{set}/\code{multiset}과 ordered bound query를 사용했다. 이번 Unit에서는 이 두 흐름을 연결하여 \textbf{정적 또는 거의 정적인 sequence를 한 번 정렬한 뒤 그 순서를 반복 query에 재사용하는 방법}을 다룬다.
+
+핵심 범위는 다음과 같다.
+\begin{itemize}
+\item \code{std::sort}와 정렬 기준
+\item custom comparator와 tie-breaking
+\item 정렬된 \code{vector}의 \code{lower\_bound}, \code{upper\_bound}
+\item 중복 원소와 반열린 경계
+\item 같은 값과 값 구간의 원소 개수 계산
+\item sorted \code{vector}와 \code{set}/\code{multiset}의 선택
+\end{itemize}
+
+이번 Unit은 STL bounds를 사용하는 단계다. Binary Search를 직접 구현하고 loop invariant를 설계하거나 answer space에 Binary Search를 적용하는 기법은 Stage 3의 Binary Search Family에서 다룬다.
+
+\subsection{왜 지금 배우는가}
+정렬되지 않은 배열에서 “$x$ 이상인 첫 값”, “$[L,R]$ 안의 값 개수” 같은 query를 반복하면 query마다 $O(N)$ scan이 필요할 수 있다. 데이터가 변하지 않는다면 한 번 정렬해 순서를 만든 뒤 각 경계를 $O(\log N)$에 찾을 수 있다.
+
+따라서 반복 scan의
+\[
+O(NQ)
+\]
+를
+\[
+O(N\log N+Q\log N)
+\]
+으로 바꿀 수 있는 경우가 많다.
+
+\subsection{선수지식}
+\begin{itemize}
+\item \code{vector}, iterator
+\item \code{sort(first,last)}
+\item 함수 또는 lambda comparator
+\item $O(N)$, $O(\log N)$, $O(N\log N)$
+\item S1-A의 ordered container와 bound query
+\end{itemize}
+
+\subsection{Core Decision Boundary}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.6cm}X}
+\toprule
+선택 상황 & 판단 기준 \\
+\midrule
+선형 탐색 vs sort + bounds & 같은 static 데이터에 query가 반복되는가? \\
+sorted \code{vector} vs ordered container & 중간 insert/erase가 계속되면 set/multiset, batch/static이면 sorted vector를 우선 검토한다. \\
+\code{lower\_bound} vs \code{upper\_bound} & 이상 경계인지 초과 경계인지 구분한다. \\
+default vs custom comparator & 기본 오름차순으로 충분한지, 여러 field와 tie-break가 필요한지 본다. \\
+정렬 기준 vs 검색 기준 & bounds가 전제하는 ordering과 실제 정렬 기준이 호환되어야 한다. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Immediate Coverage Floor}
+\begin{itemize}
+\item sorted vector에서 lower/upper bound를 사용한 boundary query
+\item duplicates가 있을 때 두 bound의 차이 설명
+\item custom comparator로 복합 정렬 기준 구현
+\item update 패턴에 따라 sorted vector와 ordered associative container를 선택
+\end{itemize}
+
+\section{Part B --- 학습 목표}
+이 Unit을 마치면 다음을 독립적으로 수행할 수 있어야 한다.
+\begin{enumerate}
+\item \code{std::sort}로 ascending/descending 정렬을 구현한다.
+\item 복합 기준 custom comparator와 tie-break를 정확히 구현한다.
+\item comparator를 strict ordering으로 작성하고 \code{<=}, \code{>=} 같은 비엄격 비교를 피한다.
+\item \code{lower\_bound(x)}를 첫 $\ge x$, \code{upper\_bound(x)}를 첫 $>x$ 위치로 해석한다.
+\item vector iterator를 \code{it - v.begin()}으로 index로 바꾼다.
+\item 값 $x$의 개수를 두 bound의 차이로 계산한다.
+\item $[L,R]$ 안의 원소 개수를 두 bound의 차이로 계산한다.
+\item \code{end()}를 dereference하지 않고 안전하게 처리한다.
+\item sort preprocessing과 Q개의 query를 합친 전체 complexity를 설명한다.
+\item static sequence와 dynamic ordered container 사이를 update 패턴으로 구분한다.
+\item \code{binary\_search}와 bounds의 반환 정보 차이를 설명한다.
+\end{enumerate}
+
+\section{Part C --- 개념과 원리}
+
+\subsection{C1. 정렬은 query를 위한 전처리다}
+정렬된 sequence에서는 작은 값 영역과 큰 값 영역이 분리된다. 이 구조를 이용하면 반복 query에서 경계를 logarithmic search로 찾을 수 있다.
+
+$N$개 값을 한 번 정렬하고 $Q$개의 query를 처리하면 대표적으로
+\[
+O(N\log N+Q\log N)
+\]
+이 된다.
+
+\subsection{C2. \code{std::sort}}
+\begin{lstlisting}
+sort(v.begin(), v.end());                 // ascending
+sort(v.begin(), v.end(), greater<int>()); // descending
+\end{lstlisting}
+$N$개 원소의 comparison sort는 $O(N\log N)$으로 분석한다.
+
+\subsection{C3. Custom comparator와 strict ordering}
+점수 내림차순, 이름 오름차순:
+\begin{lstlisting}
+struct Record {
+    string name;
+    int score;
+};
+
+bool cmp(const Record& a, const Record& b) {
+    if (a.score != b.score) {
+        return a.score > b.score;
+    }
+    return a.name < b.name;
+}
+\end{lstlisting}
+
+comparator는 “a가 b보다 앞에 와야 하는가?”를 답한다. 완전히 동률이면 false가 되어야 하므로 다음과 같은 비엄격 비교는 잘못된 comparator가 될 수 있다.
+\begin{lstlisting}
+return a.score >= b.score; // wrong
+\end{lstlisting}
+
+\begin{keybox}[Tie-break]
+문제가 점수 내림차순, 동점이면 이름 오름차순이라고 요구한다면 첫 기준이 같을 때 두 번째 기준까지 비교한다.
+\end{keybox}
+
+\subsection{C4. \code{sort}의 안정성}
+\code{std::sort}는 comparator상 동등한 원소의 원래 상대 순서를 보존한다고 가정하면 안 된다. 원래 순서 보존이 요구되면 \code{stable\_sort} 또는 명시적 tie-break를 검토한다.
+
+\subsection{C5. Bounds의 전제}
+bounds는 정렬된 범위에 사용해야 한다.
+\begin{lstlisting}
+sort(v.begin(), v.end());
+auto lo = lower_bound(v.begin(), v.end(), x);
+auto hi = upper_bound(v.begin(), v.end(), x);
+\end{lstlisting}
+custom ordering을 썼다면 검색도 그 ordering과 호환되어야 한다.
+
+\subsection{C6. \code{lower\_bound}}
+오름차순 vector에서
+\begin{lstlisting}
+auto it = lower_bound(v.begin(), v.end(), x);
+\end{lstlisting}
+은 첫
+\[
+v[i]\ge x
+\]
+위치를 반환한다. 없으면 \code{end()}다.
+
+예를 들어
+\[
+v=[1,2,2,2,5,7]
+\]
+이면 lower bound of 2는 index 1, lower bound of 3은 index 4, lower bound of 8은 \code{end()}다.
+
+\subsection{C7. \code{upper\_bound}}
+\begin{lstlisting}
+auto it = upper_bound(v.begin(), v.end(), x);
+\end{lstlisting}
+은 첫
+\[
+v[i]>x
+\]
+위치를 반환한다.
+
+같은 vector에서 upper bound of 2는 index 4, upper bound of 3도 index 4, upper bound of 7은 \code{end()}다.
+
+\begin{conceptbox}[핵심]
+lower bound는 첫 $\ge x$, upper bound는 첫 $>x$다.
+\end{conceptbox}
+
+\subsection{C8. Duplicates와 반열린 구간}
+값 $x$인 원소는 정확히
+\[
+[\operatorname{lower\_bound}(x),\operatorname{upper\_bound}(x))
+\]
+에 놓인다.
+
+따라서
+\begin{lstlisting}
+auto lo = lower_bound(v.begin(), v.end(), x);
+auto hi = upper_bound(v.begin(), v.end(), x);
+long long count = hi - lo;
+\end{lstlisting}
+로 중복 개수를 계산할 수 있다.
+
+\subsection{C9. Iterator를 index로 바꾸기}
+vector iterator는 random-access iterator이므로
+\begin{lstlisting}
+int idx = lower_bound(v.begin(), v.end(), x) - v.begin();
+\end{lstlisting}
+처럼 index를 얻을 수 있다. 반환값이 \code{end()}이면 index는 \code{v.size()}다. 단 \code{end()}는 실제 원소가 아니므로 dereference하면 안 된다.
+
+\subsection{C10. 값 구간의 개수}
+$[L,R]$의 원소 개수:
+\[
+\operatorname{upper\_bound}(R)-\operatorname{lower\_bound}(L)
+\]
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+원하는 구간 & 원소 개수 \\
+\midrule
+$[L,R]$ & \code{upper\_bound(R) - lower\_bound(L)} \\
+$[L,R)$ & \code{lower\_bound(R) - lower\_bound(L)} \\
+$(L,R]$ & \code{upper\_bound(R) - upper\_bound(L)} \\
+$(L,R)$ & \code{lower\_bound(R) - upper\_bound(L)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+공식을 외우기보다 왼쪽에서는 어떤 값부터 허용하는지, 오른쪽에서는 어떤 값부터 제외하는지를 각각 결정한다.
+
+\subsection{C11. Predecessor와 successor}
+\begin{itemize}
+\item $x$ 이상 최소값: \code{lower\_bound(x)}
+\item $x$ 초과 최소값: \code{upper\_bound(x)}
+\item $x$ 미만 최대값: \code{prev(lower\_bound(x))}, 단 iterator가 \code{begin()}이 아니어야 함
+\item $x$ 이하 최대값: \code{prev(upper\_bound(x))}, 단 iterator가 \code{begin()}이 아니어야 함
+\end{itemize}
+
+\subsection{C12. \code{binary\_search}와 bounds}
+\begin{lstlisting}
+bool exists = binary_search(v.begin(), v.end(), x);
+\end{lstlisting}
+\code{binary\_search}는 존재 여부를 반환한다. bounds는 위치를 반환하므로 첫 위치, 중복 개수, 삽입 위치, 구간 개수, predecessor/successor에 사용할 수 있다.
+
+\subsection{C13. sorted vector vs set/multiset}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3.6cm}XX}
+\toprule
+구조 & 강점 & 약점 \\
+\midrule
+sorted \code{vector} & static 데이터에 단순하고 locality가 좋고 duplicates 보존이 자연스럽다 & 중간 insert/erase는 보통 $O(N)$ \\
+\code{set} & dynamic insert/erase/bound가 $O(\log N)$ & duplicates 제거, node overhead \\
+\code{multiset} & duplicates 보존 + dynamic ordered update & node overhead \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{C14. 전체 lifecycle complexity}
+정렬 $O(N\log N)$, Q개의 bound query $O(Q\log N)$이므로 전체는
+\[
+O(N\log N+Q\log N)
+\]
+이다.
+
+입력 vector의 명시적 저장은 $O(N)$이다. \code{std::sort}의 auxiliary space를 표준 인터페이스 수준에서 무조건 $O(1)$이라고 단정하지 않는다. auxiliary space가 평가 대상이면 구현과 분석 범위를 분명히 한다.
+
+\subsection{C15. 사용하면 안 되는 상황}
+\begin{itemize}
+\item query가 한 번뿐이고 선형 탐색이면 충분한 경우
+\item query 사이에 insert/erase가 매우 자주 일어나는 경우
+\item 원래 index 순서 자체가 문제의 핵심인 경우
+\item 정렬되지 않은 범위에 bounds를 호출하려는 경우
+\item answer space에 대한 Binary Search 문제
+\end{itemize}
+
+\section{Part D --- Worked Example}
+
+\subsection{D1. 문제 --- Price Range Queries}
+$N$개의 체결 가격이 주어진다. duplicates가 허용된다. 이어서 $Q$개의 query $[L,R]$가 주어진다. 각 query마다
+\begin{enumerate}
+\item $L\le p\le R$인 가격의 개수
+\item 그런 가격이 있으면 최소 가격, 없으면 \code{NONE}
+\end{enumerate}
+를 출력한다고 하자.
+
+예시 데이터:
+\[
+[8,3,5,5,10,2]
+\]
+
+\subsection{D2. Brute Force}
+query마다 모든 가격을 훑으면 한 query가 $O(N)$, 전체가 $O(NQ)$이다.
+
+\subsection{D3. Complexity}
+$N,Q\le200000$이라면 $NQ$는 최대 약 $4\times10^{10}$ 규모가 되므로 반복 선형 scan은 부적절하다.
+
+\subsection{D4. Bottleneck}
+원본 가격은 바뀌지 않는데 query마다 같은 배열을 처음부터 다시 순회하는 것이 병목이다.
+
+\subsection{D5. 핵심 관찰}
+한 번 정렬하면
+\[
+[8,3,5,5,10,2]\longrightarrow[2,3,5,5,8,10]
+\]
+이 된다. $[L,R]$에 속하는 값은 정렬된 vector에서 하나의 연속 구간을 이룬다.
+
+왼쪽 경계는 첫 $\ge L$이므로 \code{lower\_bound(L)}, 오른쪽 바깥 경계는 첫 $>R$이므로 \code{upper\_bound(R)}다.
+
+\subsection{D6. 알고리즘 설계}
+\begin{enumerate}
+\item 가격을 vector에 저장한다.
+\item 한 번 sort한다.
+\item query마다 \code{left = lower\_bound(L)}, \code{right = upper\_bound(R)}를 구한다.
+\item 개수는 \code{right-left}.
+\item \code{left != right}이면 최소값은 \code{*left}.
+\end{enumerate}
+
+\subsection{D7. 정확성}
+\code{left} 앞의 모든 값은 $L$보다 작고, \code{right} 앞까지의 값은 $R$ 이하다. 따라서
+\[
+[\code{left},\code{right})
+\]
+에는 정확히 $L\le p\le R$인 값만 들어 있다. 그러므로 iterator 차이가 정확한 개수이며, 구간이 비어 있지 않다면 첫 원소가 최소값이다.
+
+\subsection{D8. C++ 구현}
+\begin{lstlisting}
+#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N, Q;
+    cin >> N >> Q;
+
+    vector<long long> price(N);
+    for (long long& x : price) {
+        cin >> x;
+    }
+
+    sort(price.begin(), price.end());
+
+    while (Q--) {
+        long long L, R;
+        cin >> L >> R;
+
+        auto left = lower_bound(price.begin(), price.end(), L);
+        auto right = upper_bound(price.begin(), price.end(), R);
+
+        cout << (right - left) << ' ';
+
+        if (left == right) {
+            cout << "NONE\n";
+        }
+        else {
+            cout << *left << '\n';
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{D9. Trace}
+정렬 후 vector는
+\[
+[2,3,5,5,8,10]
+\]
+이다.
+
+\begin{itemize}
+\item $[4,8]$: lower index 2, upper index 5, count 3, minimum 5
+\item $[6,7]$: 두 boundary가 모두 index 4, count 0, \code{NONE}
+\item $[5,5]$: lower index 2, upper index 4, count 2, minimum 5
+\end{itemize}
+
+\subsection{D10. Edge Cases}
+\begin{itemize}
+\item 모든 값이 같은 경우
+\item query 범위가 전체 데이터보다 왼쪽 또는 오른쪽인 경우
+\item $L=R$
+\item 정확히 한 원소만 포함되는 경우
+\item bound가 \code{end()}인 경우
+\item $N=1$
+\end{itemize}
+
+전체 시간복잡도는
+\[
+O(N\log N+Q\log N)
+\]
+이고 명시적 입력 저장 공간은 $O(N)$이다.

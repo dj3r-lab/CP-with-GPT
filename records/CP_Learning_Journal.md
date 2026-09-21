@@ -12,10 +12,10 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
-- Current Learning Unit: S1-B — Sorting & Bounds (not yet started)
-- Next Assessment: None. Start S1-B Parts A-D first; Part E must be presented later in a separate response.
+- Current Learning Unit: S1-B — Sorting & Bounds (Parts A-D complete)
+- Next Assessment: S1-B Part E — not yet presented. Present only after the learner has had time to discuss Parts A-D, and in a separate response.
 - Priority Class: Core
-- Learning Status: S1-A Parts A-H complete. Part E and Part F PASSed on Attempt 1. Part G ultimately completed after remediation: GPT-generated fresh reassessment Active ID Registry PASS and final External CP reassessment AtCoder ABC241 D — Sequence Query PASS (T_solve 19:12). S1-A Capability is L4 / Provisional. Immediate progression gate is satisfied. Review Debt remains Open / Medium and is non-blocking; delayed/mixed validation is still required for Confirmed confidence and for the reverse-index/static-vs-dynamic decision boundaries.
+- Learning Status: S1-B has started. Parts A-D are complete: sorting as preprocessing, custom comparator/tie-breaking, sorted-vector lower_bound/upper_bound, duplicate/range counting, and sorted vector vs ordered-container selection were covered with a complete worked example. No S1-B formal assessment evidence exists yet, so S1-B mastery remains unverified. S1-A remains L4 / Provisional with Open / Medium non-blocking Review Debt.
 - Last Updated: 2026-09-21
 
 ---
@@ -28,6 +28,7 @@
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Delayed/Mixed transfer reassessment |
 | S1-A — Associative Containers | L4 | Provisional | Immediate | Complete — Parts A-H complete; Immediate Progression Gate Satisfied; Part G completed after fresh GPT + External CP PASS | Open — Medium | Delayed/Mixed assessment |
+| S1-B — Sorting & Bounds | — | Unverified | Learning only | In Progress — Parts A-D complete; no formal assessment yet | None | Part E after discussion |
 
 ---
 
@@ -292,8 +293,8 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 
 ## 7. Next Learning Action
 
-1. S1-A Part H is complete. Do not continue adding immediate S1-A reassessment problems.
-2. Begin S1-B — Sorting & Bounds with Parts A-D only.
+1. S1-B Parts A-D are complete. Allow concept/Q&A discussion before assessment.
+2. When the learner is ready, present S1-B Part E in a separate response; do not attach it to the Parts A-D lesson.
 3. Keep S1-A Review Debt at Medium and non-blocking.
 4. In a later delayed/mixed assessment, hide the target topic and re-check:
    - ordered associative-container boundary operations,
