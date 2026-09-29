@@ -703,3 +703,93 @@ int main()
 전체 저장 공간은 입력 vector 때문에 $O(N)$이다. 정수 값과 query 값은 \code{int}에 안전하며 iterator 차이의 크기는 최대 $N$이다. 실제 iterator 차이의 타입은 \code{vector<int>::difference\_type} 계열이라는 점은 별도로 구분한다.
 
 Type 1의 \code{up\_b}는 계산하지만 사용하지 않는 비차단 불필요 코드다.
+
+
+\section{Part F --- 최종 성취도 평가}
+
+\subsection{F-1. Snapshot Ranking Queries}
+
+\begin{problembox}{Final Assessment --- Snapshot Ranking Queries}
+$N$명의 참가자가 있으며, 각 참가자는 세 정수 $(s,p,id)$를 가진다. 참가자들의 순위는 다음 규칙으로 정한다.
+\begin{enumerate}
+\item $s$가 큰 참가자가 앞선다.
+\item $s$가 같으면 $p$가 작은 참가자가 앞선다.
+\item $s$와 $p$가 모두 같으면 $id$가 작은 참가자가 앞선다.
+\end{enumerate}
+처음 주어진 $N$명의 참가자 집합은 이후 변하지 않는다. 이어서 $Q$개의 query를 처리한다. 각 query는 서로 독립적이며, 가상의 참가자를 사용하는 query도 실제 집합을 변경하지 않는다.
+
+query는 다음 네 종류다.
+\begin{itemize}
+\item \code{1 s p id}: 가상의 참가자 $(s,p,id)$보다 \textbf{엄격히 앞서는} 기존 참가자의 수에 1을 더한 값을 출력한다. 즉, 이 가상 참가자가 들어갈 1-based 순위 위치를 출력한다.
+\item \code{2 s p id}: 가상의 참가자보다 앞서거나, $(s,p,id)$가 완전히 같은 기존 참가자의 수를 출력한다.
+\item \code{3 s p}: $s$와 $p$가 모두 같은 기존 참가자의 수를 출력한다. $id$는 무시한다.
+\item \code{4 k}: 현재 고정된 $N$명 중 순위가 정확히 $k$번째인 참가자의 $id$를 출력한다.
+\end{itemize}
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item C++17로 완전한 프로그램을 작성한다.
+\item 최대 제약조건에서 모든 query를 처리할 수 있어야 한다.
+\item 코드와 함께 전체 시간복잡도와 공간복잡도를 $N,Q$를 사용하여 설명한다.
+\item 순위 규칙과 각 query의 출력이 코드에서 왜 정확히 구현되는지 설명한다.
+\item 사용한 정수 타입이 안전한지 설명한다.
+\item 최소 세 개의 edge case를 제시한다.
+\item \code{T\_solve}를 직접 측정하여 함께 제출한다. 문제를 읽기 시작한 시점부터 accepted-quality final code와 설명이 완성될 때까지를 측정한다.
+\item compiler/run은 사용할 수 있다. 문제 해설·정답 검색, 다른 사람이나 AI의 도움, 현재 시도에 대한 힌트 또는 접근 검토는 사용할 수 없다. 표준 C++ 문법/API 확인만 허용한다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N, Q <= 200000
+-1000000000 <= s <= 1000000000
+0 <= p <= 1000000000
+1 <= id <= 1000000000
+처음 주어진 N명의 id는 서로 다르다.
+Type 1, 2 query의 id는 기존 id와 같을 수도 있고 다를 수도 있다.
+Type 4 query에서는 1 <= k <= N이다.
+\end{TextBlock}
+
+\textbf{Input}
+
+첫째 줄에 $N$과 $Q$가 주어진다.
+
+다음 $N$개의 줄에 기존 참가자의 $s$, $p$, $id$가 주어진다.
+
+다음 $Q$개의 줄에 query가 한 줄에 하나씩 주어진다.
+
+\textbf{Output}
+
+각 query의 답을 한 줄에 하나씩 출력한다.
+
+\textbf{Sample Input}
+\begin{TextBlock}
+7 8
+100 30 5
+100 20 9
+100 20 3
+90 10 8
+100 20 7
+90 5 4
+80 50 1
+1 100 20 8
+2 100 20 7
+3 100 20
+4 5
+1 95 0 2
+2 90 5 4
+3 70 1
+4 7
+\end{TextBlock}
+
+\textbf{Sample Output}
+\begin{TextBlock}
+3
+2
+3
+4
+5
+5
+0
+1
+\end{TextBlock}
+\end{problembox}

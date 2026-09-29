@@ -1,11 +1,11 @@
 # S1-B — Sorting & Bounds
 
-Status: In Progress — Parts A-D complete
+Status: In Progress — Part F final assessment active
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 PASS
+Assessment Status: Part E E-1 PASS; Part F F-1 Pending
 Confidence: Provisional for S1-B
-Next formal step: Part F — Final Assessment
+Next formal step: Submit F-1 — Snapshot Ranking Queries
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -193,3 +193,87 @@ Edge cases:
 2. N=1, A=1e9 with query (999999999,1e9] -> 1.
 
 No retest is needed. Part F should assess remaining S1-B decision boundaries, especially custom comparator / selection.
+
+
+## Part F — Final Assessment
+
+### F-1 — Snapshot Ranking Queries
+Status: Pending
+Source: GPT-generated
+Validation Tier: B
+Validation Evidence:
+- complete C++17 reference solution compiled and matched the sample;
+- independent brute-force oracle cross-check matched 10,000 randomized valid cases;
+- explicit boundary checks include N=1, exact-record equality, absent score/penalty groups, extreme ranking positions, and k=1/N.
+Difficulty: R3/I2
+Calibration: Comparative / Provisional
+Calibration Registry: CP_Calibration_Anchor_Registry v1.1
+Mode: Independent formal assessment; compiler/run allowed; standard C++ syntax/API lookup only.
+Hints: None provided.
+
+Problem statement:
+N fixed participants are given. Each participant has three integers (s,p,id). Ranking is:
+1. larger s first;
+2. if s ties, smaller p first;
+3. if both tie, smaller id first.
+
+The original N-participant set never changes. Each query is independent; hypothetical participants are not inserted permanently.
+
+Queries:
+- 1 s p id: output 1 + the number of existing participants strictly ahead of the hypothetical participant.
+- 2 s p id: output the number of existing participants ahead of the hypothetical participant or exactly equal to its full (s,p,id) triple.
+- 3 s p: output the number of existing participants with exactly this s and p, ignoring id.
+- 4 k: output the id of the existing participant ranked exactly k-th.
+
+Submission requirements:
+- complete C++17 program;
+- must handle N,Q <= 200000;
+- explain total time and space complexity in N,Q;
+- explain why the ranking and all four query outputs are correct;
+- explain numeric safety;
+- provide at least three edge cases;
+- submit measured T_solve;
+- no solution/editorial search, other-person/AI help, hints, or approach review during the attempt; standard C++ syntax/API lookup is allowed.
+
+Constraints:
+- 1 <= N,Q <= 200000
+- -1000000000 <= s <= 1000000000
+- 0 <= p <= 1000000000
+- 1 <= id <= 1000000000
+- initial ids are pairwise distinct
+- Type 1/2 query id may equal an existing id or be absent
+- Type 4 has 1 <= k <= N
+
+Sample:
+```text
+7 8
+100 30 5
+100 20 9
+100 20 3
+90 10 8
+100 20 7
+90 5 4
+80 50 1
+1 100 20 8
+2 100 20 7
+3 100 20
+4 5
+1 95 0 2
+2 90 5 4
+3 70 1
+4 7
+```
+
+Output:
+```text
+3
+2
+3
+4
+5
+5
+0
+1
+```
+
+Assessment remains active until the learner submits a final answer or explicitly gives up. No solution-relevant calibration rationale is recorded while the attempt is active.
