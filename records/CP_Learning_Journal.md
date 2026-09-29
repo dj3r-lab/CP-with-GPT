@@ -12,11 +12,11 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
-- Current Learning Unit: S1-B — Sorting & Bounds (Parts A-D complete)
-- Next Assessment: S1-B Part F — Final Assessment.
+- Current Learning Unit: S1-B — Sorting & Bounds (Part F Attempt 1 FAIL; remediation required)
+- Next Assessment: S1-B Part F — fresh reassessment after targeted remediation.
 - Priority Class: Core
-- Learning Status: S1-B Part E E-1 Static Score Queries PASS on Attempt 1 (Tier B, R2/I2, T_solve 11:29, no hints). Submitted C++17 was correct and passed sample, learner edge cases, and 2,000 randomized differential tests. Capability is L3 / Provisional from immediate evidence. A non-blocking explanation error remains: lower_bound/upper_bound do not linearly scan to the last element; on vector random-access iterators the search is logarithmic. Part F is next and should cover remaining decision boundaries, especially custom comparator/selection.
-- Last Updated: 2026-09-21
+- Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 is FAIL — Complexity (Tier B, R3/I2, T_solve 1:21:00, no hints). Submitted C++17 is functionally correct: sample + 3,000 randomized differential tests passed. Blocking issue: multiset iterators are bidirectional, so distance() and k-th traversal are linear; actual worst-case total is O(N log N + QN), not O((N+Q) log N). Capability remains L3 / Provisional. Review Debt opened at Medium for iterator-cost accounting and static sorted-vector vs dynamic ordered-container selection.
+- Last Updated: 2026-09-29
 
 ---
 
@@ -28,7 +28,7 @@
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Delayed/Mixed transfer reassessment |
 | S1-A — Associative Containers | L4 | Provisional | Immediate | Complete — Parts A-H complete; Immediate Progression Gate Satisfied; Part G completed after fresh GPT + External CP PASS | Open — Medium | Delayed/Mixed assessment |
-| S1-B — Sorting & Bounds | L3 | Provisional | Immediate | In Progress — Part E PASS; Part F pending | None | Part F — Final Assessment |
+| S1-B — Sorting & Bounds | L3 | Provisional | Immediate | In Progress — Part E PASS; Part F Attempt 1 FAIL | Open — Medium | Remediation + fresh Part F reassessment |
 
 ---
 
@@ -60,7 +60,7 @@
 - Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgraded S1-A Review Debt from High to Medium.
 - Fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem` then FAILed on Complexity. The submitted `map<int, multiset<int>>` correctly represents sorted duplicate-preserving box contents, but type-3 queries scan all boxes instead of maintaining a reverse card→ordered unique boxes index. In addition, `const pair<int, multiset<int>>&` does not match `map<int,multiset<int>>::value_type` (`pair<const int,multiset<int>>`), so each range-for iteration constructs a temporary and copies the multiset. Type-2 traversal cost was also overstated as O(c log c); iterating an already ordered multiset is O(c) plus output.
 
-Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C Medium, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium after the clean ABC241 D external transfer and now waits for delayed/mixed confirmation.
+Current unresolved Core Review Debt count: 5 entries (S0-B Medium, S0-B Low, S0-C Medium, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium after the clean ABC241 D external transfer and now waits for delayed/mixed confirmation.
 
 ---
 
@@ -338,3 +338,30 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - Result: PASS (learning-mode; not formal mastery evidence).
 - Evidence: correctly stated `find(x)=O(log|S|)`, `erase(iterator)=amortized O(1)`, `begin()/prev(end())=O(1)`, total successful erases <= total ADD count, and overall `O(Q log Q)`.
 - Next action: fresh External CP reassessment — AtCoder ABC217 D — Cutting Woods.
+
+
+## 9. S1-B Formal Evidence — 2026-09-29
+
+### Final Assessment — Attempt 1
+- Problem: Snapshot Ranking Queries
+- Result: FAIL
+- Validation Tier: B
+- Difficulty: R3/I2 (Comparative / Provisional)
+- T_solve: 1:21:00
+- Hints: None
+- Failure Attribution: Complexity
+- Functional validation: C++17 compile + sample PASS + 3,000 randomized differential cases PASS.
+- Positive evidence:
+  - compound custom comparator is correct;
+  - all four query semantics are implemented correctly on tested cases;
+  - numeric range and O(N) storage reasoning are acceptable.
+- Blocking error:
+  - `multiset` iterator is bidirectional, so `distance` is linear;
+  - Type 1/2/3 therefore have O(N) worst-case iterator traversal after O(log N) bounds;
+  - Type 4 is O(k), hence O(N) worst-case;
+  - actual total is O(N log N + QN), violating maximum-constraint efficiency.
+- Secondary explanation issue: the proposed alternative Type-3 formula using `lower_bound(v2)+1` is not generally equivalent to the implemented upper-bound formulation.
+- Capability: L3 / Provisional remains.
+- Review Debt: Open / Medium — iterator category cost; static sorted-vector vs dynamic ordered-container selection.
+- Progression: Part G not unlocked. F-1 is now learning-only and cannot be reused for formal reassessment.
+- Next action: targeted remediation, then a fresh equivalent Part F assessment.

@@ -1,11 +1,11 @@
 # S1-B — Sorting & Bounds
 
-Status: In Progress — Part F final assessment active
+Status: In Progress — Part F Attempt 1 FAIL; remediation required
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 PASS; Part F F-1 Pending
+Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity
 Confidence: Provisional for S1-B
-Next formal step: Submit F-1 — Snapshot Ranking Queries
+Next formal step: targeted remediation, then fresh Part F reassessment
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -277,3 +277,50 @@ Output:
 ```
 
 Assessment remains active until the learner submits a final answer or explicitly gives up. No solution-relevant calibration rationale is recorded while the attempt is active.
+
+
+### F-1 Attempt 1 — Learner Submission and Judgment
+- Date: 2026-09-29
+- Result: FAIL
+- Failure Attribution: Complexity
+- T_solve: 1:21:00
+- Hints: None
+- First-pass functional correctness: Yes on tested cases
+- Assessment independence: Valid
+- Capability impact: S1-B remains L3 / Provisional
+- Review Debt: Open / Medium — iterator category cost and static sorted-vector vs dynamic ordered-container selection
+- Part G: Locked until a fresh Part F reassessment passes or conditionally passes
+
+Validation:
+- C++17 compile succeeded; only an unused local `pair<int,int> p` warning.
+- sample output matched.
+- 3,000 randomized differential tests against an independent ranking oracle matched.
+- Therefore the submitted program is functionally correct on the tested semantics.
+
+Positive evidence:
+- the custom comparator implements the required compound ranking: score descending, penalty ascending, id ascending;
+- Type 1 and Type 2 use the correct lower/upper ordering boundaries;
+- Type 3 correctly brackets all allowed ids with id=1 and id=1e9;
+- Type 4 returns the k-th element under the multiset ordering;
+- input integers and all produced counts fit in `int` under the stated constraints.
+
+Blocking issue:
+- `multiset` iterators are bidirectional, not random-access;
+- `S.lower_bound` and `S.upper_bound` are O(log N), but `distance(S.begin(), it)` is O(N) in the worst case;
+- Type 3 also uses `distance` over a multiset iterator range and can be O(N);
+- Type 4 advances from `begin()` k times, so it is O(k), hence O(N) worst-case;
+- therefore the query phase is O(QN) worst-case and total time is O(N log N + QN), not O((N+Q) log N);
+- this violates the maximum-constraint requirement and triggers FAIL under the formal rubric.
+
+Complexity notes:
+- the insertion phase may be written as O(sum_{i=1}^N log i)=O(log(N!))=Theta(N log N);
+- comparator arguments are copied by value, but each vector has exactly three integers, so this is a constant-factor inefficiency rather than a different asymptotic bound;
+- space remains O(N).
+
+Explanation issue:
+- the alternative statement for Type 3, `distance(lower_bound(v1), lower_bound(v2)) + 1`, is not generally equivalent to the implemented `distance(lower_bound(v1), upper_bound(v2))`. The implemented version is correct under the stated id bounds; the alternative formula is not reliable.
+
+Next action:
+- convert F-1 to learning mode;
+- remediate iterator-category operation cost and container selection for a static ranked sequence;
+- reassess the same learning objectives with a fresh, non-reused Part F problem.

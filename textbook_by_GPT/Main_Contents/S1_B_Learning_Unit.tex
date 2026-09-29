@@ -793,3 +793,140 @@ Type 4 query에서는 1 <= k <= N이다.
 1
 \end{TextBlock}
 \end{problembox}
+
+
+\subsection{F-1 제출 및 판정 --- Attempt 1}
+
+\begin{answerbox}[학습자 제출 코드]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include<iterator>
+
+using namespace std;
+
+struct cmp {
+    bool operator()(vector<int> v1, vector<int> v2) const {
+        if (v1[0] != v2[0]) {
+            return v1[0] > v2[0];
+        }
+        else if (v1[1] != v2[1]) {
+            return v1[1] < v2[1];
+        }
+        else if (v1[2] != v2[2]) {
+            return v1[2] < v2[2];
+        }
+        else {
+            return v1[2] > v2[2];
+        }
+    }
+};
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    int Q = 0;
+    cin >> Q;
+
+    multiset<vector<int>, cmp> S = {};
+    pair<int, int> p = {};
+    for (int i = 0; i < N; i += 1) {
+        int s = 0;
+        int p = 0;
+        int id = 0;
+        cin >> s >> p >> id;
+        vector<int> v = { s, p, id };
+        S.insert(v);
+    }
+
+    for (int i = 0; i < Q; i += 1) {
+        int n = 0;
+        int s = 0;
+        int p = 0;
+        int id = 0;
+        int k = 0;
+        cin >> n;
+
+        if (n == 1) {
+            cin >> s >> p >> id;
+            vector<int> v = { s, p, id };
+            auto it = S.lower_bound(v);
+            int dist = 1 + distance(S.begin(), it);
+            cout << dist << '\n';
+        }
+        else if (n == 2) {
+            cin >> s >> p >> id;
+            vector<int> v = { s, p, id };
+            auto it = S.upper_bound(v);
+            int dist = distance(S.begin(), it);
+            cout << dist << '\n';
+        }
+        else if (n == 3) {
+            cin >> s >> p;
+            int id1 = 1;
+            int id2 = 1000000000;
+            vector<int> v1 = { s, p, id1 };
+            vector<int> v2 = { s, p, id2 };
+            int dist = distance(S.lower_bound(v1), S.upper_bound(v2));
+            cout << dist << '\n';
+        }
+        else if (n == 4) {
+            cin >> k;
+            auto it = S.begin();
+            for (int i = 0; i < k; i += 1) {
+                it++;
+            }
+            it--;
+            cout << (*it)[2] << '\n';
+        }
+    }
+}
+\end{lstlisting}
+\end{answerbox}
+
+\paragraph{제출 정보.}
+\code{T\_solve = 1:21:00}. 힌트 사용 없음. 학습자는 insertion phase를
+\[
+O(\log(N!)) \le O(N\log N)
+\]
+으로, query phase를 $O(Q\log N)$으로 분석하여 전체를 $O((N+Q)\log N)$이라고 설명했다. 공간복잡도는 $O(N)$으로 설명했고 세 개의 edge case와 numeric-safety 설명을 제출했다.
+
+\paragraph{검증.}
+제출 코드는 C++17로 컴파일되었고 sample을 통과했다. 독립적인 ranking oracle과 비교한 3,000개의 randomized differential test도 모두 일치했다. 따라서 테스트된 문제 의미에 대한 구현 correctness는 확인되었다.
+
+\paragraph{판정: FAIL --- Complexity.}
+핵심 차단 오류는 \code{multiset} iterator의 연산 비용이다. \code{multiset} iterator는 bidirectional iterator이므로 \code{std::distance}는 두 iterator 사이를 실제로 이동하며 최악 $O(N)$이 걸린다. 따라서 Type 1과 Type 2의 \code{distance(S.begin(), it)}, Type 3의 두 bound 사이 \code{distance}는 모두 최악 $O(N)$이다. Type 4 역시 \code{begin()}에서 $k$번 전진하므로 $O(k)\subseteq O(N)$이다.
+
+\code{multiset::lower\_bound}와 \code{multiset::upper\_bound} 자체는 $O(\log N)$이지만, 그 뒤에 수행되는 iterator distance가 query 전체 비용을 $O(\log N)$으로 만들지는 않는다. 따라서 실제 최악 시간복잡도는
+\[
+O(N\log N + QN)
+\]
+까지 올라가며, $N,Q\le 200000$에서 요구되는 효율을 만족하지 못한다.
+
+초기 삽입 비용은
+\[
+\sum_{i=1}^{N} O(\log i)
+=O(\log(N!))
+=\Theta(N\log N)
+\]
+으로 표현할 수 있다. 공간복잡도 $O(N)$과 정수 범위에 대한 \code{int} 안전성 결론은 유효하다.
+
+\paragraph{정답성에서 확인된 강점.}
+custom comparator는 점수 내림차순, penalty 오름차순, id 오름차순을 정확히 구현한다. Type 1과 Type 2의 lower/upper boundary 의미도 정확하다. Type 3에서 \code{id=1}과 \code{id=1000000000}을 사용해 허용되는 전체 id 범위를 감싸는 구현도 정확하며, Type 4 역시 순서 자체는 올바르게 찾는다.
+
+\paragraph{추가 설명 오류.}
+Type 3에 대해 설명한 대안식
+\code{distance(S.lower\_bound(v1), S.lower\_bound(v2)) + 1}
+은 일반적으로 구현된
+\code{distance(S.lower\_bound(v1), S.upper\_bound(v2))}
+과 동치가 아니다. 제출 코드의 \code{upper\_bound(v2)} 버전은 정확하지만, 대안식은 신뢰할 수 없다.
+
+\paragraph{학습 상태.}
+이 Attempt는 기능적 correctness와 compound comparator 구현은 입증했지만, static ranked sequence에서 자료구조를 선택하는 boundary와 iterator-category별 operation cost에서 실패했다. 따라서 S1-B는 아직 진행 중이며 Capability는 L3 / Provisional을 유지한다. Review Debt는 iterator cost와 static sorted-vector 대 dynamic ordered-container 선택에 대해 Medium으로 연다. F-1은 이제 학습용으로 전환하며, 동일 문제는 정식 재평가에 재사용하지 않는다. 다음 정식 평가는 remediation 후 새로운 동급 문제로 실시한다.
