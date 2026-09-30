@@ -380,3 +380,10 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - S1-B Review Debt: Resolved.
 - Immediate Progression Gate: Satisfied.
 - Part G: Active — G-A Trade Archive Queries; G-B AtCoder ABC308 C — Standings.
+
+
+### Workbook Sync Note — 2026-09-30
+- F-2 PASS has been semantically recorded in Unit/Journal/textbook records.
+- A repaired `CP_Learning_Record.xlsx` candidate containing the F-2 PASS, L4/Provisional update, resolved S1-B Review Debt, and Part G unlock was generated and passed ZIP/member, OOXML parse, spreadsheet re-import, required-sheet, history-preservation, and spreadsheet-error checks.
+- GitHub binary upload/post-upload identity verification could not be completed through the currently available connector path without violating the v0.6 binary-safety protocol. The existing known-good remote workbook was therefore not overwritten.
+- Status: `GitHub sync incomplete` for XLSX only; no corrupted candidate was committed. The validated candidate is preserved as `CP_Learning_Record_F2_pass.xlsx` in the current conversation artifacts.
