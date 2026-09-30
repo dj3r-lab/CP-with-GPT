@@ -8,3 +8,7 @@ E-1 & Static Score Queries & PASS & B & static data, strict/non-strict boundary 
 F-1 & Snapshot Ranking Queries & FAIL & B & Complexity; functionally correct, but multiset distance/k-th traversal makes worst-case queries linear; T\_solve 1:21:00 \\
 \bottomrule
 \end{longtable}
+
+
+\paragraph{F-1 remediation status.}
+2026-09-30에 iterator-category operation cost와 static sorted vector 대 dynamic ordered container 선택에 대한 학습 모드 remediation을 진행했다. 이는 정식 mastery evidence가 아니며 F-1의 FAIL을 변경하지 않는다. F-1은 학습용으로 유지하고, 다음 정식 평가는 새로운 Part F 문제로 실시한다.

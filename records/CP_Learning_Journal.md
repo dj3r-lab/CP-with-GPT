@@ -1,7 +1,7 @@
 # CP Learning Journal
 
 > **Status:** Active  
-> **Curriculum standard:** Competitive Programming 학습자료 제작 작업 규범 v5.8  
+> **Curriculum standard:** Competitive Programming 학습자료 제작 작업 규범 v5.9  
 > **Calibration registry:** CP_Calibration_Anchor_Registry v1.1  
 > **Authoritative quantitative record:** `CP_Learning_Record.xlsx`  
 > **Policy:** 문제별 정형 데이터는 xlsx에 기록하고, 이 파일은 Learning Unit 진행 상태, Capability/Confidence, Review Debt, 다음 학습 행동과 장기 성장 해석을 요약한다.
@@ -13,10 +13,10 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
 - Current Learning Unit: S1-B — Sorting & Bounds (Part F Attempt 1 FAIL; remediation required)
-- Next Assessment: S1-B Part F — fresh reassessment after targeted remediation.
+- Next Assessment: S1-B Part F — fresh reassessment after targeted remediation; learning-mode remediation delivered on 2026-09-30.
 - Priority Class: Core
 - Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 is FAIL — Complexity (Tier B, R3/I2, T_solve 1:21:00, no hints). Submitted C++17 is functionally correct: sample + 3,000 randomized differential tests passed. Blocking issue: multiset iterators are bidirectional, so distance() and k-th traversal are linear; actual worst-case total is O(N log N + QN), not O((N+Q) log N). Capability remains L3 / Provisional. Review Debt opened at Medium for iterator-cost accounting and static sorted-vector vs dynamic ordered-container selection.
-- Last Updated: 2026-09-29
+- Last Updated: 2026-09-30
 
 ---
 
@@ -293,7 +293,7 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 
 ## 7. Next Learning Action
 
-1. S1-B Part E E-1 is complete with PASS. Proceed next to Part F — Final Assessment in a separate assessment response.
+1. S1-B Part E E-1 is complete with PASS, and Part F F-1 has FAILed on complexity. Targeted learning-mode remediation on iterator cost and static-vs-dynamic container selection was delivered on 2026-09-30; the next formal step is a fresh, non-reused Part F reassessment.
 2. Part F should independently cover remaining S1-B boundaries, especially custom comparator / selection, while preserving no-hint evaluation integrity.
 3. Keep S1-A Review Debt at Medium and non-blocking.
 4. In a later delayed/mixed assessment, hide the target topic and re-check:

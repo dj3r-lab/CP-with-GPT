@@ -111,3 +111,31 @@ it->second = "new";  // allowed
 \item \code{list}/\code{map}/\code{set}: insert는 대체로 기존 iterator 보존; erase된 원소 iterator는 무효
 \item unordered container: rehash 시 iterator 무효화 가능
 \end{itemize}
+
+
+\section{Static vs Dynamic Ordered Data 선택표}
+\begin{longtable}{p{4.2cm}p{4.3cm}p{5.0cm}}
+\toprule
+\textbf{필요한 operation profile} & \textbf{우선 검토} & \textbf{핵심 이유} \\
+\midrule
+고정 데이터 + 많은 bound/rank query & sorted \code{vector} & sort $O(N\log N)$ 후 bound $O(\log N)$, iterator subtraction $O(1)$ \\
+고정 데이터 + k-th query & sorted \code{vector} & \code{v[k-1]}이 $O(1)$ \\
+동적 insert/erase + ordered lookup & \code{set}/\code{multiset} & update와 member bounds가 $O(\log N)$ \\
+동적 multiset + min/max & \code{multiset} & duplicate 보존, endpoints 접근 가능 \\
+동적 update + rank/k-th & later order-statistics structure & 표준 ordered associative container는 subtree-size rank를 제공하지 않음 \\
+\bottomrule
+\end{longtable}
+
+\section{Bound를 찾은 뒤의 비용까지 더하기}
+\begin{lstlisting}
+// multiset: lower_bound is logarithmic,
+// but numeric rank is not.
+auto it1 = S.lower_bound(x);        // O(log N)
+auto r1 = distance(S.begin(), it1); // O(N) worst-case
+
+// sorted vector: both steps stay efficient.
+auto it2 = lower_bound(v.begin(), v.end(), x); // O(log N)
+auto r2 = it2 - v.begin();                     // O(1)
+\end{lstlisting}
+
+복잡도는 함수 이름 하나가 아니라 \textbf{query 전체의 연산 합}으로 계산한다. 특히 bidirectional/forward iterator의 \code{distance}/\code{advance}를 random-access처럼 취급하지 않는다.

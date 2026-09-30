@@ -930,3 +930,95 @@ Type 3에 대해 설명한 대안식
 
 \paragraph{학습 상태.}
 이 Attempt는 기능적 correctness와 compound comparator 구현은 입증했지만, static ranked sequence에서 자료구조를 선택하는 boundary와 iterator-category별 operation cost에서 실패했다. 따라서 S1-B는 아직 진행 중이며 Capability는 L3 / Provisional을 유지한다. Review Debt는 iterator cost와 static sorted-vector 대 dynamic ordered-container 선택에 대해 Medium으로 연다. F-1은 이제 학습용으로 전환하며, 동일 문제는 정식 재평가에 재사용하지 않는다. 다음 정식 평가는 remediation 후 새로운 동급 문제로 실시한다.
+
+
+\section{Targeted Remediation --- Iterator Cost와 Static/Dynamic Container 선택}
+
+\paragraph{상태.}
+이 절은 F-1 실패 이후의 \textbf{학습 모드 remediation}이다. 정식 숙달 evidence가 아니며 F-1의 FAIL 판정을 변경하지 않는다.
+
+\subsection{탐색 비용과 iterator 이동 비용을 분리한다}
+
+\code{multiset::lower\_bound}와 \code{multiset::upper\_bound} 자체는 $O(\log N)$이다. 그러나 \code{multiset} iterator는 bidirectional iterator이므로 검색 결과의 ``몇 번째 위치인가''를 얻기 위해
+\begin{lstlisting}
+auto it = S.lower_bound(x);
+auto rank = distance(S.begin(), it);
+\end{lstlisting}
+를 수행하면 \code{distance}가 실제로 iterator를 전진시키며 최악 $O(N)$이 걸린다. 따라서 전체 query는
+\[
+O(\log N)+O(N)=O(N)
+\]
+이다.
+
+같은 이유로 \code{begin()}에서 $k$번 전진하여 k번째 원소를 찾는 것은 $O(k)\subseteq O(N)$이다.
+
+\begin{keybox}[핵심 구분]
+tree가 key boundary를 $O(\log N)$에 찾는다는 사실은 그 node의 \textbf{numeric rank}도 $O(\log N)$에 안다는 뜻이 아니다. 표준 \code{set}/\code{multiset}은 subtree size를 유지하는 order-statistics tree가 아니다.
+\end{keybox}
+
+\subsection{Static snapshot에서는 sorted vector가 왜 유리한가}
+
+데이터가 처음 주어진 뒤 바뀌지 않는다면 다음 구조를 우선 검토한다.
+\begin{enumerate}
+\item 모든 record를 \code{vector}에 저장한다.
+\item 필요한 comparator로 한 번 정렬한다: $O(N\log N)$.
+\item boundary query는 \code{lower\_bound}/\code{upper\_bound}: $O(\log N)$.
+\item rank는 iterator subtraction: $O(1)$.
+\item k번째 원소는 \code{v[k-1]}: $O(1)$.
+\end{enumerate}
+
+\code{vector} iterator는 random-access이므로
+\begin{lstlisting}
+auto it = lower_bound(v.begin(), v.end(), x, cmp);
+auto rank = it - v.begin();  // O(1)
+auto kth = v[k - 1];         // O(1)
+\end{lstlisting}
+처럼 위치 정보를 바로 얻을 수 있다.
+
+\subsection{Sorted vector와 ordered tree의 선택 기준}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.2cm}XX}
+\toprule
+상황 & 우선 검토 & 이유 \\
+\midrule
+초기 데이터가 고정됨 & sorted \code{vector} & 한 번 sort 후 bounds와 index 접근이 빠름 \\
+rank/count/k-th query가 많음 & sorted \code{vector} & random-access subtraction/indexing 가능 \\
+insert/erase가 계속 발생 & \code{set}/\code{multiset} & ordered update가 $O(\log N)$ \\
+predecessor/successor가 필요 & \code{set}/\code{multiset} & member bound 후 이웃 iterator 접근이 자연스러움 \\
+동적 update와 rank/k-th가 모두 필요 & 이후의 order-statistics 도구 & 표준 \code{set}/\code{multiset}만으로는 rank가 효율적이지 않음 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{복잡도 분석 체크리스트}
+
+ordered query를 분석할 때 named STL operation 하나만 보고 끝내지 않는다.
+\begin{enumerate}
+\item iterator가 어느 container에서 왔는가?
+\item iterator category는 무엇인가?
+\item search 자체의 비용은 얼마인가?
+\item search 뒤에 subtraction, \code{distance}, \code{advance}, traversal, output이 있는가?
+\item 데이터가 static인가, batch update인가, dynamic인가?
+\item query가 key boundary만 요구하는가, numeric rank/k-th까지 요구하는가?
+\end{enumerate}
+
+예를 들어
+\[
+\code{multiset::lower\_bound}\ O(\log N)
++\code{distance(begin,it)}\ O(N)
+=O(N)
+\]
+인 반면,
+\[
+\code{vector lower\_bound}\ O(\log N)
++\code{it-v.begin()}\ O(1)
+=O(\log N)
+\]
+이다.
+
+\subsection{F-1에 다시 적용}
+
+Snapshot Ranking Queries에서는 참가자 집합이 처음부터 끝까지 고정되어 있었다. query는 rank, prefix/equality count, 같은 $(s,p)$ 그룹 count, k-th ranked participant를 요구했다. 따라서 dynamic update 기능을 제공하는 \code{multiset}보다 한 번 정렬한 random-access sequence가 문제의 operation profile에 더 직접적으로 맞는다.
+
+F-1의 comparator와 ordering semantics는 정확했지만, 사용하지 않는 dynamic-update 능력을 얻는 대신 rank/k-th 접근 비용을 잃었다. 다음 정식 평가는 같은 문제를 재사용하지 않고 새로운 Part F 문제로 실시한다.

@@ -324,3 +324,75 @@ Next action:
 - convert F-1 to learning mode;
 - remediate iterator-category operation cost and container selection for a static ranked sequence;
 - reassess the same learning objectives with a fresh, non-reused Part F problem.
+
+
+## Targeted Remediation — Iterator Cost and Static/Dynamic Container Choice (2026-09-30)
+
+Mode: Learning mode — not formal mastery evidence.
+
+### Remediation objective
+Part F F-1 failed on complexity despite functionally correct ranking semantics. The blocking issue is separated into two linked decisions:
+
+1. distinguish the complexity of a tree search from the complexity of moving between iterators;
+2. choose a sorted random-access sequence rather than a dynamic ordered tree when the dataset is fixed and the queries require rank/count/k-th access.
+
+### 1. Search cost is not the whole query cost
+For `std::multiset`:
+- `S.lower_bound(x)` / `S.upper_bound(x)`: O(log N);
+- iterator category: bidirectional;
+- `std::distance(S.begin(), it)`: O(N) worst case;
+- advancing k positions from `begin()`: O(k), hence O(N) worst case.
+
+Therefore a query such as
+```cpp
+auto it = S.lower_bound(x);
+auto rank = distance(S.begin(), it);
+```
+is O(log N + N) = O(N), not O(log N).
+
+The tree stores enough structure to navigate by key, but a standard `set`/`multiset` does not maintain subtree sizes that would reveal the numeric rank of a node. Finding a key boundary and finding its 0-based/1-based rank are different operations.
+
+### 2. Why sorted vector fits a static ranked snapshot
+If the N records never change:
+- build a `vector<Record>`;
+- sort once using the ranking comparator: O(N log N);
+- `lower_bound` / `upper_bound` on the vector: O(log N);
+- iterator subtraction `it - v.begin()`: O(1), because vector iterators are random-access;
+- k-th ranked record `v[k-1]`: O(1).
+
+Thus rank/count boundary queries can remain O(log N), and direct k-th access is O(1).
+
+### 3. Static vs dynamic selection rule
+Prefer a sorted `vector` when:
+- the dataset is fixed or updated only in occasional batches;
+- there are many lookup/rank/range-count queries;
+- direct index/k-th access matters;
+- one O(N log N) preprocessing sort is acceptable.
+
+Prefer `set`/`multiset` when:
+- insert/erase operations occur continually between queries;
+- ordered membership, predecessor/successor, min/max, or key boundaries are needed;
+- numeric rank or arbitrary k-th order statistic is not required.
+
+A standard `set`/`multiset` is not an order-statistics tree. If both frequent dynamic updates and rank/k-th queries are required, later tools such as coordinate compression + Fenwick/segment tree or an order-statistics tree may be appropriate; those are outside the current S1-B requirement.
+
+### 4. Complexity accounting checklist
+For every ordered-query solution, analyze the entire expression rather than only the named STL operation:
+
+1. What container supplies the iterator?
+2. What iterator category does it provide?
+3. What is the cost of the search operation?
+4. What happens after the search — subtraction, `distance`, `advance`, traversal, output?
+5. Is the dataset static, batch-updated, or dynamically updated?
+6. Does the query require only a boundary by key, or also a numeric rank/k-th element?
+
+Example:
+`multiset::lower_bound` O(log N) + `distance(begin,it)` O(N) => O(N).
+
+By contrast:
+vector `lower_bound` O(log N) + iterator subtraction O(1) => O(log N).
+
+### 5. Transfer back to F-1
+F-1's participant set is explicitly fixed. The required queries ask for insertion rank, prefix/equality counts, a same-(s,p) count, and the k-th ranked participant. These requirements strongly favor a once-sorted random-access sequence. The earlier `multiset` solution got the ordering semantics right but chose dynamic-update capability that the problem never needed, while losing efficient rank/k-th access.
+
+This remediation does not change F-1's FAIL result and is not mastery evidence. F-1 remains learning-only. The next formal evidence must come from a fresh Part F problem.
