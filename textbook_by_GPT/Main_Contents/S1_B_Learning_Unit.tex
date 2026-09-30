@@ -1113,3 +1113,208 @@ Type 4에서는 -1000000000 <= L <= R <= 1000000000
 8
 \end{TextBlock}
 \end{problembox}
+
+
+\subsection{F-2 제출 및 판정 --- Attempt 1}
+
+\begin{answerbox}[학습자 제출 코드]
+\begin{lstlisting}
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include<iterator>
+
+using namespace std;
+
+bool cmp(const vector<int>& v1, const vector<int>& v2) {
+    if (v1[0] != v2[0]) {
+        return v1[0] < v2[0];
+    }
+    else if (v1[1] != v2[1]) {
+        return v1[1] > v2[1];
+    }
+    else if (v1[2] != v2[2]) {
+        return v1[2] < v2[2];
+    }
+    else {
+        return v1[2] < v2[2];
+    }
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    int Q = 0;
+    cin >> Q;
+    vector<vector<int>> V = {};
+    for (int i = 0; i < N; i += 1) {
+        vector<int> v = {};
+        int d, p, id;
+        cin >> d >> p >> id;
+        v.push_back(d);
+        v.push_back(p);
+        v.push_back(id);
+        V.push_back(v);
+    }
+
+    sort(V.begin(), V.end(), cmp);
+
+    for (int i = 0; i < Q; i += 1) {
+        int q = 0;
+        cin >> q;
+        if (q == 1) {
+            int d1, p1, id1, d2, p2, id2;
+            cin >> d1 >> p1 >> id1 >> d2 >> p2 >> id2;
+            vector<int> v1 = { d1, p1, id1 };
+            vector<int> v2 = { d2, p2, id2 };
+            auto it1 = lower_bound(V.begin(), V.end(), v1, cmp);
+            auto it2 = upper_bound(V.begin(), V.end(), v2, cmp);
+            int dist = distance(it1, it2);
+            cout << dist << '\n';
+        }
+        else if (q == 2) {
+            int d, p;
+            cin >> d >> p;
+            vector<int> v1 = { d, 1000000000, 1 };
+            vector<int> v2 = { d, p, 1 };
+            auto it1 = lower_bound(V.begin(), V.end(), v1, cmp);
+            auto it2 = lower_bound(V.begin(), V.end(), v2, cmp);
+            int dist = distance(it1, it2);
+            cout << dist << '\n';
+        }
+        else if (q == 3) {
+            int d, p;
+            cin >> d >> p;
+            vector<int> v1 = { d, p, 1 };
+            vector<int> v2 = { d, p, 1000000000 };
+            auto it1 = lower_bound(V.begin(), V.end(), v1, cmp);
+            auto it2 = upper_bound(V.begin(), V.end(), v2, cmp);
+            int dist = distance(it1, it2);
+            cout << dist << '\n';
+        }
+        else if (q == 4) {
+            int L, R;
+            cin >> L >> R;
+            vector<int> v1 = { L, 1000000000, 1 };
+            vector<int> v2 = { R, 0, 1000000000 };
+            auto it1 = lower_bound(V.begin(), V.end(), v1, cmp);
+            auto it2 = upper_bound(V.begin(), V.end(), v2, cmp);
+            int dist = distance(it1, it2);
+            cout << dist << '\n';
+        }
+    }
+}
+\end{lstlisting}
+\end{answerbox}
+
+\paragraph{제출 정보.}
+\code{T\_solve = 2:40:00}. 힌트 사용 없음. 제출 코드는 C++17로 컴파일되었고 sample, 학습자가 제시한 세 edge case, 독립 oracle과 비교한 3,000개 randomized case를 모두 통과했다.
+
+\paragraph{판정: PASS.}
+비교 함수는 $d$ 오름차순, $p$ 내림차순, $id$ 오름차순을 정확히 구현하며 완전 동률에서는 false를 반환한다. Type 1은 \code{lower\_bound(A)}와 \code{upper\_bound(B)} 사이를 사용하여 전역 순서의 inclusive interval을 센다. Type 2는 해당 $d$의 시작 경계와 priority $p$의 시작 경계를 사용하여 $p$보다 엄격히 큰 record만 센다. Type 3은 허용된 전체 id 범위를 감싸 fixed $(d,p)$ group을 센다. Type 4는 day $L$의 첫 가능 record와 day $R$의 마지막 가능 record를 경계로 사용한다.
+
+정렬은 $O(N\log N)$이고 각 bound query는 $O(\log N)$이다. \code{vector} iterator는 random-access이므로 두 iterator 사이 \code{distance}는 $O(1)$이다. 따라서 전체 시간복잡도는 $O(N\log N+Q\log N)=O((N+Q)\log N)$이고 전체 저장 공간은 $O(N)$이다.
+
+$d,p,id$와 sentinel은 모두 signed 32-bit \code{int} 범위 안에 있고 해당 값들 사이의 위험한 산술 연산이 없다. count의 최대값도 $N\le 200000$이므로 \code{int}에 안전하다.
+
+Query 2 설명에서 ``가장 마지막''이라는 표현은 부정확하지만, 실제 코드는 priority $p$ group의 첫 위치에서 구간을 끝내어 $p$와 같은 원소를 제외한다. 이는 비차단 설명상 부정확성이다.
+
+F-1의 FAIL은 역사적 evidence로 그대로 보존한다. 이번 fresh reassessment는 static sorted sequence 선택과 iterator-category cost accounting을 독립적으로 확인했으므로 S1-B Capability는 L4 --- Selection, Confidence는 Provisional로 갱신한다. 해당 Medium Review Debt는 해결되었고 Part G를 진행한다.
+
+
+\section{Part G --- Adaptive Extra Problems}
+
+\subsection{G-A. Trade Archive Queries}
+\begin{problembox}{Adaptive Extra --- Trade Archive Queries}
+$N$개의 과거 거래 기록이 고정되어 있다. 각 거래는 정수 symbol id $s$와 정수 timestamp $t$를 가진다. 같은 timestamp가 여러 번 나타날 수 있으며 같은 symbol 안에서도 중복될 수 있다. 입력 이후 archive는 변경되지 않는다.
+
+query는 다음 네 종류다.
+\begin{itemize}
+\item \code{1 s L R}: symbol $s$의 거래 중 $L\le t\le R$인 개수를 출력한다.
+\item \code{2 s x}: symbol $s$의 거래 중 $t<x$인 개수를 출력한다.
+\item \code{3 s k}: symbol $s$의 거래를 timestamp 오름차순으로 보았을 때 $k$번째 timestamp를 출력한다. 거래가 $k$개보다 적으면 \code{NONE}을 출력한다.
+\item \code{4 L R}: symbol과 무관하게 전체 거래 중 $L\le t\le R$인 개수를 출력한다.
+\end{itemize}
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item C++17 완전한 프로그램을 작성한다.
+\item $N,Q\le 200000$을 처리한다.
+\item 전체 시간복잡도와 공간복잡도를 $N,Q$로 설명한다.
+\item 네 query의 correctness를 설명한다.
+\item numeric safety를 설명한다.
+\item 최소 세 edge case와 직접 측정한 \code{T\_solve}를 제출한다.
+\item compiler/run과 표준 C++ 문법/API 확인만 허용한다. 해설·정답 검색, 다른 사람/AI 도움, 힌트, 접근 검토는 사용할 수 없다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+1 <= N, Q <= 200000
+1 <= s <= 1000000000
+-1000000000 <= t, x, L, R <= 1000000000
+L <= R
+Type 3: 1 <= k <= N
+\end{TextBlock}
+
+\textbf{Sample Input}
+\begin{TextBlock}
+8 8
+10 5
+20 3
+10 2
+10 5
+30 9
+20 8
+10 -1
+30 4
+1 10 2 5
+2 20 8
+3 10 3
+4 4 8
+1 40 -100 100
+3 30 3
+2 10 -1
+4 10 20
+\end{TextBlock}
+
+\textbf{Sample Output}
+\begin{TextBlock}
+3
+1
+5
+4
+0
+NONE
+0
+0
+\end{TextBlock}
+\end{problembox}
+
+\subsection{G-B. AtCoder ABC308 C --- Standings}
+\begin{problembox}{External CP Extra --- AtCoder ABC308 C}
+$1$부터 $N$까지 번호가 있는 사람들이 각각 $A_i$번 성공, $B_i$번 실패했다. 성공률을 $A_i/(A_i+B_i)$로 정의한다. 성공률이 높은 순서대로 사람 번호를 출력하고, 성공률이 같으면 번호가 작은 사람이 먼저 오도록 한다.
+
+\textbf{구현 및 제출 조건}
+\begin{itemize}
+\item 공식 AtCoder ABC308 C를 C++17로 독립 해결한다.
+\item 완전한 코드를 제출하고, AtCoder에 제출했다면 verdict도 함께 기록한다.
+\item 시간복잡도·공간복잡도·numeric safety를 설명한다.
+\item 최소 두 edge case와 직접 측정한 \code{T\_solve}를 제출한다.
+\item editorial/solution 검색, 다른 사람/AI 도움, 힌트, 접근 검토는 사용할 수 없다.
+\end{itemize}
+
+\textbf{제약 조건}
+\begin{TextBlock}
+2 <= N <= 200000
+0 <= A_i, B_i <= 1000000000
+A_i + B_i >= 1
+\end{TextBlock}
+
+Official problem: \url{https://atcoder.jp/contests/abc308/tasks/abc308_c}
+\end{problembox}

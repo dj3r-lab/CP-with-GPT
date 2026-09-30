@@ -12,10 +12,10 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
-- Current Learning Unit: S1-B — Sorting & Bounds (Fresh Part F reassessment F-2 active)
-- Next Assessment: S1-B Part F F-2 — Archived Job Queries (active fresh reassessment).
+- Current Learning Unit: S1-B — Sorting & Bounds (Part F fresh reassessment PASS; Part G active)
+- Next Assessment: S1-B Part G — G-A Trade Archive Queries and G-B AtCoder ABC308 C — Standings.
 - Priority Class: Core
-- Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 is FAIL — Complexity (Tier B, R3/I2, T_solve 1:21:00, no hints). Targeted remediation was delivered on 2026-09-30. Fresh Part F reassessment F-2 Archived Job Queries is now active/pending. Capability remains L3 / Provisional and the existing Medium Review Debt remains open until independent reassessment evidence is obtained.
+- Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 remains FAIL — Complexity. After targeted remediation, fresh Part F F-2 Archived Job Queries PASSed independently (Tier B, R3/I2, T_solve 2:40:00, no hints): compile/sample + 3 learner edge cases + 3,000 randomized differential tests all passed; static sorted-vector selection and vector iterator-cost accounting were correct. Capability is now L4 / Provisional. The S1-B Medium Review Debt is Resolved. Immediate Progression Gate is satisfied; Part G is active.
 - Last Updated: 2026-09-30
 
 ---
@@ -28,7 +28,7 @@
 | S0-B — Basic Containers & STL | L3 | Provisional | Immediate | Complete — Progression Gate Satisfied; Parts A-H complete | Open — overall Medium | Fresh Extra/Mixed check |
 | S0-C — Complexity & Numeric Safety | L3 | Provisional | Baseline + Immediate | Complete — Parts A-H complete; Progression Gate Satisfied | Open — Medium | Delayed/Mixed transfer reassessment |
 | S1-A — Associative Containers | L4 | Provisional | Immediate | Complete — Parts A-H complete; Immediate Progression Gate Satisfied; Part G completed after fresh GPT + External CP PASS | Open — Medium | Delayed/Mixed assessment |
-| S1-B — Sorting & Bounds | L3 | Provisional | Immediate | In Progress — Part E PASS; Part F Attempt 1 FAIL | Open — Medium | Remediation + fresh Part F reassessment |
+| S1-B — Sorting & Bounds | L4 | Provisional | Immediate | Part E PASS; fresh Part F F-2 PASS; Immediate Progression Gate satisfied; Part G active | None | Part G Adaptive Extra Problems |
 
 ---
 
@@ -60,7 +60,7 @@
 - Fresh formal reassessment `Active ID Registry` subsequently PASSed independently: the submitted solution was correct, expected O(Q) and worst-case O(Q^2) hash-container complexity were both correctly explained, and O(Q) space / int safety were correct. This clean transfer evidence downgraded S1-A Review Debt from High to Medium.
 - Fresh External CP reassessment `AtCoder ABC298 C — Cards Query Problem` then FAILed on Complexity. The submitted `map<int, multiset<int>>` correctly represents sorted duplicate-preserving box contents, but type-3 queries scan all boxes instead of maintaining a reverse card→ordered unique boxes index. In addition, `const pair<int, multiset<int>>&` does not match `map<int,multiset<int>>::value_type` (`pair<const int,multiset<int>>`), so each range-for iteration constructs a temporary and copies the multiset. Type-2 traversal cost was also overstated as O(c log c); iterating an already ordered multiset is O(c) plus output.
 
-Current unresolved Core Review Debt count: 5 entries (S0-B Medium, S0-B Low, S0-C Medium, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium after the clean ABC241 D external transfer and now waits for delayed/mixed confirmation.
+Current unresolved Core Review Debt count: 4 entries (S0-B Medium, S0-B Low, S0-C Medium, S1-A Medium). `Active ID Registry` PASS confirmed hash-container complexity transfer. The reverse-index/value_type remediation checkpoint PASSed, and the later ordered-container/global-accounting remediation checkpoint also PASSed: the learner correctly identified `find` as O(log n), iterator erase as amortized O(1), begin/prev(end) as O(1), and total successful removals as bounded by total insertions. S1-A debt remains Medium after the clean ABC241 D external transfer and now waits for delayed/mixed confirmation.
 
 ---
 
@@ -293,8 +293,8 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 
 ## 7. Next Learning Action
 
-1. S1-B Part E E-1 is complete with PASS, and Part F F-1 has FAILed on complexity. Targeted learning-mode remediation on iterator cost and static-vs-dynamic container selection was delivered on 2026-09-30; the next formal step is a fresh, non-reused Part F reassessment.
-2. Part F should independently cover remaining S1-B boundaries, especially custom comparator / selection, while preserving no-hint evaluation integrity.
+1. S1-B Part E and fresh Part F F-2 are complete with PASS. Proceed with both required Part G Adaptive Extra Problems: GPT-generated Trade Archive Queries and External CP AtCoder ABC308 C — Standings.
+2. Preserve no-hint evaluation integrity for both Part G problems. Their results are independent evidence and do not retroactively cancel the Part F PASS.
 3. Keep S1-A Review Debt at Medium and non-blocking.
 4. In a later delayed/mixed assessment, hide the target topic and re-check:
    - ordered associative-container boundary operations,
@@ -365,3 +365,18 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - Review Debt: Open / Medium — iterator category cost; static sorted-vector vs dynamic ordered-container selection.
 - Progression: Part G not unlocked. F-1 is now learning-only and cannot be reused for formal reassessment.
 - Next action: targeted remediation, then a fresh equivalent Part F assessment.
+
+
+### Fresh Part F Reassessment F-2 — 2026-09-30
+- Problem: Archived Job Queries
+- Result: PASS
+- Validation Tier: B
+- Difficulty: R3/I2 (Comparative / Provisional)
+- T_solve: 2:40:00
+- Hints: None
+- Validation: C++17 compile + sample + 3 learner edge cases + 3,000 randomized differential cases PASS.
+- Evidence: correct strict compound comparator; correct lower/upper boundary semantics; static sorted vector selected for fixed data; vector iterator distance correctly analyzed as O(1); total O((N+Q) log N), O(N) storage, int safety correct.
+- Capability: L4 / Provisional.
+- S1-B Review Debt: Resolved.
+- Immediate Progression Gate: Satisfied.
+- Part G: Active — G-A Trade Archive Queries; G-B AtCoder ABC308 C — Standings.

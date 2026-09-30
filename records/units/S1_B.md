@@ -1,11 +1,11 @@
 # S1-B — Sorting & Bounds
 
-Status: In Progress — Fresh Part F reassessment F-2 active
+Status: In Progress — Part F fresh reassessment PASS; Part G active
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 Pending
+Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 PASS; Part G Pending
 Confidence: Provisional for S1-B
-Next formal step: complete F-2 independent reassessment
+Next formal step: complete both Part G Adaptive Extra Problems
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -478,3 +478,157 @@ Sample Output:
 ```
 
 Assessment remains active until the learner submits a final answer or explicitly gives up. No solution-relevant calibration rationale will be surfaced during the active attempt.
+
+
+### F-2 Attempt 1 — Learner Submission and Judgment
+- Date: 2026-09-30
+- Result: PASS
+- Validation Tier: B
+- Difficulty: R3/I2 (Comparative / Provisional)
+- T_solve: 2:40:00
+- Hints: None
+- Assessment independence: Valid
+- Capability impact: S1-B advances to L4 / Provisional
+- Review Debt: S1-B Medium debt Resolved
+- Part G: Unlocked
+
+Validation:
+- submitted C++17 compiled successfully;
+- sample output matched;
+- all three learner-provided edge cases matched;
+- 3,000 randomized differential cases matched an independent brute-force oracle.
+
+Correctness:
+- comparator implements d ascending, p descending, id ascending and is strict because equal records return false;
+- Type 1 lower_bound(A) and upper_bound(B) correctly count the inclusive full-order interval [A,B];
+- Type 2 uses the earliest possible tuple for day d and the earliest tuple at priority p, so the half-open interval counts exactly same-d records with priority strictly greater than p;
+- Type 3 brackets the whole id range [1,1e9] at fixed (d,p), so it counts exactly the matching group;
+- Type 4 brackets the first possible record at day L and the last possible record at day R, so it counts all records with L<=d<=R.
+
+Complexity:
+- building the fixed-size three-int records is O(N);
+- sorting is O(N log N);
+- each lower_bound/upper_bound is O(log N);
+- vector iterators are random-access, so distance between returned iterators is O(1);
+- total time is O(N log N + Q log N)=O((N+Q) log N);
+- total stored data is O(N).
+
+Numeric safety:
+- d, p, id and all sentinel values are within signed 32-bit int;
+- no arithmetic on those values can overflow in the submitted code;
+- each count/distance magnitude is at most N<=200000, so conversion to int is safe.
+
+Non-blocking explanation issue:
+- the Query 2 prose is imprecise when it says the interval extends to the 'last' record; the code actually stops at the first record of priority p and therefore correctly excludes priority == p. The intended strict-greater boundary is nevertheless implemented correctly and the surrounding explanation identifies the two relevant boundaries.
+
+Edge cases submitted:
+1. N=1, (1,2,3), query 2 1 1 -> 1
+2. N=1, (1,2,3), query 3 1 2 -> 1
+3. N=1, (1,2,3), query 4 -1 100 -> 1
+
+Interpretation:
+- F-1's historical FAIL remains valid and is preserved.
+- F-2 independently demonstrates the remediated static sorted-vector vs dynamic ordered-container selection and iterator-cost accounting.
+- S1-B Immediate Progression Gate is satisfied through Part E PASS + fresh Part F PASS, with Capability L4 / Confidence Provisional.
+- Part G is now required.
+
+
+## Part G — Adaptive Extra Problems
+
+### G-A — Trade Archive Queries
+Status: Pending / Active
+Source: GPT-generated
+Validation Tier: B
+Validation Evidence:
+- complete C++17 reference solution compiled and matched the sample;
+- 5,000 randomized valid cases matched an independent brute-force oracle;
+- grouped-empty, duplicate-time, missing-symbol, k-too-large, and global-boundary cases were included.
+Difficulty: R3/I2 (Comparative / Provisional)
+Calibration Registry: CP_Calibration_Anchor_Registry v1.1
+Mode: Independent formal assessment; no hints.
+
+Problem statement:
+N historical trades are fixed. Each trade has an integer symbol id s and integer timestamp t. Duplicate timestamps are allowed, including within the same symbol. The archive never changes after input.
+
+Queries:
+- 1 s L R: count trades of symbol s with L <= t <= R.
+- 2 s x: count trades of symbol s with t < x.
+- 3 s k: output the k-th smallest timestamp among trades of symbol s; output NONE if fewer than k exist.
+- 4 L R: count all trades, regardless of symbol, with L <= t <= R.
+
+Submission requirements:
+- complete C++17 program;
+- handle N,Q <= 200000;
+- explain total time and space complexity in N,Q;
+- explain why all four query types are correct;
+- explain numeric safety;
+- provide at least three edge cases;
+- submit measured T_solve;
+- no solution/editorial search, other-person/AI help, hints, or approach review; standard C++ syntax/API lookup only.
+
+Constraints:
+- 1 <= N,Q <= 200000
+- 1 <= s <= 1000000000
+- -1000000000 <= t,x,L,R <= 1000000000
+- L <= R
+- Type 3 has 1 <= k <= N
+
+Sample Input:
+```text
+8 8
+10 5
+20 3
+10 2
+10 5
+30 9
+20 8
+10 -1
+30 4
+1 10 2 5
+2 20 8
+3 10 3
+4 4 8
+1 40 -100 100
+3 30 3
+2 10 -1
+4 10 20
+```
+
+Sample Output:
+```text
+3
+1
+5
+4
+0
+NONE
+0
+0
+```
+
+### G-B — AtCoder ABC308 C — Standings
+Status: Pending / Active
+Source: External CP — official AtCoder
+Validation Tier: A
+Mode: Independent formal assessment; no hints.
+
+Problem statement:
+N people are numbered 1..N. Person i has Ai successful outcomes and Bi unsuccessful outcomes. Their success rate is Ai/(Ai+Bi). Output all person numbers in descending order of success rate; if rates are equal, output smaller person numbers first.
+
+Submission requirements:
+- solve the official AtCoder ABC308 C problem independently in C++17;
+- submit the complete code here, and include the AtCoder verdict if you submit on the platform;
+- explain time and space complexity;
+- explain numeric safety;
+- provide at least two edge cases;
+- submit measured T_solve;
+- no editorial/solution search, other-person/AI help, hints, or approach review; standard C++ syntax/API lookup only.
+
+Constraints:
+- 2 <= N <= 200000
+- 0 <= Ai,Bi <= 1000000000
+- Ai+Bi >= 1
+
+Official problem: https://atcoder.jp/contests/abc308/tasks/abc308_c
+
+Both G-A and G-B must be completed. Results are independent evidence; an Extra FAIL does not retroactively cancel the Part F PASS.
