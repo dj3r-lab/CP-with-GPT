@@ -1,38 +1,21 @@
 name: Recover CP Learning Record
+
 on:
   push:
     paths:
       - '.github/workflows/recover-cp-learning-record.yml'
+
 jobs:
   recover:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Diagnose staged workbook chunks
-        shell: bash
-        run: |
-          cat .tmp/cp_chunks/00 .tmp/cp_chunks/01 .tmp/cp_chunks/02 .tmp/cp_chunks/03 .tmp/cp_chunks/04 .tmp/cp_chunks/05 > CP_Learning_Record_reconstructed.b64
-          base64 --decode CP_Learning_Record_reconstructed.b64 > CP_Learning_Record.xlsx
-          python - <<'PY'
-          import zipfile, hashlib
-          p='CP_Learning_Record.xlsx'
-          with zipfile.ZipFile(p) as z:
-              print('members', len(z.infolist()))
-              for info in z.infolist():
-                  try:
-                      data=z.read(info.filename)
-                      print('OK', info.filename, len(data), hashlib.sha256(data).hexdigest()[:16])
-                      if info.filename=='xl/worksheets/sheet2.xml':
-                          open('sheet2.xml','wb').write(data)
-                  except Exception as e:
-                      print('FAIL', info.filename, type(e).__name__, str(e))
-          PY
-      - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: cp-learning-record-chunk-diagnostics
-          path: |
-            CP_Learning_Record.xlsx
-            sheet2.xml
-          if-no-files-found: ignore
+          fetch-depth: 0
+      - name: Recover workbook from repair commit
+        run: git show ea1430b370593c4caf4738d7d4f9ead3a6d287d4:records/CP_Learning_Record.xlsx > CP_Learning_Record.xlsx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cp-learning-record-recovery
+          path: CP_Learning_Record.xlsx
           retention-days: 1
