@@ -5,6 +5,9 @@ on:
     paths:
       - '.github/workflows/recover-cp-learning-record.yml'
 
+permissions:
+  contents: write
+
 jobs:
   recover:
     runs-on: ubuntu-latest
@@ -12,10 +15,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Recover workbook from repair commit
-        run: git show ea1430b370593c4caf4738d7d4f9ead3a6d287d4:records/CP_Learning_Record.xlsx > CP_Learning_Record.xlsx
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cp-learning-record-recovery
-          path: CP_Learning_Record.xlsx
-          retention-days: 1
+      - name: Install verified repaired workbook
+        shell: bash
+        run: |
+          cat .tmp/final_repair_chunks/00 .tmp/final_repair_chunks/01 .tmp/final_repair_chunks/02 .tmp/final_repair_chunks/03 .tmp/final_repair_chunks/04 .tmp/final_repair_chunks/05 > repaired.b64
+          base64 --decode repaired.b64 > records/CP_Learning_Record.xlsx
+          echo "7c9d5420cab793b21f06af7fc169d6683035f6cc3f4c0b57836847d8b14ebb9b  records/CP_Learning_Record.xlsx" | sha256sum -c -
+          unzip -t records/CP_Learning_Record.xlsx
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add records/CP_Learning_Record.xlsx
+          git commit -m "records: repair CP learning workbook through S1-B Part F"
+          git push
