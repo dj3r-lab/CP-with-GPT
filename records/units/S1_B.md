@@ -1,11 +1,11 @@
 # S1-B — Sorting & Bounds
 
-Status: In Progress — Part F Attempt 1 FAIL; remediation required
+Status: In Progress — Fresh Part F reassessment F-2 active
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity
+Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 Pending
 Confidence: Provisional for S1-B
-Next formal step: targeted remediation, then fresh Part F reassessment
+Next formal step: complete F-2 independent reassessment
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -396,3 +396,85 @@ vector `lower_bound` O(log N) + iterator subtraction O(1) => O(log N).
 F-1's participant set is explicitly fixed. The required queries ask for insertion rank, prefix/equality counts, a same-(s,p) count, and the k-th ranked participant. These requirements strongly favor a once-sorted random-access sequence. The earlier `multiset` solution got the ordering semantics right but chose dynamic-update capability that the problem never needed, while losing efficient rank/k-th access.
 
 This remediation does not change F-1's FAIL result and is not mastery evidence. F-1 remains learning-only. The next formal evidence must come from a fresh Part F problem.
+
+## Part F Fresh Reassessment — F-2 Archived Job Queries
+Status: Pending / Active
+Source: GPT-generated
+Validation Tier: B
+Validation Evidence:
+- complete C++17 reference solution compiled successfully;
+- sample output matched;
+- 5,000 randomized valid cases matched an independent brute-force oracle;
+- explicit edge coverage includes N=1, absent day/priority groups, interval boundaries not present in the data, equal interval endpoints, duplicate (d,p) groups with distinct ids, and extreme allowed values.
+Difficulty: R3/I2
+Calibration: Comparative / Provisional
+Calibration Registry: CP_Calibration_Anchor_Registry v1.1
+Calibration rationale:
+- the implementation remains a standard sorting/bounds composition consistent with I2;
+- recognition requires choosing a static random-access ordered representation and applying the same compound ordering consistently across multiple boundary shapes, placing it above a direct R2/I2 bounds exercise and near the Registry's R3/I2 selection anchors;
+- F-1's exposed surface and query set are not reused.
+Mode: Independent formal assessment; compiler/run allowed; standard C++ syntax/API lookup only.
+Hints: None provided.
+
+Problem statement:
+N archived jobs are fixed. Each job has (d,p,id). Global order is d ascending, then p descending, then id ascending.
+
+Queries:
+- 1 d1 p1 id1 d2 p2 id2: count existing records in the inclusive full-order interval [A,B]. A and B need not exist; A is guaranteed not to come after B.
+- 2 d p: count records with exact d and priority strictly greater than p.
+- 3 d p: count records with exact d and exact p, ignoring id.
+- 4 L R: count records with L <= d <= R.
+
+Submission requirements:
+- complete C++17 program;
+- handle N,Q <= 200000;
+- explain total time and space complexity in N,Q;
+- explain why the global order and all four queries are correct;
+- explain numeric safety;
+- provide at least three edge cases;
+- submit measured T_solve;
+- no solution/editorial search, other-person/AI help, hints, or approach review; standard C++ syntax/API lookup only.
+
+Constraints:
+- 1 <= N,Q <= 200000
+- -1e9 <= d <= 1e9
+- 0 <= p <= 1e9
+- 1 <= id <= 1e9
+- initial ids are pairwise distinct
+- Type 1 boundaries obey the same d,p,id ranges and A <= B under the defined order
+- Type 4: -1e9 <= L <= R <= 1e9
+
+Sample Input:
+```text
+8 8
+1 90 5
+1 70 3
+1 70 8
+2 100 2
+2 40 6
+3 80 4
+3 80 1
+5 50 7
+1 1 70 4 3 80 1
+2 1 70
+3 1 70
+4 2 3
+1 0 0 1 1 70 8
+2 3 80
+3 4 10
+4 1 5
+```
+
+Sample Output:
+```text
+4
+1
+2
+4
+3
+0
+0
+8
+```
+
+Assessment remains active until the learner submits a final answer or explicitly gives up. No solution-relevant calibration rationale will be surfaced during the active attempt.

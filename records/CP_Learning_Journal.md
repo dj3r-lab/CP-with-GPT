@@ -12,10 +12,10 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
-- Current Learning Unit: S1-B — Sorting & Bounds (Part F Attempt 1 FAIL; remediation required)
-- Next Assessment: S1-B Part F — fresh reassessment after targeted remediation; learning-mode remediation delivered on 2026-09-30.
+- Current Learning Unit: S1-B — Sorting & Bounds (Fresh Part F reassessment F-2 active)
+- Next Assessment: S1-B Part F F-2 — Archived Job Queries (active fresh reassessment).
 - Priority Class: Core
-- Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 is FAIL — Complexity (Tier B, R3/I2, T_solve 1:21:00, no hints). Submitted C++17 is functionally correct: sample + 3,000 randomized differential tests passed. Blocking issue: multiset iterators are bidirectional, so distance() and k-th traversal are linear; actual worst-case total is O(N log N + QN), not O((N+Q) log N). Capability remains L3 / Provisional. Review Debt opened at Medium for iterator-cost accounting and static sorted-vector vs dynamic ordered-container selection.
+- Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 is FAIL — Complexity (Tier B, R3/I2, T_solve 1:21:00, no hints). Targeted remediation was delivered on 2026-09-30. Fresh Part F reassessment F-2 Archived Job Queries is now active/pending. Capability remains L3 / Provisional and the existing Medium Review Debt remains open until independent reassessment evidence is obtained.
 - Last Updated: 2026-09-30
 
 ---
