@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
 - Current Learning Unit: S1-B — Sorting & Bounds (Parts A-H complete; review block active)
-- Next Assessment: Review Block 1 remediation active — exact rational comparator precision + grouped k-th iterator boundary safety; fresh reassessment only after discussion.
+- Next Assessment: Review Block 1 fresh reassessments active — RB-1 Batch Priority Board and RB-2 Locker Archive Queries.
 - Priority Class: Core
 - Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 remains FAIL — Complexity. After targeted remediation, fresh Part F F-2 Archived Job Queries PASSed independently (Tier B, R3/I2, T_solve 2:40:00, no hints): compile/sample + 3 learner edge cases + 3,000 randomized differential tests all passed; static sorted-vector selection and vector iterator-cost accounting were correct. Capability is now L4 / Provisional. The S1-B Medium Review Debt is Resolved. Immediate Progression Gate is satisfied; Part G is active.
 - Last Updated: 2026-09-30
@@ -440,3 +440,10 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - Remediation content delivered: exact cross-product comparison with 64-bit safety; prove group size before k-th iterator movement; post-move end-check is insufficient.
 - Debt status: both remain Open until fresh independent reassessment.
 - Next step: allow discussion/questions, then present fresh non-reused formal reassessment in a separate response.
+
+
+### Review Block 1 Fresh Reassessment — 2026-10-02
+- RB-1 Batch Priority Board: Pending / Tier B; target = exact rational comparator + numeric safety.
+- RB-2 Locker Archive Queries: Pending / Tier B; target = grouped k-th iterator-boundary safety + range count.
+- Both are fresh, non-reused formal problems; each was reference-compiled and matched 5,000 randomized oracle cases.
+- Passing one resolves only its corresponding Review Debt.
