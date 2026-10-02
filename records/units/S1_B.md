@@ -757,7 +757,7 @@ Purpose: independently reassess the two S1-B debts opened by G-A and G-B after l
 Assessment integrity: no hints or approach review; any such request makes the corresponding attempt non-passing.
 
 ### RB-1 — Batch Priority Board
-Status: Pending / Active
+Status: PASS
 Source: GPT-generated
 Validation Tier: B
 Difficulty: R2/I2 (Comparative / Provisional)
@@ -826,3 +826,41 @@ NONE
 ```
 
 Both reassessments are independent. Passing one resolves only its corresponding debt; the other debt remains open until independently passed.
+
+
+### RB-1 Attempt 1 — Learner Submission and Judgment
+- Date: 2026-10-02
+- Result: PASS
+- Validation Tier: B
+- Difficulty: R2/I2 (Comparative / Provisional)
+- T_solve: 22:10 total; code complete at 10:51
+- Hints: None
+- Assessment independence: Valid
+- Target debt: Medium — exact rational comparison / floating-point precision
+- Debt result: Resolved
+
+Validation:
+- learner C++17 code compiled;
+- sample output matched;
+- 5,000 randomized exact-rational differential cases matched an independent oracle.
+
+Correctness evidence:
+- comparator compares (a_i+b_i)/c_i and (a_j+b_j)/c_j by exact cross multiplication;
+- all c values are positive, so multiplying by c_i*c_j preserves the inequality direction;
+- exact equality of cross-products falls through to smaller batch index, implementing the required tie-break;
+- equal records return false in both comparator directions except for the index tie-break, so the ordering is strict.
+
+Complexity / numeric safety:
+- construction O(N), sorting O(N log N), output O(N), total O(N log N);
+- storage O(N);
+- (a+b)c is at most 2*10^18, within signed 64-bit long long;
+- because a,b,c are already long long, both addition and multiplication occur in 64-bit arithmetic.
+
+Non-blocking documentation issue:
+- both submitted edge-case labels say N=1 although the first lists two records and the second lists three records; the intended N values are 2 and 3. This does not affect program correctness or the assessed objective.
+
+State impact:
+- G-B Medium exact-rational / floating-point Review Debt is Resolved;
+- S1-B remains L4 / Provisional;
+- RB-2 Low iterator-boundary debt remains Open;
+- global unresolved Core Review Debt decreases from 6 to 5, so the review block remains active because the count is still above 4.
