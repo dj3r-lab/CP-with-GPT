@@ -1,11 +1,11 @@
 # S1-B — Sorting & Bounds
 
-Status: In Progress — Part F fresh reassessment PASS; Part G active
+Status: Complete — Parts A-H complete; Immediate Progression Gate satisfied; review block active
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 PASS; Part G G-A FAIL — Implementation; G-B Pending
+Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 PASS; Part G G-A FAIL — Implementation; G-B FAIL — Correctness
 Confidence: Provisional for S1-B
-Next formal step: complete G-B External CP Extra; G-A is learning-only after FAIL and requires a fresh adaptive reassessment later
+Next formal step: review block before the next Core Learning Unit; fresh non-reused reassessments for G-A/G-B debt objectives
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -672,3 +672,50 @@ Next action:
 - open Low Review Debt for grouped k-th lookup boundary safety;
 - complete G-B External CP Extra;
 - later reassess with a fresh non-reused Extra.
+
+
+### G-B Attempt 1 — Learner Submission and Judgment
+- Date: 2026-10-02
+- Problem: AtCoder ABC308 C — Standings
+- Result: FAIL
+- Failure Attribution: Correctness
+- Validation Tier: A
+- T_solve: 20:30 total; code complete at 14:26
+- Hints: None
+- Assessment independence: Valid
+- Capability impact: S1-B remains L4 / Provisional
+- Review Debt: Open / Medium — exact rational comparison / floating-point precision in comparator
+- Progression impact: none; Part F PASS / immediate progression gate remain valid
+
+Validation:
+- submitted C++17 code compiled;
+- official sample 1 matched;
+- official sample 3 failed: expected `3 1 4 2`, submitted program produced `1 3 4 2`;
+- success rate was stored in `float` before being placed in `pair<double,int>`.
+
+Blocking issue:
+- distinct exact rational success rates can round to the same binary32 value;
+- official sample 3 therefore creates false ties and the index tie-break yields the wrong order;
+- converting the already-rounded value to double does not recover precision.
+
+Positive evidence:
+- sorting + custom comparator is the correct algorithmic family;
+- tie-breaking by smaller person number is structurally correct;
+- O(N log N) time and O(N) space are correct.
+
+Remediation target:
+- compare the rational rates exactly with integer cross-products; required products fit signed 64-bit under the stated constraints.
+
+Reuse:
+- G-B becomes learning-only after FAIL and cannot be reused for formal reassessment.
+
+## Part H — S1-B Immediate Closure
+- Part E: PASS — Static Score Queries
+- Part F: PASS on fresh reassessment F-2 — Archived Job Queries
+- Part G: G-A FAIL — Implementation; G-B FAIL — Correctness
+- Capability: L4 — Selection
+- Confidence: Provisional
+- Immediate Progression Gate: Satisfied
+- Review Debt: Low (grouped k-th iterator safety) + Medium (exact rational comparator / floating-point precision)
+- Unit Coverage: Parts A-H complete
+- Next action: review block before another Core Learning Unit because unresolved Core Review Debt exceeds the operating threshold.
