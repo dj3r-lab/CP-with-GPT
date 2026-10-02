@@ -12,8 +12,8 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
-- Current Learning Unit: S1-B — Sorting & Bounds (Part F PASS; Part G G-A FAIL, G-B pending)
-- Next Assessment: S1-B Part G G-B — AtCoder ABC308 C — Standings. G-A is learning-only after FAIL; fresh adaptive reassessment later.
+- Current Learning Unit: S1-B — Sorting & Bounds (Parts A-H complete; review block active)
+- Next Assessment: Review block before next Core Unit — prioritize S1-B rational-comparator precision and grouped k-th iterator safety, plus older unresolved Core debt.
 - Priority Class: Core
 - Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 remains FAIL — Complexity. After targeted remediation, fresh Part F F-2 Archived Job Queries PASSed independently (Tier B, R3/I2, T_solve 2:40:00, no hints): compile/sample + 3 learner edge cases + 3,000 randomized differential tests all passed; static sorted-vector selection and vector iterator-cost accounting were correct. Capability is now L4 / Provisional. The S1-B Medium Review Debt is Resolved. Immediate Progression Gate is satisfied; Part G is active.
 - Last Updated: 2026-09-30
@@ -401,3 +401,34 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - Review Debt: Open / Low — grouped k-th lookup iterator-boundary safety.
 - Progression: Part F PASS and immediate progression gate remain valid; G-B remains pending.
 - Reuse: G-A is learning-only after FAIL and cannot be reused.
+
+
+### S1-B Part G G-B — 2026-10-02
+- Problem: AtCoder ABC308 C — Standings
+- Result: FAIL — Correctness
+- Validation Tier: A
+- T_solve: 20:30 total; code complete at 14:26
+- Hints: None
+- Official sample 3 failed: expected 3 1 4 2, submitted program produced 1 3 4 2.
+- Blocking error: success rate was stored in float, so distinct rational rates collapsed to the same value and were incorrectly treated as ties.
+- Positive evidence: sorting/custom-comparator family correct; O(N log N) time and O(N) space correct.
+- Capability: remains L4 / Provisional.
+- Review Debt: Open / Medium — exact rational comparison / floating-point precision.
+- Progression: Part F PASS and immediate progression gate remain valid.
+- Reuse: G-B is learning-only after FAIL and cannot be reused.
+
+### S1-B Part H Closure — 2026-10-02
+- Parts A-H: Complete.
+- Part E: PASS.
+- Part F: F-2 PASS after remediation.
+- Part G: G-A FAIL — Implementation; G-B FAIL — Correctness.
+- Capability: L4 / Provisional.
+- S1-B Review Debt: Low + Medium, both open.
+- Immediate Progression Gate: Satisfied.
+- Global unresolved Core Review Debt: 6 open entries.
+- Operating consequence: pause adding a new Core Learning Unit and run a review block first.
+
+### Workbook Sync Note — 2026-10-02 (G-B)
+- A validated local workbook candidate was generated and re-imported successfully with no spreadsheet formula errors.
+- GitHub binary upload/post-upload identity verification was not completed in this transaction, so the existing remote known-good workbook was not overwritten.
+- Status: GitHub sync incomplete for XLSX only; text persistent records are synchronized.
