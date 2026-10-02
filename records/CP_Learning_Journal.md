@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
 - Current Learning Unit: S1-B — Sorting & Bounds (Parts A-H complete; review block active)
-- Next Assessment: Review Block 1 fresh reassessments active — RB-1 Batch Priority Board and RB-2 Locker Archive Queries.
+- Next Assessment: Review Block 1 RB-2 — Locker Archive Queries. RB-1 PASS resolved the S1-B Medium exact-rational comparator debt.
 - Priority Class: Core
 - Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 remains FAIL — Complexity. After targeted remediation, fresh Part F F-2 Archived Job Queries PASSed independently (Tier B, R3/I2, T_solve 2:40:00, no hints): compile/sample + 3 learner edge cases + 3,000 randomized differential tests all passed; static sorted-vector selection and vector iterator-cost accounting were correct. Capability is now L4 / Provisional. The S1-B Medium Review Debt is Resolved. Immediate Progression Gate is satisfied; Part G is active.
 - Last Updated: 2026-09-30
@@ -447,3 +447,22 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - RB-2 Locker Archive Queries: Pending / Tier B; target = grouped k-th iterator-boundary safety + range count.
 - Both are fresh, non-reused formal problems; each was reference-compiled and matched 5,000 randomized oracle cases.
 - Passing one resolves only its corresponding Review Debt.
+
+
+### Review Block 1 RB-1 — 2026-10-02
+- Problem: Batch Priority Board
+- Result: PASS
+- Validation Tier: B
+- Difficulty: R2/I2 (Comparative / Provisional)
+- T_solve: 22:10 total; code complete at 10:51
+- Validation: compile/sample + 5,000 randomized exact-rational oracle cases PASS.
+- Evidence: exact cross-product comparator; exact-equality index tie-break; O(N log N) time; O(N) space; 2e18 signed-64-bit safety bound correct.
+- Non-blocking issue: submitted edge-case N labels were inconsistent with the listed record counts and the formal N>=2 constraint.
+- Review Debt: S1-B Medium exact-rational / floating-point comparator debt Resolved.
+- Remaining S1-B debt: Low — grouped k-th iterator-boundary safety; RB-2 pending.
+- Global unresolved Core Review Debt: 5 open entries; review block remains active because the operating threshold (>4) is still exceeded.
+
+### Workbook Sync Note — 2026-10-02 (RB-1)
+- A validated local workbook candidate containing RB-1 PASS and debt resolution was generated with artifact_tool and passed spreadsheet re-import, key-range inspection, and formula-error scan.
+- GitHub binary upload/post-upload identity verification was not completed in this transaction; the existing remote known-good workbook was not overwritten.
+- Status: GitHub sync incomplete for XLSX only.
