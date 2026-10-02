@@ -749,3 +749,80 @@ Before writing a comparator or k-th query, identify the exact invariant to prese
 - iterator arithmetic: what fact proves the destination iterator is within the valid range before the movement occurs?
 
 This remediation does not resolve either debt by itself. Both require fresh independent formal evidence.
+
+
+## Review Block 1 — Fresh Reassessment (2026-10-02)
+Status: Active / Pending
+Purpose: independently reassess the two S1-B debts opened by G-A and G-B after learning-mode remediation.
+Assessment integrity: no hints or approach review; any such request makes the corresponding attempt non-passing.
+
+### RB-1 — Batch Priority Board
+Status: Pending / Active
+Source: GPT-generated
+Validation Tier: B
+Difficulty: R2/I2 (Comparative / Provisional)
+Validation evidence: C++17 reference compile/sample + 5,000 randomized comparisons against an exact rational oracle.
+Target debt: Medium — exact rational comparison / floating-point precision.
+
+Problem: N batches are indexed 1..N. Batch i has integers (a_i,b_i,c_i) and exact priority score (a_i+b_i)/c_i. Output indices in descending exact score; ties use smaller index first.
+
+Submission conditions: complete C++17 program; N<=200000; total O(N log N) or better; explain correctness, time/space complexity, numeric safety; at least two edge cases; measured T_solve; no hints/editorials/other-person-or-AI help/approach review; standard C++ syntax/API lookup only.
+
+Constraints: 0<=a_i,b_i<=1e9; 1<=c_i<=1e9.
+
+Sample Input:
+```text
+5
+3 1 2
+1 1 1
+2 1 3
+9 0 3
+0 5 5
+```
+Sample Output:
+```text
+4 1 2 3 5
+```
+
+### RB-2 — Locker Archive Queries
+Status: Pending / Active
+Source: GPT-generated
+Validation Tier: B
+Difficulty: R2/I2 (Comparative / Provisional)
+Validation evidence: C++17 reference compile/sample + 5,000 randomized comparisons against an independent grouped brute-force oracle.
+Target debt: Low — grouped k-th lookup iterator-boundary safety.
+
+Problem: N fixed records have group g and integer value x; duplicates are allowed. Query 1 g k outputs the k-th smallest x in group g, or NONE if the group has fewer than k records. Query 2 g L R outputs the number of records in group g with L<=x<=R.
+
+Submission conditions: complete C++17 program; N,Q<=200000; worst-case total O((N+Q) log N) or better; explain correctness, time/space complexity, numeric safety; at least three edge cases; measured T_solve; no hints/editorials/other-person-or-AI help/approach review; standard C++ syntax/API lookup only.
+
+Constraints: 1<=g<=1e9; -1e9<=x,L,R<=1e9; 1<=k<=N; L<=R.
+
+Sample Input:
+```text
+7 6
+10 5
+20 3
+10 2
+10 5
+30 9
+20 8
+30 4
+1 10 3
+1 10 4
+2 20 1 7
+1 40 1
+2 30 4 9
+1 20 2
+```
+Sample Output:
+```text
+5
+NONE
+1
+NONE
+2
+8
+```
+
+Both reassessments are independent. Passing one resolves only its corresponding debt; the other debt remains open until independently passed.
