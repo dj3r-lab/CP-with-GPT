@@ -1343,3 +1343,14 @@ Type 3에서 \code{lower\_bound} 결과를 얻은 직후 해당 symbol에 k개�
 
 \section{Part H --- S1-B Immediate Closure}
 Part E는 PASS, fresh Part F F-2는 PASS이다. Part G에서는 G-A가 Implementation FAIL, G-B가 Correctness FAIL이다. Immediate Progression Gate는 만족되었고 Capability는 L4 --- Selection, Confidence는 Provisional이다. 현재 S1-B에는 grouped k-th iterator safety의 Low debt와 exact ratio comparison의 Medium debt가 열려 있다. 전체 unresolved Core Review Debt가 운영 임계값을 초과하므로 다음 Core Learning Unit 전에 review block을 우선한다.
+
+
+\subsection{Review Block RB-1 제출 및 판정}
+\paragraph{문제.} Batch Priority Board.
+\paragraph{판정: PASS.} 학습자는 $R_i=(a_i+b_i)/c_i$를 floating-point로 만들지 않고 cross multiplication으로 정확히 비교했다. comparator는 $(a_i+b_i)c_j$와 $(a_j+b_j)c_i$를 비교하고, 정확히 같은 경우에만 작은 index를 우선한다.
+
+제출 코드는 C++17로 컴파일되었고 sample 및 5,000개 randomized exact-rational oracle case를 모두 통과했다. 전체 시간복잡도는 $O(N\log N)$, 저장 공간은 $O(N)$이다. 최대 cross product는 $2\times10^{18}$이므로 signed \code{long long} 범위 안에 들어간다.
+
+제출한 edge-case 설명에서는 두 예시 모두 \code{N=1}로 표기했으나 실제로는 각각 2개와 3개의 batch를 나열했다. 문제의 제약 $N\ge2$와도 맞지 않는 문서상 불일치이지만, intended case는 명확하고 코드/증명/독립 검증은 깨끗하므로 비차단 오류로 기록한다.
+
+이 fresh reassessment로 G-B에서 열린 exact rational comparison / floating-point precision Medium Review Debt는 해결되었다. S1-B Capability는 L4 / Provisional을 유지하며 RB-2의 grouped k-th iterator boundary safety debt는 아직 Open이다.
