@@ -1,0 +1,1067 @@
+\chapter{C++ 자료구조와 STL 함수 빠른 참고}
+
+\begin{notebox}[이 Appendix의 목적]
+이 장은 Competitive Programming에서 반복적으로 사용하는 자료구조의 \textbf{실전 API, iterator 규칙, 시간복잡도, 선택 기준, 주요 함정}을 빠르게 다시 찾기 위한 참고 자료다.
+현재까지 학습한 표준 container뿐 아니라 이후 커리큘럼에서 등장할 Core/Advanced Core 및 일부 Optional 자료구조의 canonical interface도 함께 정리한다.
+미학습 항목이 이 장에 존재한다는 사실은 해당 항목을 이미 숙달했다는 뜻이 아니다.
+\end{notebox}
+
+\section{표기와 복잡도 해석}
+이 장에서는 다음 기호를 사용한다.
+\begin{itemize}
+  \item $N$: 현재 container에 저장된 원소 수
+  \item $M$: 두 번째 container 또는 문자열의 길이
+  \item $K$: 삽입, 삭제, 출력 등 실제로 처리하는 원소 수
+  \item $L$: 문자열 하나의 길이 또는 처리하는 총 문자 수
+  \item $V,E$: graph의 vertex 수와 edge 수
+  \item $\alpha(N)$: inverse Ackermann function. 실전에서는 사실상 상수에 가깝다.
+\end{itemize}
+
+\begin{keybox}[복잡도를 읽을 때 가장 중요한 규칙]
+\code{unordered\_map}과 \code{unordered\_set}의 $O(1)$은 \textbf{expected / average} complexity다. 충돌이 심한 최악의 경우 개별 연산이 $O(N)$까지 악화될 수 있다. 반면 \code{map}, \code{set}, \code{multiset}의 주요 탐색/삽입/삭제는 worst-case $O(\log N)$이다.
+\end{keybox}
+
+\section{공통 iterator 규칙}
+
+\subsection{\code{begin()}과 \code{end()}}
+대부분의 STL container는 반열린 범위 $[\text{begin},\text{end})$를 사용한다.
+\begin{lstlisting}
+vector<int> v = {10, 20, 30};
+
+auto first = v.begin();
+auto last  = v.end();
+
+cout << *first;       // 10
+// cout << *last;     // invalid: end() is past-the-end
+\end{lstlisting}
+
+\code{end()}는 마지막 원소가 아니라 \textbf{마지막 원소 다음 위치}다. 따라서 \code{*end()}는 invalid다.
+
+\subsection{dereference와 member 접근}
+\begin{lstlisting}
+auto it = v.begin();
+cout << *it;
+
+map<string, int> mp;
+mp["BTC"] = 100;
+
+auto mit = mp.find("BTC");
+if (mit != mp.end()) {
+    cout << mit->first << ' ' << mit->second;
+}
+\end{lstlisting}
+
+\code{*it}는 iterator가 가리키는 객체를 얻고, \code{it->member}는 \code{(*it).member}의 축약 형태다.
+
+\subsection{\code{next}, \code{prev}, \code{advance}, \code{distance}}
+\begin{lstlisting}
+auto it2 = next(it);       // one step forward
+auto it3 = next(it, 3);    // three steps forward
+auto it4 = prev(it2);      // one step backward
+
+advance(it, 5);            // move it itself by 5
+
+auto d = distance(first, last);
+\end{lstlisting}
+
+복잡도는 iterator category에 따라 달라진다.
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.1cm}XX}
+\toprule
+iterator 성질 & 대표 container & $k$칸 이동 / distance \\
+\midrule
+Random access & \code{vector}, \code{array}, \code{deque} & $O(1)$ \\
+Bidirectional & \code{map}, \code{set}, \code{multiset} & $O(k)$ \\
+Forward & 일부 forward container & $O(k)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+따라서 \code{next(set.begin(), k)}는 $O(k)$이지 $O(1)$이 아니다.
+
+\subsection{reverse iterator}
+\begin{lstlisting}
+vector<int> v = {1, 2, 3};
+for (auto it = v.rbegin(); it != v.rend(); ++it) {
+    cout << *it << ' ';    // 3 2 1
+}
+\end{lstlisting}
+
+\section{iterator invalidation 빠른 규칙}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3.1cm}p{4.5cm}X}
+\toprule
+Container & 대표 변화 & 실전에서 기억할 안전 규칙 \\
+\midrule
+\code{vector} & capacity를 넘는 삽입 & reallocation이 일어나면 모든 iterator/reference/pointer가 무효화될 수 있다. \\
+\code{vector} & 중간 \code{insert/erase} & 변경 위치 이후 iterator/reference는 무효화될 수 있다. \\
+\code{string} & 크기 변경 & 재할당/수정으로 iterator/reference가 무효화될 수 있으므로 변경 전 iterator를 계속 믿지 않는다. \\
+\code{deque} & 삽입/삭제 & invalidation 규칙이 vector보다 복잡하다. 수정 뒤 오래된 iterator를 재사용하지 않는 보수적 습관이 안전하다. \\
+\code{map/set/multiset} & insert & 기존 원소 iterator/reference는 유지된다. \\
+\code{map/set/multiset} & erase & 지운 원소만 무효화된다. \\
+\code{unordered\_*} & rehash & iterator는 무효화된다. 원소에 대한 reference/pointer는 일반적으로 유지되지만, 지운 원소는 당연히 무효다. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{notebox}[CP에서의 실전 원칙]
+container를 수정한 뒤 이전 iterator를 계속 사용할 필요가 없다면 새로 얻는 것이 가장 안전하다. 특히 \code{vector::push\_back}, \code{vector::insert}, unordered container의 rehash 가능성이 있는 삽입 뒤에는 오래된 iterator를 무심코 재사용하지 않는다.
+\end{notebox}
+
+\section{\code{string}}
+\subsection{기본 사용}
+\begin{lstlisting}
+string s = "abc";
+
+cout << s.size();
+cout << s[0];
+
+s.push_back('d');
+s.pop_back();
+
+cout << s.front();
+cout << s.back();
+\end{lstlisting}
+
+\subsection{주요 함수와 복잡도}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.0cm}p{4.0cm}X}
+\toprule
+연산 & 사용 예 & 복잡도 / 비고 \\
+\midrule
+크기 & \code{s.size()}, \code{s.length()} & $O(1)$ \\
+비었는지 & \code{s.empty()} & $O(1)$ \\
+index 접근 & \code{s[i]}, \code{s.at(i)} & $O(1)$; \code{at}은 범위 검사 \\
+앞/뒤 & \code{s.front()}, \code{s.back()} & $O(1)$; empty에서 호출 금지 \\
+뒤에 문자 추가 & \code{s.push\_back(c)} & amortized $O(1)$ \\
+뒤 문자 제거 & \code{s.pop\_back()} & $O(1)$; empty에서 호출 금지 \\
+문자열 이어붙이기 & \code{s += t}, \code{s.append(t)} & 추가 길이에 선형 + 재할당 가능 \\
+부분 문자열 & \code{s.substr(pos,len)} & 생성되는 길이에 선형 \\
+삽입 & \code{s.insert(pos,t)} & 일반적으로 이동되는 문자 수 때문에 $O(N+|t|)$ \\
+삭제 & \code{s.erase(pos,len)} & 일반적으로 $O(N)$ \\
+검색 & \code{s.find(t)} & 구현에 따라 다르며 단순한 엄밀 $O(1)$로 가정하면 안 됨 \\
+비교 & \code{s < t}, \code{s == t} & 최악 $O(\min(N,M))$ 수준의 문자 비교 \\
+초기화/비우기 & \code{s.clear()} & 원소 제거에 선형으로 생각하는 것이 안전 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{\code{getline}}
+\begin{lstlisting}
+string line;
+getline(cin, line);
+\end{lstlisting}
+\code{cin >> s}는 공백 전까지 읽지만 \code{getline}은 한 줄 전체를 읽는다. 앞선 \code{cin >>} 뒤의 newline이 남아 있다면 입력 경계를 확인한다.
+
+\section{\code{array<T,N>}}
+\subsection{기본 사용}
+\begin{lstlisting}
+array<int, 5> a = {1, 2, 3, 4, 5};
+
+cout << a.size();
+cout << a[2];
+
+a.fill(0);
+\end{lstlisting}
+
+\subsection{주요 함수와 복잡도}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{4cm}X}
+\toprule
+연산 & 사용 예 & 복잡도 \\
+\midrule
+크기 & \code{a.size()} & $O(1)$ \\
+index & \code{a[i]}, \code{a.at(i)} & $O(1)$ \\
+앞/뒤 & \code{a.front()}, \code{a.back()} & $O(1)$ \\
+전체 채우기 & \code{a.fill(x)} & $O(N)$ \\
+순회 & \code{a.begin()}, \code{a.end()} & 전체 순회 $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\code{array<T,N>}의 $N$은 compile-time 상수이고 타입의 일부다. 실행 중 크기가 달라져야 한다면 \code{vector}가 보통 더 자연스럽다.
+
+\section{\code{vector<T>}}
+\subsection{생성과 크기}
+\begin{lstlisting}
+vector<int> a;
+vector<int> b(10);        // 10 zeros for int
+vector<int> c(10, 7);     // ten 7s
+vector<int> d = {1, 2, 3};
+\end{lstlisting}
+
+\subsection{주요 함수와 복잡도}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.3cm}p{4.2cm}X}
+\toprule
+연산 & 사용 예 & 복잡도 / 비고 \\
+\midrule
+크기 & \code{v.size()}, \code{v.empty()} & $O(1)$ \\
+index & \code{v[i]}, \code{v.at(i)} & $O(1)$ \\
+앞/뒤 & \code{v.front()}, \code{v.back()} & $O(1)$ \\
+뒤 삽입 & \code{v.push\_back(x)} & amortized $O(1)$ \\
+뒤 직접 생성 & \code{emplace\_back(...)} & amortized $O(1)$ \\
+뒤 삭제 & \code{v.pop\_back()} & $O(1)$ \\
+중간 삽입 & \code{v.insert(it,x)} & $O(N)$ \\
+중간 삭제 & \code{v.erase(it)} & $O(N)$ \\
+구간 삭제 & \code{v.erase(l,r)} & 이동 원소 수까지 포함해 $O(N)$ \\
+전체 비우기 & \code{v.clear()} & 원소 수에 선형으로 생각 \\
+크기 변경 & \code{v.resize(n)} & 늘리면 새 원소 생성 비용 포함; 전체적으로 $O(|\Delta N|)$ + 재할당 가능 \\
+capacity 예약 & \code{v.reserve(n)} & 필요 시 $O(N)$ 재할당; size는 바뀌지 않음 \\
+capacity 확인 & \code{v.capacity()} & $O(1)$ \\
+raw pointer & \code{v.data()} & $O(1)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{\code{reserve}와 \code{resize}는 다르다}
+\begin{lstlisting}
+vector<int> v;
+v.reserve(1000);  // size is still 0
+v.resize(1000);   // size becomes 1000
+\end{lstlisting}
+
+\code{reserve}는 저장 공간을 미리 확보할 뿐 원소를 만들지 않는다. 반면 \code{resize}는 실제 logical size를 바꾼다.
+
+\subsection{삭제 후 새 end iterator 받기}
+\begin{lstlisting}
+vector<int> v = {1, 2, 3, 4};
+auto it = v.begin() + 1;
+it = v.erase(it);      // it now points to the next element
+\end{lstlisting}
+
+\section{\code{pair<A,B>}와 structured binding}
+\begin{lstlisting}
+pair<string, int> p = {"BTC", 100};
+cout << p.first << ' ' << p.second;
+
+vector<pair<int, int>> edges;
+edges.push_back({1, 2});
+
+for (const auto& [u, v] : edges) {
+    cout << u << ' ' << v << '\n';
+}
+\end{lstlisting}
+
+\code{pair} 자체의 원소 접근은 $O(1)$이다. 기본 비교는 먼저 \code{first}, 같으면 \code{second}를 비교하는 lexicographic ordering을 사용한다.
+
+\section{\code{map<K,V>}}
+\subsection{핵심 성질}
+key를 정렬된 순서로 유지하는 key $\to$ value container다. 주요 연산은 worst-case $O(\log N)$이다.
+
+\begin{lstlisting}
+map<string, int> mp;
+mp["BTC"] = 100;
+++mp["ETH"];
+\end{lstlisting}
+
+\subsection{조회와 삽입}
+\begin{lstlisting}
+auto it = mp.find("BTC");
+if (it != mp.end()) {
+    cout << it->second;
+}
+
+if (mp.count("BTC")) {
+    // key exists
+}
+
+// C++20
+if (mp.contains("BTC")) {
+    // key exists
+}
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{3.6cm}p{5.1cm}X}
+\toprule
+연산 & 사용 예 & 복잡도 / 의미 \\
+\midrule
+lookup & \code{mp.find(k)} & $O(\log N)$ \\
+존재 확인 & \code{mp.count(k)} & $O(\log N)$; map에서는 0 또는 1 \\
+존재 확인 C++20 & \code{mp.contains(k)} & $O(\log N)$ \\
+조회 + 없으면 삽입 & \code{mp[k]} & $O(\log N)$; 없는 key를 default value와 함께 생성 \\
+예외 기반 조회 & \code{mp.at(k)} & $O(\log N)$; 없으면 예외 \\
+삽입 & \code{mp.insert(\{k,v\})} & $O(\log N)$ \\
+직접 생성 & \code{mp.emplace(k,v)} & $O(\log N)$ \\
+없을 때만 value 생성 & \code{try\_emplace(k,...)} & $O(\log N)$; C++17 \\
+삽입 또는 대입 & \code{insert\_or\_assign(k,v)} & $O(\log N)$; C++17 \\
+key 삭제 & \code{mp.erase(k)} & $O(\log N)$ + 삭제 개수 \\
+iterator 삭제 & \code{mp.erase(it)} & amortized $O(1)$ \\
+경계 & \code{lower\_bound}, \code{upper\_bound} & $O(\log N)$ \\
+전체 순회 & range-for & $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{\code{operator[]}의 함정}
+\begin{lstlisting}
+map<string, int> mp;
+if (mp["BTC"] == 0) {
+    // "BTC" has now been inserted even if it did not exist before
+}
+\end{lstlisting}
+존재 여부만 확인할 때는 \code{find} 또는 C++20의 \code{contains}가 더 안전하다.
+
+\subsection{정렬 순회와 역순 순회}
+\begin{lstlisting}
+for (const auto& [k, v] : mp) {
+    cout << k << ' ' << v << '\n';
+}
+
+for (auto it = mp.rbegin(); it != mp.rend(); ++it) {
+    cout << it->first << ' ' << it->second << '\n';
+}
+\end{lstlisting}
+
+\section{\code{multimap<K,V>}}
+하나의 key에 여러 value를 보존해야 하는 ordered associative container다. 기본 복잡도는 \code{map}과 같은 계열이다.
+
+\begin{lstlisting}
+multimap<int, string> mm;
+mm.insert({10, "A"});
+mm.insert({10, "B"});
+
+auto [first, last] = mm.equal_range(10);
+for (auto it = first; it != last; ++it) {
+    cout << it->second << '\n';
+}
+\end{lstlisting}
+
+\code{equal\_range(k)}는 key가 $k$인 구간 $[first,last)$를 얻는다. 경계 탐색 자체는 $O(\log N)$이고 실제 $K$개 결과를 순회하면 총 $O(\log N+K)$이다.
+
+\section{\code{set<T>}와 \code{multiset<T>}}
+\subsection{기본 사용}
+\begin{lstlisting}
+set<int> s;
+s.insert(10);
+s.insert(10);       // duplicate ignored
+
+multiset<int> ms;
+ms.insert(10);
+ms.insert(10);      // duplicate preserved
+\end{lstlisting}
+
+\subsection{주요 함수와 복잡도}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.1cm}p{4.5cm}X}
+\toprule
+연산 & 사용 예 & 복잡도 \\
+\midrule
+삽입 & \code{s.insert(x)} & $O(\log N)$ \\
+탐색 & \code{s.find(x)} & $O(\log N)$ \\
+존재 확인 & \code{s.count(x)} & set: $O(\log N)$, multiset: $O(\log N+K)$ 수준 \\
+C++20 존재 확인 & \code{s.contains(x)} & $O(\log N)$ \\
+key 삭제 & \code{s.erase(x)} & $O(\log N+K)$; multiset에서는 같은 key 전부 삭제 \\
+iterator 삭제 & \code{s.erase(it)} & amortized $O(1)$ \\
+경계 & \code{lower\_bound}, \code{upper\_bound} & $O(\log N)$ \\
+동일 key 구간 & \code{equal\_range(x)} & 경계 탐색 $O(\log N)$ \\
+최솟값 & \code{*s.begin()} & iterator 획득/접근 $O(1)$ \\
+최댓값 & \code{*prev(s.end())} & $O(1)$ \\
+전체 순회 & range-for & $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{multiset에서 한 개만 삭제}
+\begin{lstlisting}
+auto it = ms.find(x);
+if (it != ms.end()) {
+    ms.erase(it);        // erase one occurrence
+}
+\end{lstlisting}
+
+반대로 \code{ms.erase(x)}는 $x$와 같은 원소를 모두 삭제한다.
+
+\subsection{predecessor / successor}
+\begin{lstlisting}
+auto right = s.lower_bound(x);  // first value >= x
+
+if (right != s.end()) {
+    cout << *right;              // successor-like boundary
+}
+
+if (right != s.begin()) {
+    auto left = prev(right);
+    cout << *left;               // greatest value < x
+}
+\end{lstlisting}
+
+\section{\code{unordered\_map<K,V>}와 \code{unordered\_set<T>}}
+\subsection{핵심 성질}
+ordering이 필요 없고 빠른 membership / key lookup이 핵심일 때 사용하는 hash container다.
+
+\begin{lstlisting}
+unordered_map<string, int> freq;
+++freq["apple"];
+
+unordered_set<int> seen;
+seen.insert(7);
+\end{lstlisting}
+
+\subsection{주요 함수와 복잡도}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{4.5cm}X}
+\toprule
+연산 & 사용 예 & Expected / Worst \\
+\midrule
+탐색 & \code{find(k)} & $O(1)$ / $O(N)$ \\
+존재 확인 & \code{count(k)}, \code{contains(k)} & $O(1)$ / $O(N)$ \\
+삽입 & \code{insert}, \code{emplace} & $O(1)$ / $O(N)$; rehash 가능 \\
+map index & \code{mp[k]} & $O(1)$ / $O(N)$; 없는 key 삽입 \\
+삭제 & \code{erase(k)} & $O(1)$ / $O(N)$ 평균적 해석 \\
+전체 순회 & range-for & $O(N)$ \\
+rehash & \code{rehash(b)} & 평균 $O(N)$, 최악 더 악화 가능 \\
+capacity 예약 & \code{reserve(n)} & 충분한 bucket 수 확보를 요청; rehash 가능 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{bucket 관련 함수}
+\begin{lstlisting}
+unordered_map<int, int> mp;
+mp.reserve(200000);
+
+cout << mp.bucket_count() << '\n';
+cout << mp.load_factor() << '\n';
+mp.max_load_factor(0.7f);
+\end{lstlisting}
+
+큰 입력에서 원소 수를 대략 안다면 \code{reserve}로 반복 rehash를 줄일 수 있다. 다만 이는 asymptotic worst-case를 없애는 방법은 아니다.
+
+\section{\code{stack<T>}}
+LIFO(Last In, First Out) adaptor다. 기본 underlying container는 \code{deque}다.
+
+\begin{lstlisting}
+stack<int> st;
+st.push(10);
+st.push(20);
+
+cout << st.top();
+st.pop();
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{4cm}X}
+\toprule
+함수 & 의미 & 기본 복잡도 \\
+\midrule
+\code{push(x)} & top에 삽입 & $O(1)$ \\
+\code{emplace(args...)} & top에 직접 생성 & $O(1)$ \\
+\code{top()} & top 원소 참조 & $O(1)$ \\
+\code{pop()} & top 삭제, 반환값 없음 & $O(1)$ \\
+\code{size()} & 크기 & $O(1)$ \\
+\code{empty()} & 비었는지 & $O(1)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{notebox}[중요]
+\code{pop()}은 삭제한 값을 반환하지 않는다. 값이 필요하면 먼저 \code{top()}으로 읽고 \code{pop()}한다.
+\end{notebox}
+
+\section{\code{queue<T>}}
+FIFO(First In, First Out) adaptor다.
+
+\begin{lstlisting}
+queue<int> q;
+q.push(10);
+q.push(20);
+
+cout << q.front();
+cout << q.back();
+q.pop();
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{4cm}X}
+\toprule
+함수 & 의미 & 기본 복잡도 \\
+\midrule
+\code{push(x)} / \code{emplace} & 뒤에 삽입 & $O(1)$ \\
+\code{front()} & 맨 앞 & $O(1)$ \\
+\code{back()} & 맨 뒤 & $O(1)$ \\
+\code{pop()} & 맨 앞 삭제 & $O(1)$ \\
+\code{size()}, \code{empty()} & 상태 확인 & $O(1)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+BFS에서는 일반적으로 vertex/state를 \code{queue}에 넣고, 방문 여부나 거리를 별도 배열에 저장한다.
+
+\section{\code{deque<T>}}
+양쪽 끝 삽입/삭제와 random access를 모두 지원한다.
+
+\begin{lstlisting}
+deque<int> dq;
+dq.push_back(10);
+dq.push_front(5);
+
+cout << dq.front();
+cout << dq.back();
+cout << dq[1];
+
+dq.pop_front();
+dq.pop_back();
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{4.5cm}X}
+\toprule
+연산 & 사용 예 & 복잡도 \\
+\midrule
+양끝 삽입 & \code{push\_front/back} & $O(1)$ \\
+양끝 삭제 & \code{pop\_front/back} & $O(1)$ \\
+양끝 접근 & \code{front/back} & $O(1)$ \\
+index 접근 & \code{dq[i]} & $O(1)$ \\
+중간 삽입/삭제 & \code{insert/erase} & $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\code{deque}는 \code{vector}처럼 하나의 연속 메모리 블록이라는 보장이 없다. \code{data()} 기반의 contiguous storage가 필요하면 \code{vector}를 사용한다.
+
+\section{\code{priority\_queue<T>}}
+기본적으로 max-heap adaptor다.
+
+\begin{lstlisting}
+priority_queue<int> maxpq;
+maxpq.push(3);
+maxpq.push(10);
+cout << maxpq.top();      // 10
+\end{lstlisting}
+
+min-heap은 다음처럼 만든다.
+\begin{lstlisting}
+priority_queue<int, vector<int>, greater<int>> minpq;
+\end{lstlisting}
+
+\subsection{주요 함수와 복잡도}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{4cm}X}
+\toprule
+함수 & 의미 & 복잡도 \\
+\midrule
+\code{top()} & 최우선 원소 & $O(1)$ \\
+\code{push(x)} & 삽입 & $O(\log N)$ \\
+\code{emplace(args...)} & 직접 생성 & $O(\log N)$ \\
+\code{pop()} & 최우선 원소 삭제 & $O(\log N)$ \\
+\code{size()}, \code{empty()} & 상태 확인 & $O(1)$ \\
+heapify 기반 구축 & 범위에서 heap 구성 & $O(N)$ 가능한 구현 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{custom comparator}
+\begin{lstlisting}
+struct Node {
+    long long dist;
+    int v;
+};
+
+struct Cmp {
+    bool operator()(const Node& a, const Node& b) const {
+        return a.dist > b.dist;   // smaller dist has higher priority
+    }
+};
+
+priority_queue<Node, vector<Node>, Cmp> pq;
+\end{lstlisting}
+
+\section{정렬된 \code{vector}와 경계 탐색}
+자료구조 선택에서 \code{set}과 자주 비교된다.
+
+\begin{lstlisting}
+vector<int> v = {1, 3, 3, 7, 10};
+
+auto lo = lower_bound(v.begin(), v.end(), 3); // first >= 3
+auto hi = upper_bound(v.begin(), v.end(), 3); // first > 3
+
+bool exists = binary_search(v.begin(), v.end(), 7);
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.2cm}p{4.5cm}X}
+\toprule
+연산 & 정렬된 vector & set/multiset \\
+\midrule
+경계 탐색 & $O(\log N)$ & $O(\log N)$ \\
+index/random access & $O(1)$ & 직접 지원하지 않음 \\
+중간 삽입/삭제 & $O(N)$ & $O(\log N)$ \\
+순차 scan locality & 매우 좋음 & node 기반이라 상대적으로 불리 \\
+동적 ordering 유지 & 비쌈 & 강점 \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Graph 저장: adjacency list}
+Graph 자체는 STL 하나의 container가 아니라 보통 \code{vector}를 조합해 표현한다.
+
+\subsection{unweighted graph}
+\begin{lstlisting}
+int N, M;
+cin >> N >> M;
+
+vector<vector<int>> g(N);
+for (int i = 0; i < M; ++i) {
+    int u, v;
+    cin >> u >> v;
+    --u; --v;
+    g[u].push_back(v);
+    g[v].push_back(u);   // omit for directed graph
+}
+\end{lstlisting}
+
+edge 추가는 각 \code{push\_back}이 amortized $O(1)$이고, 전체 adjacency를 한 번 순회하면 $O(V+E)$다.
+
+\subsection{weighted graph}
+\begin{lstlisting}
+struct Edge {
+    int to;
+    long long w;
+};
+
+vector<vector<Edge>> g(N);
+g[u].push_back({v, w});
+\end{lstlisting}
+
+Dijkstra에서는 흔히 \code{priority\_queue}와 adjacency list를 결합한다.
+
+\section{Disjoint Set Union / Union-Find}
+서로소 집합을 동적으로 합치고 두 원소가 같은 component인지 판단한다.
+
+\subsection{canonical interface}
+\begin{lstlisting}
+struct DSU {
+    vector<int> parent;
+    vector<int> sz;
+
+    DSU(int n) : parent(n), sz(n, 1) {
+        iota(parent.begin(), parent.end(), 0);
+    }
+
+    int find(int x) {
+        if (parent[x] == x) return x;
+        return parent[x] = find(parent[x]);
+    }
+
+    bool unite(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a == b) return false;
+        if (sz[a] < sz[b]) swap(a, b);
+        parent[b] = a;
+        sz[a] += sz[b];
+        return true;
+    }
+
+    bool same(int a, int b) {
+        return find(a) == find(b);
+    }
+
+    int size(int x) {
+        return sz[find(x)];
+    }
+};
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{5cm}X}
+\toprule
+연산 & 의미 & amortized complexity \\
+\midrule
+\code{find(x)} & representative/root 찾기 & $O(\alpha(N))$ \\
+\code{unite(a,b)} & 두 집합 합치기 & $O(\alpha(N))$ \\
+\code{same(a,b)} & 같은 집합인지 & $O(\alpha(N))$ \\
+\code{size(x)} & component 크기 & $O(\alpha(N))$ \\
+초기화 & $N$개 singleton & $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+이 복잡도는 path compression과 union by size/rank를 함께 사용할 때 얻는다.
+
+\section{Fenwick Tree / Binary Indexed Tree}
+prefix sum과 point update가 반복되는 문제에서 간결한 선택이다.
+
+\subsection{canonical interface}
+\begin{lstlisting}
+struct Fenwick {
+    int n;
+    vector<long long> bit;
+
+    Fenwick(int n) : n(n), bit(n + 1, 0) {}
+
+    void add(int idx, long long delta) {
+        for (++idx; idx <= n; idx += idx & -idx) {
+            bit[idx] += delta;
+        }
+    }
+
+    long long prefix_sum(int r) const {
+        long long res = 0;
+        for (++r; r > 0; r -= r & -r) {
+            res += bit[r];
+        }
+        return res;
+    }
+
+    long long range_sum(int l, int r) const {
+        if (l > r) return 0;
+        return prefix_sum(r) - (l ? prefix_sum(l - 1) : 0);
+    }
+};
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{5cm}X}
+\toprule
+연산 & 의미 & 복잡도 \\
+\midrule
+\code{add(i,delta)} & point update & $O(\log N)$ \\
+\code{prefix\_sum(r)} & $[0,r]$ 합 & $O(\log N)$ \\
+\code{range\_sum(l,r)} & 구간 합 & $O(\log N)$ \\
+기본 반복 add build & 모든 원소를 add & $O(N\log N)$ \\
+선형 build & 내부 bit 관계 직접 구성 & $O(N)$ 가능 \\
+order-statistic search & 누적합이 단조일 때 k-th 탐색 & $O(\log N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Fenwick Tree는 일반적인 arbitrary associative range query보다 prefix-decomposable한 연산에 특히 적합하다.
+
+\section{Segment Tree}
+point update와 range query를 모두 $O(\log N)$에 처리하는 범용 구조다.
+
+\subsection{대표 interface}
+\begin{lstlisting}
+struct SegTree {
+    int n;
+    vector<long long> tree;
+
+    SegTree(int n) : n(1) {
+        while (this->n < n) this->n <<= 1;
+        tree.assign(2 * this->n, 0);
+    }
+
+    void set_value(int idx, long long value) {
+        int p = idx + n;
+        tree[p] = value;
+        for (p >>= 1; p >= 1; p >>= 1) {
+            tree[p] = tree[2 * p] + tree[2 * p + 1];
+            if (p == 1) break;
+        }
+    }
+
+    long long query(int l, int r) const { // [l, r)
+        long long left = 0, right = 0;
+        for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+            if (l & 1) left += tree[l++];
+            if (r & 1) right = tree[--r] + right;
+        }
+        return left + right;
+    }
+};
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{5cm}X}
+\toprule
+연산 & 의미 & 복잡도 \\
+\midrule
+build & 배열 전체 구축 & $O(N)$ \\
+point update & 한 위치 변경 & $O(\log N)$ \\
+range query & 한 구간 집계 & $O(\log N)$ \\
+메모리 & tree array & $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+sum/min/max/gcd 등 결합 연산을 바꿀 수 있지만, 결합법칙과 identity를 명확히 해야 한다.
+
+\section{Lazy Propagation Segment Tree}
+range update와 range query가 모두 필요한 경우 Segment Tree node에 아직 자식에게 내리지 않은 update를 저장한다.
+
+\subsection{canonical operation}
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.4cm}p{5cm}X}
+\toprule
+연산 & 역할 & 복잡도 \\
+\midrule
+\code{build} & 초기 tree 구축 & $O(N)$ \\
+\code{apply(node,tag)} & node 값에 lazy tag 반영 & node당 $O(1)$ \\
+\code{push(node)} & tag를 두 자식에 전달 & node당 $O(1)$ \\
+\code{range\_update(l,r,x)} & 구간 갱신 & $O(\log N)$ \\
+\code{range\_query(l,r)} & 구간 질의 & $O(\log N)$ \\
+메모리 & tree + lazy arrays & $O(N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{keybox}[가장 중요한 구현 invariant]
+node가 대표하는 구간 값과 lazy tag의 의미를 먼저 고정한다. \code{apply}, \code{push}, parent merge가 그 의미를 항상 보존해야 한다. range add/range sum과 range assign/range min처럼 update 종류가 달라지면 tag 합성 규칙도 달라진다.
+\end{keybox}
+
+\section{Sparse Table}
+배열이 \textbf{정적}이고 range query만 반복될 때 사용하는 구조다.
+
+\subsection{RMQ 예시}
+\begin{lstlisting}
+int K = 1;
+while ((1 << K) <= n) ++K;
+vector<vector<int>> st(K, vector<int>(n));
+st[0] = a;
+
+for (int k = 1; k < K; ++k) {
+    for (int i = 0; i + (1 << k) <= n; ++i) {
+        st[k][i] = min(st[k - 1][i],
+                       st[k - 1][i + (1 << (k - 1))]);
+    }
+}
+\end{lstlisting}
+
+min/max/gcd처럼 idempotent한 연산은 두 겹치는 block을 사용해 $O(1)$ query가 가능하다.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{5cm}X}
+\toprule
+연산 & 조건 & 복잡도 \\
+\midrule
+build & 정적 배열 & $O(N\log N)$ \\
+RMQ query & min/max/gcd 등 idempotent & $O(1)$ \\
+일반 associative query & 겹침 허용 불가 시 & $O(\log N)$ block decomposition \\
+update & 기본 Sparse Table & 지원하지 않음; rebuild 필요 \\
+메모리 & table & $O(N\log N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Trie}
+문자열 prefix 기반 검색을 위한 tree 구조다.
+
+\subsection{고정 alphabet 예시}
+\begin{lstlisting}
+struct TrieNode {
+    array<int, 26> next;
+    bool terminal = false;
+
+    TrieNode() {
+        next.fill(-1);
+    }
+};
+
+struct Trie {
+    vector<TrieNode> nodes{TrieNode{}};
+
+    void insert(const string& s) {
+        int cur = 0;
+        for (char c : s) {
+            int x = c - 'a';
+            if (nodes[cur].next[x] == -1) {
+                nodes[cur].next[x] = (int)nodes.size();
+                nodes.emplace_back();
+            }
+            cur = nodes[cur].next[x];
+        }
+        nodes[cur].terminal = true;
+    }
+
+    bool contains(const string& s) const {
+        int cur = 0;
+        for (char c : s) {
+            int x = c - 'a';
+            if (nodes[cur].next[x] == -1) return false;
+            cur = nodes[cur].next[x];
+        }
+        return nodes[cur].terminal;
+    }
+};
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4cm}p{5cm}X}
+\toprule
+연산 & 의미 & 복잡도 \\
+\midrule
+insert & 길이 $L$ 문자열 삽입 & $O(L)$ \\
+contains/search & 완전 문자열 검색 & $O(L)$ \\
+prefix search & prefix 존재 확인 & $O(L)$ \\
+메모리 & 생성된 node 수에 비례 & $O(\text{총 문자 수}\times\text{child representation})$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+alphabet이 크면 고정 \code{array} 대신 \code{unordered\_map<char,int>} 등을 child mapping으로 사용할 수 있지만 시간/메모리 trade-off가 달라진다.
+
+\section{GNU PBDS \code{ordered\_set} [Optional]}
+ISO C++ STL이 아니라 GNU extension이다. GCC 계열 환경에서만 사용 가능한 경우가 많다.
+
+\begin{lstlisting}
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+
+template <class T>
+using ordered_set = tree<
+    T,
+    null_type,
+    less<T>,
+    rb_tree_tag,
+    tree_order_statistics_node_update
+>;
+
+ordered_set<int> os;
+os.insert(10);
+os.insert(30);
+os.insert(20);
+
+cout << *os.find_by_order(1); // 20: 0-based k-th
+cout << os.order_of_key(25);  // 2: number of values < 25
+\end{lstlisting}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.1cm}p{5cm}X}
+\toprule
+연산 & 의미 & 복잡도 \\
+\midrule
+\code{insert(x)} & 삽입 & $O(\log N)$ \\
+\code{erase(x)} & 삭제 & $O(\log N)$ \\
+\code{find(x)} & exact lookup & $O(\log N)$ \\
+\code{order\_of\_key(x)} & $x$보다 작은 원소 수 & $O(\log N)$ \\
+\code{find\_by\_order(k)} & 0-based $k$번째 원소 & $O(\log N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+중복을 보존하려면 단순히 \code{less\_equal} comparator를 쓰는 방식보다 \code{pair<value,id>}를 key로 두는 방식이 안전하다.
+
+\section{Treap [Optional]}
+BST ordering과 random priority heap property를 결합하는 randomized balanced tree다. STL 표준 interface가 없으므로 직접 구현한다.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.2cm}p{5cm}X}
+\toprule
+canonical 연산 & 의미 & Expected complexity \\
+\midrule
+\code{split(root,key)} & key 기준 두 tree로 분리 & $O(\log N)$ \\
+\code{merge(a,b)} & 모든 $a$ key $<$ 모든 $b$ key일 때 결합 & $O(\log N)$ \\
+\code{insert(root,node)} & 삽입 & $O(\log N)$ \\
+\code{erase(root,key)} & 삭제 & $O(\log N)$ \\
+\code{kth(root,k)} & subtree size 유지 시 k-th & $O(\log N)$ \\
+\code{order\_of\_key} & subtree size 유지 시 rank & $O(\log N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+random priority에 의존하므로 최악 보장은 별개이며, subtree aggregate를 추가해 implicit treap/range structure로 확장할 수 있다.
+
+\section{Persistent Segment Tree [Optional]}
+update할 때 전체 tree를 복사하지 않고 변경 경로의 node만 새로 만들어 여러 version을 보존한다.
+
+\begin{center}
+\begin{tabularx}{\textwidth}{p{4.2cm}p{5cm}X}
+\toprule
+canonical 연산 & 의미 & 복잡도 \\
+\midrule
+초기 build & 첫 version & $O(N)$ \\
+\code{update(root,p,v)} & 새 version root 반환 & $O(\log N)$ time, $O(\log N)$ 새 node \\
+\code{query(root,l,r)} & 특정 version 질의 & $O(\log N)$ \\
+version 선택 & root index 선택 & $O(1)$ \\
+총 메모리 & $Q$회 point update & $O(N+Q\log N)$ \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{자료구조 선택 빠른 표}
+\begin{center}
+\begin{longtable}{p{3.4cm}p{5.0cm}p{6.1cm}}
+\toprule
+\textbf{자료구조} & \textbf{강점} & \textbf{대표 선택 조건} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{자료구조} & \textbf{강점} & \textbf{대표 선택 조건} \\
+\midrule
+\endhead
+\code{vector} & contiguous storage, random access & 동적 길이 sequence, 끝 삽입 중심 \\
+\code{array} & 고정 크기, stack-like value semantics & compile-time 크기 고정 \\
+정렬된 \code{vector} & 빠른 scan/cache, binary search & build 후 update가 적은 ordered data \\
+\code{map} & ordered key-value, worst-case log & ordering/bounds와 동적 update 모두 필요 \\
+\code{set} & ordered unique values & membership + ordering + predecessor/successor \\
+\code{multiset} & ordered duplicates & 중복 보존 + 최소/최대/bounds \\
+\code{unordered\_map/set} & expected constant lookup & ordering 불필요한 membership/frequency \\
+\code{stack} & LIFO & 괄호, DFS-like explicit stack, monotonic stack 기반 \\
+\code{queue} & FIFO & BFS \\
+\code{deque} & 양끝 $O(1)$ & 0-1 BFS, monotonic deque, double-ended state \\
+\code{priority\_queue} & dynamic extremum & Dijkstra, greedy, top-k \\
+DSU & component merge/query & online connectivity, Kruskal \\
+Fenwick & compact prefix aggregate & point update + prefix/range sum, rank count \\
+Segment Tree & general dynamic range query & point update + arbitrary associative query \\
+Lazy Segment Tree & range update/query & 많은 구간 갱신과 구간 질의 \\
+Sparse Table & static range query & update 없음 + 매우 많은 RMQ \\
+Trie & prefix path & 문자열 prefix/search \\
+PBDS ordered set & rank + k-th & GNU 허용 + dynamic order statistics \\
+Treap & customizable ordered tree & split/merge, custom augmentation 필요 \\
+Persistent SegTree & versioned range structure & 과거 version query, offline order statistics \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\section{자주 틀리는 API 의미}
+\begin{center}
+\begin{longtable}{p{5.1cm}p{9.2cm}}
+\toprule
+\textbf{실수} & \textbf{정확한 규칙} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{실수} & \textbf{정확한 규칙} \\
+\midrule
+\endhead
+\code{*container.end()} & \code{end()}는 past-the-end이므로 dereference 금지 \\
+\code{prev(begin())} & begin보다 앞은 invalid \\
+\code{multiset.erase(x)}로 하나만 삭제하려 함 & key overload는 같은 key 전부 삭제; 한 개는 \code{find} 후 \code{erase(iterator)} \\
+\code{map[k]}를 존재 확인에 사용 & 없는 key가 삽입될 수 있음; \code{find}/\code{contains} 사용 \\
+\code{priority\_queue.pop()}의 반환값 기대 & \code{pop()}은 값을 반환하지 않음; 먼저 \code{top()} \\
+\code{stack.pop()}의 반환값 기대 & 동일하게 먼저 \code{top()} \\
+\code{vector.reserve(n)} 후 \code{v[i]} 사용 & reserve는 size를 늘리지 않음; 필요하면 \code{resize} \\
+\code{lower\_bound} 결과 무조건 dereference & 결과가 \code{end()}일 수 있음 \\
+\code{prev(lower\_bound(...))} 무조건 실행 & 결과가 \code{begin()}이면 invalid \\
+set에서 \code{next(begin,k)}를 $O(1)$로 계산 & bidirectional iterator이므로 $O(k)$ \\
+\code{unordered\_*}를 worst-case $O(1)$로 주장 & $O(1)$은 expected; worst-case는 linear 가능 \\
+\code{deque}를 contiguous array로 가정 & random access는 가능하지만 contiguous storage 보장 없음 \\
+\code{set}을 선택한 뒤 전체 선형 scan & 경계 query가 목적이라면 \code{lower\_bound}/\code{upper\_bound} 사용 여부 확인 \\
+큰 mapped container를 값으로 복사 & 읽기만 하면 \code{const auto\&} 또는 iterator reference 사용 \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\section{C++17 / C++20 차이에서 자주 만나는 항목}
+\begin{itemize}
+  \item \code{contains(k)}는 C++20에서 associative container와 unordered associative container에 제공된다.
+  \item C++17에서는 존재 확인에 \code{find(k) != end()} 또는 상황에 따라 \code{count(k)}를 사용한다.
+  \item structured binding \code{auto [a,b] = ...}: C++17.
+  \item \code{try\_emplace}, \code{insert\_or\_assign}: C++17.
+  \item 일부 bit utility(예: \code{std::bit\_width})는 C++20이다. C++17 환경에서는 직접 계산하거나 다른 방식을 사용한다.
+\end{itemize}
+
+\section{CP용 최소 암기 세트}
+모든 API를 외우기보다 다음은 손에 익혀두는 편이 좋다.
+\begin{itemize}
+  \item \code{vector}: \code{size}, \code{empty}, \code{push\_back}, \code{pop\_back}, \code{back}, \code{begin/end}, \code{erase}, \code{reserve}
+  \item \code{string}: \code{size}, \code{push\_back}, \code{pop\_back}, \code{substr}, \code{find}
+  \item \code{map/unordered\_map}: \code{operator[]}, \code{find}, \code{contains} 또는 \code{count}, \code{erase}, 순회
+  \item \code{set/multiset}: \code{insert}, \code{find}, \code{erase}, \code{lower\_bound}, \code{upper\_bound}; 최솟값/최댓값은 \code{begin}, \code{prev(end)}
+  \item \code{stack}: \code{push}, \code{top}, \code{pop}
+  \item \code{queue}: \code{push}, \code{front}, \code{pop}
+  \item \code{deque}: \code{push\_front/back}, \code{pop\_front/back}, \code{front/back}
+  \item \code{priority\_queue}: \code{push}, \code{top}, \code{pop}, min-heap 선언
+  \item DSU: \code{find}, \code{unite}, \code{same}
+  \item Fenwick: \code{add}, \code{prefix\_sum}, \code{range\_sum}
+  \item Segment Tree: \code{build}, point \code{update}, range \code{query}
+\end{itemize}
+
+\begin{notebox}[참고 범위]
+표준 library의 세부 overload와 allocator, node handle, heterogeneous lookup 같은 고급 API는 이 Appendix의 핵심 범위가 아니다. 실제 문제에서 필요해질 때 공식 C++ reference로 세부 signature를 확인한다. GNU PBDS는 ISO C++ 표준이 아니므로 시험 환경에서 지원 여부를 먼저 확인한다.
+\end{notebox}
