@@ -785,7 +785,7 @@ Sample Output:
 ```
 
 ### RB-2 — Locker Archive Queries
-Status: Pending / Active
+Status: PASS
 Source: GPT-generated
 Validation Tier: B
 Difficulty: R2/I2 (Comparative / Provisional)
@@ -864,3 +864,106 @@ State impact:
 - S1-B remains L4 / Provisional;
 - RB-2 Low iterator-boundary debt remains Open;
 - global unresolved Core Review Debt decreases from 6 to 5, so the review block remains active because the count is still above 4.
+
+
+### RB-2 Attempt 1 — Learner Submission and Judgment
+- Date: 2026-10-02
+- Result: PASS
+- Validation Tier: B
+- Difficulty: R2/I2 (Comparative / Provisional)
+- T_solve: 27:10 total; code complete at 15:01
+- Hints: None
+- Assessment independence: Valid
+- Target debt: Low — grouped k-th lookup iterator-boundary safety
+- Debt result: Resolved
+
+Learner code:
+```cpp
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include<iterator>
+
+using namespace std;
+
+bool cmp(const vector<int>& v1, const vector<int>& v2) {
+    if (v1[0] != v2[0]) {
+        return v1[0] < v2[0];
+    }
+    else {
+        return v1[1] < v2[1];
+    }
+}
+
+int main()
+{
+    int N = 0;
+    cin >> N;
+    int Q = 0;
+    cin >> Q;
+    vector<vector<int>> V = {};
+    for (int i = 0; i < N; i += 1) {
+        int g, x;
+        cin >> g >> x;
+        vector<int> v = { g, x };
+        V.push_back(v);
+    }
+    sort(V.begin(), V.end(), cmp);
+
+    for (int i = 0; i < Q; i += 1) {
+        int q = 0;
+        cin >> q;
+        if (q == 1) {
+            int g, k;
+            cin >> g >> k;
+
+            vector<int> v1 = { g, -1000000000 };
+            vector<int> v2 = { g, 1000000000 };
+            auto it1 = lower_bound(V.begin(), V.end(), v1, cmp);
+            auto it2 = upper_bound(V.begin(), V.end(), v2, cmp);
+            if (distance(it1, it2) < k) {
+                cout << "NONE" << '\n';
+            }
+            else {
+                it1 += k - 1;
+                cout << (*it1)[1] << '\n';
+            }
+        }
+        else {
+            int g, L, R;
+            cin >> g >> L >> R;
+
+            vector<int> v1 = { g, L };
+            vector<int> v2 = { g, R };
+            auto it1 = lower_bound(V.begin(), V.end(), v1, cmp);
+            auto it2 = upper_bound(V.begin(), V.end(), v2, cmp);
+            cout << distance(it1, it2) << '\n';
+        }
+    }
+}
+```
+
+Validation:
+- learner C++17 compiled and matched the sample;
+- 5,000 randomized grouped-oracle cases all matched;
+- Type 1 obtains the complete group half-open range [it1,it2), checks its size before iterator arithmetic, and only then forms it1+(k-1);
+- therefore the destination is guaranteed to lie inside the group and before it2 <= end();
+- Type 2 lower_bound/upper_bound correctly counts the inclusive [L,R] values in group g;
+- vector iterator distance is O(1), so each query remains O(log N).
+
+Complexity / safety:
+- sort O(N log N), each query O(log N), total O((N+Q)logN), storage O(N);
+- all input scalars fit int; all distances/counts are <= N <= 200000, also int-safe;
+- comparator is strict: equal (g,x) pairs return false in both directions.
+
+Interpretation:
+- G-A's iterator-boundary weakness is independently remediated;
+- S1-B has no active immediate Review Debt;
+- Review Block 1 is complete with RB-1 PASS + RB-2 PASS;
+- S1-B remains L4 / Provisional pending delayed/mixed evidence;
+- global unresolved Core Review Debt count is now 4, so the forced review-block trigger (>4) is cleared.
