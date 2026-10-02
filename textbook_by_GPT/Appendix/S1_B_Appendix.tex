@@ -139,3 +139,15 @@ auto r2 = it2 - v.begin();                     // O(1)
 \end{lstlisting}
 
 복잡도는 함수 이름 하나가 아니라 \textbf{query 전체의 연산 합}으로 계산한다. 특히 bidirectional/forward iterator의 \code{distance}/\code{advance}를 random-access처럼 취급하지 않는다.
+
+\section{k-th lookup에서 iterator 경계 확인 순서}
+
+random-access iterator라도 vector의 유효 범위 또는 정확히 one-past-the-end를 넘어가는 산술은 허용되지 않는다.
+
+\begin{lstlisting}
+auto it = lower_bound(v.begin(), v.end(), key);
+it += k - 1;                 // may already go past end()
+if (it != v.end()) { ... }   // too late
+\end{lstlisting}
+
+grouped k-th query에서는 먼저 group의 \code{[begin,end)} 경계를 구하고, 원소 수가 k 이상인지 확인한 뒤 \code{begin + (k-1)}를 수행해야 한다. 핵심은 ``이동 후 검사''가 아니라 ``이동이 유효함을 먼저 증명한 뒤 이동''이다.

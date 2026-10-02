@@ -12,8 +12,8 @@
 
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
-- Current Learning Unit: S1-B — Sorting & Bounds (Part F fresh reassessment PASS; Part G active)
-- Next Assessment: S1-B Part G — G-A Trade Archive Queries and G-B AtCoder ABC308 C — Standings.
+- Current Learning Unit: S1-B — Sorting & Bounds (Part F PASS; Part G G-A FAIL, G-B pending)
+- Next Assessment: S1-B Part G G-B — AtCoder ABC308 C — Standings. G-A is learning-only after FAIL; fresh adaptive reassessment later.
 - Priority Class: Core
 - Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 remains FAIL — Complexity. After targeted remediation, fresh Part F F-2 Archived Job Queries PASSed independently (Tier B, R3/I2, T_solve 2:40:00, no hints): compile/sample + 3 learner edge cases + 3,000 randomized differential tests all passed; static sorted-vector selection and vector iterator-cost accounting were correct. Capability is now L4 / Provisional. The S1-B Medium Review Debt is Resolved. Immediate Progression Gate is satisfied; Part G is active.
 - Last Updated: 2026-09-30
@@ -387,3 +387,17 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - A repaired `CP_Learning_Record.xlsx` candidate containing the F-2 PASS, L4/Provisional update, resolved S1-B Review Debt, and Part G unlock was generated and passed ZIP/member, OOXML parse, spreadsheet re-import, required-sheet, history-preservation, and spreadsheet-error checks.
 - GitHub binary upload/post-upload identity verification could not be completed through the currently available connector path without violating the v0.6 binary-safety protocol. The existing known-good remote workbook was therefore not overwritten.
 - Status: `GitHub sync incomplete` for XLSX only; no corrupted candidate was committed. The validated candidate is preserved as `CP_Learning_Record_F2_pass.xlsx` in the current conversation artifacts.
+
+### S1-B Part G G-A — 2026-10-02
+- Problem: Trade Archive Queries
+- Result: FAIL — Implementation
+- Validation Tier: B
+- Difficulty: R3/I2 (Comparative / Provisional)
+- T_solve: 1:09:21 total; code complete at 50:26
+- Hints: None
+- Positive evidence: correct two-static-index design; correct comparator orders; Query 1/2/4 correct; intended O((N+Q)logN) time and O(N) space correct; numeric safety correct.
+- Blocking error: Type 3 performs iterator += k-1 before verifying the target symbol contains k elements. Valid input can advance past end(), causing undefined behavior.
+- Capability: remains L4 / Provisional.
+- Review Debt: Open / Low — grouped k-th lookup iterator-boundary safety.
+- Progression: Part F PASS and immediate progression gate remain valid; G-B remains pending.
+- Reuse: G-A is learning-only after FAIL and cannot be reused.

@@ -3,9 +3,9 @@
 Status: In Progress — Part F fresh reassessment PASS; Part G active
 Started: 2026-09-21
 Priority: Core
-Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 PASS; Part G Pending
+Assessment Status: Part E E-1 PASS; Part F F-1 FAIL — Complexity; F-2 PASS; Part G G-A FAIL — Implementation; G-B Pending
 Confidence: Provisional for S1-B
-Next formal step: complete both Part G Adaptive Extra Problems
+Next formal step: complete G-B External CP Extra; G-A is learning-only after FAIL and requires a fresh adaptive reassessment later
 
 ## Scope
 S1-B extends S0-B sort/comparator syntax and S1-A ordered-container bounds.
@@ -632,3 +632,43 @@ Constraints:
 Official problem: https://atcoder.jp/contests/abc308/tasks/abc308_c
 
 Both G-A and G-B must be completed. Results are independent evidence; an Extra FAIL does not retroactively cancel the Part F PASS.
+
+### G-A Attempt 1 — Learner Submission and Judgment
+- Date: 2026-10-02
+- Result: FAIL
+- Failure Attribution: Implementation
+- Validation Tier: B
+- Difficulty: R3/I2 (Comparative / Provisional)
+- T_solve: 1:09:21 total; code complete at 50:26
+- Hints: None
+- Assessment independence: Valid
+- Capability impact: S1-B remains L4 / Provisional
+- Review Debt: Open / Low — k-th lookup iterator-boundary safety
+- Progression impact: none; Part F PASS / immediate progression gate remain valid
+- G-B: still pending
+
+Validation:
+- submitted C++17 code compiled;
+- sample output matched;
+- Query 1, 2, and 4 boundary constructions are correct;
+- a valid counterexample N=1, trade=(1,5), query `3 2 2` makes lower_bound return end(), then `it1 += 1` advances past end();
+- libstdc++ debug iterators abort on this invalid advance; normal release behavior is undefined.
+
+Blocking issue:
+- Type 3 executes `it1 += k - 1` before proving that at least k records of symbol s exist;
+- checking `it1 != arc1.end()` afterward is too late;
+- the same defect occurs when symbol s exists but has fewer than k records and the advance crosses vector end().
+
+Positive evidence:
+- two static sorted vectors are a valid solution family;
+- cmp1 correctly orders by symbol then timestamp;
+- cmp2 correctly orders by timestamp then symbol;
+- Query 1, 2, and 4 are correct;
+- intended total time O((N+Q)logN) and space O(N) are correct;
+- numeric-safety reasoning is correct.
+
+Next action:
+- G-A becomes learning-only and cannot be reused;
+- open Low Review Debt for grouped k-th lookup boundary safety;
+- complete G-B External CP Extra;
+- later reassess with a fresh non-reused Extra.
