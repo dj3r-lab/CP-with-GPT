@@ -13,7 +13,7 @@
 - Current Stage: Stage 1 — 선형 데이터 처리와 Associative Containers
 - Most Recently Completed Learning Unit: S1-A — Associative Containers
 - Current Learning Unit: S1-B — Sorting & Bounds (Parts A-H complete; review block active)
-- Next Assessment: Review Block 1 RB-2 — Locker Archive Queries. RB-1 PASS resolved the S1-B Medium exact-rational comparator debt.
+- Next Assessment: Core progression may resume; remaining older Review Debt stays scheduled for fresh/delayed mixed review.
 - Priority Class: Core
 - Learning Status: S1-B Part E E-1 PASS. Part F F-1 Snapshot Ranking Queries Attempt 1 remains FAIL — Complexity. After targeted remediation, fresh Part F F-2 Archived Job Queries PASSed independently (Tier B, R3/I2, T_solve 2:40:00, no hints): compile/sample + 3 learner edge cases + 3,000 randomized differential tests all passed; static sorted-vector selection and vector iterator-cost accounting were correct. Capability is now L4 / Provisional. The S1-B Medium Review Debt is Resolved. Immediate Progression Gate is satisfied; Part G is active.
 - Last Updated: 2026-09-30
@@ -466,3 +466,18 @@ S1-A can progress to S1-B because the Immediate Coverage Floor and progression g
 - A validated local workbook candidate containing RB-1 PASS and debt resolution was generated with artifact_tool and passed spreadsheet re-import, key-range inspection, and formula-error scan.
 - GitHub binary upload/post-upload identity verification was not completed in this transaction; the existing remote known-good workbook was not overwritten.
 - Status: GitHub sync incomplete for XLSX only.
+
+
+### Review Block 1 RB-2 — 2026-10-02
+- Problem: Locker Archive Queries
+- Result: PASS
+- Validation Tier: B
+- Difficulty: R2/I2 (Comparative / Provisional)
+- T_solve: 27:10 total; code complete at 15:01
+- Validation: compile/sample + 5,000 randomized grouped-oracle cases PASS.
+- Evidence: full group range is established first; group size >= k is verified before iterator movement; Type 2 inclusive range count is correct.
+- Review Debt: S1-B Low grouped-k-th iterator-boundary debt Resolved.
+- S1-B immediate Review Debt: none active.
+- Review Block 1: Complete.
+- Global unresolved Core Review Debt: 4 open entries; forced review-block trigger (>4) cleared.
+- Next action: Core progression may resume while older debts remain scheduled for fresh/delayed mixed review.
