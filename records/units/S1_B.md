@@ -719,3 +719,33 @@ Reuse:
 - Review Debt: Low (grouped k-th iterator safety) + Medium (exact rational comparator / floating-point precision)
 - Unit Coverage: Parts A-H complete
 - Next action: review block before another Core Learning Unit because unresolved Core Review Debt exceeds the operating threshold.
+
+
+## Review Block 1 — Precision and Boundary Safety Remediation (2026-10-02)
+Mode: Learning mode — not formal mastery evidence.
+
+Targets:
+1. Medium Review Debt: exact rational comparison / floating-point precision in comparator.
+2. Low Review Debt: grouped k-th lookup iterator-boundary safety.
+
+### A. Exact rational ordering
+- When an ordering criterion is mathematically exact, storing a ratio as float/double can merge distinct values and create false ties.
+- For positive denominators, compare ratios by integer cross multiplication rather than by a rounded floating key.
+- In the ABC308-C form Ai/(Ai+Bi) vs Aj/(Aj+Bj), cancellation reduces the comparison to Ai*Bj vs Aj*Bi.
+- With Ai,Bi <= 1e9, each simplified product is <= 1e18 and fits signed 64-bit long long.
+- If values are stored as int, cast before multiplication (e.g. 1LL * Ai * Bj) so the multiplication itself occurs in 64-bit arithmetic.
+- Exact equality of cross-products is the only point at which the secondary id/index tie-break should be used.
+
+### B. Safe grouped k-th lookup
+- Random-access means O(1) positional movement, not permission to move outside [begin,end].
+- `end()+positive` or any iterator arithmetic whose result is beyond one-past-end is undefined behavior.
+- For a group ordered contiguously in a vector, first compute its half-open range [first,last), then count = last-first.
+- Only if count >= k may `first + (k-1)` be formed. This proves the target lies strictly before last and therefore within the vector.
+- Checking `it != end()` after an unchecked jump is too late because undefined behavior may already have occurred.
+
+### Transfer rule
+Before writing a comparator or k-th query, identify the exact invariant to preserve:
+- comparator: is approximate numerical equality acceptable, or must mathematical order be exact?
+- iterator arithmetic: what fact proves the destination iterator is within the valid range before the movement occurs?
+
+This remediation does not resolve either debt by itself. Both require fresh independent formal evidence.
